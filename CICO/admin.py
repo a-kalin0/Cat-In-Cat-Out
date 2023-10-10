@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import CiCoItem, TableStatus
+from .models import CiCoItem, Statuses
 
 
 admin.site.register(CiCoItem)
-admin.site.register(TableStatus)
+admin.site.register(Statuses)

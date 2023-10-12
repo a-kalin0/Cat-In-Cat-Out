@@ -6,5 +6,6 @@ class ContactUsForm(forms.Form):
    message = forms.CharField(max_length=1000)
 
 class ConnectionForm(forms.Form):
-   indentification = forms.CharField(max_length=100)
-   password = forms.CharField(max_length=100)
+   identification = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+   password = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+   

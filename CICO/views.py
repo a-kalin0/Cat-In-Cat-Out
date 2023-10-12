@@ -35,7 +35,7 @@ def connection(request):
             #newItem.save()
 
 
-            user = authenticate(username=form.cleaned_data["indentification"], password=form.cleaned_data["password"])
+            user = authenticate(username=form.cleaned_data["identification"], password=form.cleaned_data["password"])
             if user is not None:
                 request.session['user'] = user.id                # A backend authenticated the credentials
                 return redirect('profileIndex')

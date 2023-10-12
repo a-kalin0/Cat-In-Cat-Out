@@ -1,6 +1,11 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
+
+class UserCICO(AbstractUser):
+    ownedDevice = models.CharField(max_length=100, unique=True)
 
 class ToDoItem(models.Model):
     text = models.CharField(max_length=100)

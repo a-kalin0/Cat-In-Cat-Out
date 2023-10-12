@@ -1,6 +1,7 @@
 {% extends "baseProfil.html" %}
 {% block content %}
     <h1>Bienvenue sur votre profil CICO</h1>
+    <h2>Vous êtes l'utilisateur {{ user }}</h2>
     <table>
         {% for item in items %}
         <tr>

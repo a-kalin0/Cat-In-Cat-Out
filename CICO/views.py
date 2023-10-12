@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import ListView
 from .models import CiCoItem
 from .models import Statuses
+from .models import UserCICO
 from django.shortcuts import redirect
 from CICO.forms import ContactUsForm
 from CICO.forms import ConnectionForm
@@ -26,7 +27,7 @@ def vue(request):
 
 
 def connection(request):
-
+    request.session["user"] = None
     if (request.method == "POST"):
         form = ConnectionForm(request.POST)
         if form.is_valid():
@@ -36,10 +37,8 @@ def connection(request):
 
             user = authenticate(username=form.cleaned_data["indentification"], password=form.cleaned_data["password"])
             if user is not None:
-
-                # A backend authenticated the credentials
-                return redirect(profileIndex)
-                ...
+                request.session['user'] = user.id                # A backend authenticated the credentials
+                return redirect('profileIndex')
             else:
                 # No backend authenticated the credentials
                 logger.info("login failed")
@@ -54,7 +53,16 @@ def connection(request):
 
 def profileIndex(request):
     items = CiCoItem.objects.all()
-    return render(request, 'CICO/profileIndex.html', {"items": items})
+    print(request.session['user'])
+    user = None
+    try:
+        user = UserCICO.objects.get(id=request.session['user'])
+    except (KeyError, UserCICO.DoesNotExist):
+        user = None
+    print(user)
+    if (user==None):
+        return render(request, 'CICO/unauthorized.html')
+    return render(request, 'CICO/profileIndex.html', {"items": items, "user":user})
 
 
 def faq(request):

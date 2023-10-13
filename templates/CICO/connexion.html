@@ -45,7 +45,59 @@
           >
             {% csrf_token %}
 
-            <label class="form-control-plaintext" style="text-align: left"
+              {% if form.confirmPassword != None %}
+
+              <label class="form-control-plaintext" style="text-align: left"
+              >Identification</label
+            >
+            {{form.identification}}
+
+            <label
+              for="form.id_password"
+              class="form-control-plaintext"
+              style="text-align: left"
+            >
+            email
+
+            </label>
+            {{form.email}}
+
+              <label
+              class="form-control-plaintext"
+              style="text-align: left"
+            >
+              serial number of device
+
+            </label>
+            {{form.serial}}
+
+              <label
+              class="form-control-plaintext"
+              style="text-align: left"
+            >
+
+              Password
+            </label>
+            {{form.password}}
+
+              <label
+              for="form.id_confirmPassword"
+              class="form-control-plaintext"
+              style="text-align: left"
+            >
+              Confirm Password
+            </label>
+            {{form.confirmPassword}}
+            <input
+              class="btn border rounded btn-primary d-block mx-auto"
+              type="submit"
+              style="margin-top: 10px; text-align: center; margin-bottom: 10px"
+              data-bs-theme="light"
+            />
+
+              {% else %}
+
+              <label class="form-control-plaintext" style="text-align: left"
               >Identification</label
             >
             {{form.identification}}
@@ -63,8 +115,13 @@
               style="margin-top: 10px; text-align: center; margin-bottom: 10px"
               data-bs-theme="light"
             />
+
+              {% endif %}
+
+
+
           </form>
-          <a href="#">Vous n'êtes pas encore inscrit ? Inscrivez vous !</a>
+          <a href='{% url "connexion" formId=2%}'>Vous n'êtes pas encore inscrit ? Inscrivez vous !</a>
         </div>
       </div>
     </div>

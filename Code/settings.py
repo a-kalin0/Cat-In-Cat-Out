@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'CICO.apps.CicoConfig',
-    'bootstrap5'
+    'bootstrap5',
+    'fontawesomefree',
 ]
 
 MIDDLEWARE = [

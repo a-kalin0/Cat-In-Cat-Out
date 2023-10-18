@@ -2,3 +2,5 @@ CICO/__pycache__/*
 __pycache___/*
 Code/__pycache__/*
 CICO/Migrations/__pycache__/*
+.idea/
+

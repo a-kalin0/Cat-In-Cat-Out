@@ -6,6 +6,7 @@ from .models import UserCICO
 from django.shortcuts import redirect
 from CICO.forms import ContactUsForm
 from CICO.forms import ConnectionForm
+from CICO.forms import NewAccountForm
 import logging
 from django.contrib.auth import authenticate
 logger = logging.getLogger('django')
@@ -26,28 +27,43 @@ def vue(request):
     return render(request, 'CICO/index.html')
 
 
-def connection(request):
+def connection(request, formId):
     request.session["user"] = None
-    if (request.method == "POST"):
-        form = ConnectionForm(request.POST)
-        if form.is_valid():
-            #newItem = CiCoItem(text=form.cleaned_data["message"])
-            #newItem.save()
 
-
-            user = authenticate(username=form.cleaned_data["identification"], password=form.cleaned_data["password"])
-            if user is not None:
-                request.session['user'] = user.id                # A backend authenticated the credentials
-                return redirect('profileIndex')
-            else:
-                # No backend authenticated the credentials
-                logger.info("login failed")
-
-
-
-
+    if (formId == 2):
+        if (request.method == "POST"):
+            form = NewAccountForm(request.POST)
+            if form.is_valid():
+                if form.cleaned_data["email"] in UserCICO.objects.values_list("email", flat = True):
+                    logger.info("This email is already used") #these texts will need to be displayed on the page
+                elif form.cleaned_data["password"] != form.cleaned_data["confirmPassword"]:
+                    logger.info("Passwords not identical")
+                elif form.cleaned_data["serial"] == False: #Insert here serial check function
+                    logger.info("Wrong serial number")
+                else:
+                    # No backend authenticated the credentials
+                    newUser = UserCICO.objects.create(email=form.cleaned_data["email"],
+                                                      username=form.cleaned_data["identification"],
+                                                      ownedDevice=form.cleaned_data["serial"])
+                    newUser.set_password(form.cleaned_data["password"])
+                    newUser.save()
+        else:
+            form = NewAccountForm()
     else:
-        form = ConnectionForm()
+        if (request.method == "POST"):
+            form = ConnectionForm(request.POST)
+            if form.is_valid():
+                #newItem = CiCoItem(text=form.cleaned_data["message"])
+                #newItem.save()
+                user = authenticate(username=form.cleaned_data["identification"], password=form.cleaned_data["password"])
+                if user is not None:
+                    request.session['user'] = user.id                # A backend authenticated the credentials
+                    return redirect('profileIndex')
+                else:
+                    # No backend authenticated the credentials
+                    logger.info("login failed")
+        else:
+            form = ConnectionForm()
     return render(request, 'CICO/connexion.html', {"form": form})
 
 

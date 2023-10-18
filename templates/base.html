@@ -10,10 +10,40 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
     {% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+
     <link
       rel="stylesheet"
       type="text/css"
       href="{% static 'CICO/Navbar-Right-Links-icons.css' %}"
+    />
+    <link
+      href="{% static 'fontawesomefree/css/fontawesome.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'fontawesomefree/css/brands.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'fontawesomefree/css/solid.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'CICO/Bootstrap-Calendar.css' %}"
+    />
+    <link rel="stylesheet" href="{% static 'CICO/accordion-faq-list.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'CICO/Features-Centered-Icons-icons.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'CICO/Hero-Carousel-images.css' %}"
     />
   </head>
   <body class="d-flex flex-column min-vh-100">
@@ -64,7 +94,7 @@
           <a
             class="btn btn-primary ms-md-2"
             role="button"
-            href='{% url "connexion" %}'
+            href='{% url "connexion" formId=1%}'
             >Connexion</a
           >
         </div>

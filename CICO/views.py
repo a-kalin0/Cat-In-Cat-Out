@@ -47,6 +47,8 @@ def connection(request, formId):
                                                       ownedDevice=form.cleaned_data["serial"])
                     newUser.set_password(form.cleaned_data["password"])
                     newUser.save()
+                    request.session['user'] = newUser.id  # A backend authenticated the credentials
+                    return redirect('profileIndex')
         else:
             form = NewAccountForm()
     else:

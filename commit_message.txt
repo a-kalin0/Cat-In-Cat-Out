@@ -1,7 +1,10 @@
-Mise en place de la création d'utilisateur avec un form
+Ajout du fichier dependencies
 
-Avancée dans l'US 1.4.2
-Il manque la vérification du serial number, qui viendra quand le systeme de numéro de séries sera clarifié
+Le fichier dependencies.txt contiens tout les packages nécessaires au fonctionnement du code.
 
-Ajout du fichier "commit_message", qui permet d'écrire confortablement le message de commit dans un fichier texte. Le commit se fait donc avec la commande: "git commit --file commit_message.txt"
-Pensez à bien effacer le contenu du fichier avant d'y écrire votre commit.
+Pour l'utiliser:
+depuis le terminal dans le dossier  du projet-> pip install -r dependencies.txt
+
+Pour le mettre a jour:
+Si vous avez installé un nouveau package qui sera requis par la suite->pip freeze > dependencies.txt
+cela réecrira le fichier avec tout les packages, y compris le nouveau.

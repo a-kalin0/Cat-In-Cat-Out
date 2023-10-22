@@ -3,4 +3,5 @@ __pycache___/*
 Code/__pycache__/*
 CICO/Migrations/__pycache__/*
 .idea/
+db.sqlite3
 

@@ -10,6 +10,7 @@ from CICO.forms import NewAccountForm
 import logging
 from django.contrib.auth import authenticate
 logger = logging.getLogger('django')
+from django.http import HttpResponse
 
 
 def Empty(request):
@@ -76,7 +77,7 @@ def profileIndex(request):
         user = None
     print(user)
     if (user==None):
-        return render(request, 'CICO/unauthorized.html')
+        return render(request, 'CICO/unauthorized.html', status=401)
     return render(request, 'CICO/profileIndex.html', {"items": items, "user":user})
 
 

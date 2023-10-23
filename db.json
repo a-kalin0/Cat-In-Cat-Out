@@ -1,65 +1,54 @@
 [
-   
-   {
-      "model":"sessions.session",
-      "pk":"0uqikf23bija2bhzmilnosyjhmzrjfl8",
-      "fields":{
-         "session_data":"eyJ1c2VyIjpudWxsfQ:1qt7YN:08aRLf5qUUjvz5tlwjZC6s5hz7DjZdu0vkoOwKlm3Bo",
-         "expire_date":"2023-11-01T14:29:43.492Z"
-      }
-   },
-   {
-      "model":"sessions.session",
-      "pk":"t5q52d0278ivifiiy3o05yiv7ctscvug",
-      "fields":{
-         "session_data":"eyJ1c2VyIjoyfQ:1quWHa:5uOmlcLEyy7q1FE2V27Cs3oxnk8c4j4GmzOG7Csdp5I",
-         "expire_date":"2023-11-05T11:06:10.621Z"
-      }
-   },
-   {
-      "model":"CICO.usercico",
-      "pk":1,
-      "fields":{
-         "password":"pbkdf2_sha256$600000$kHQWx5zn6ja2cNgnCFc437$p5J09Vps024sfWOGMgNrgHr++FsdVkfFLjZtFOxLuJ8=",
-         "last_login":null,
-         "is_superuser":true,
-         "username":"admin",
-         "first_name":"",
-         "last_name":"",
-         "email":"",
-         "is_staff":true,
-         "is_active":true,
-         "date_joined":"2023-10-11T10:34:23.581Z",
-         "ownedDevice":"",
-         "groups":[
-            
-         ],
-         "user_permissions":[
-            
-         ]
-      }
-   },
-   {
-      "model":"CICO.usercico",
-      "pk":2,
-      "fields":{
-         "password":"pbkdf2_sha256$600000$XYhutwtvdqDkeqD1G7msPY$b1B8GwxH5Hndtfx36F/8H6Bzeg1bKQUtBe7y17BjiCQ=",
-         "last_login":null,
-         "is_superuser":false,
-         "username":"test",
-         "first_name":"",
-         "last_name":"",
-         "email":"",
-         "is_staff":false,
-         "is_active":true,
-         "date_joined":"2023-10-11T10:45:13.951Z",
-         "ownedDevice":"1",
-         "groups":[
-            
-         ],
-         "user_permissions":[
-            
-         ]
-      }
-   }
+{
+    "model": "sessions.session",
+    "pk": "0uqikf23bija2bhzmilnosyjhmzrjfl8",
+    "fields": {
+        "session_data": "eyJ1c2VyIjpudWxsfQ:1qt7YN:08aRLf5qUUjvz5tlwjZC6s5hz7DjZdu0vkoOwKlm3Bo",
+        "expire_date": "2023-11-01T14:29:43.492Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "t5q52d0278ivifiiy3o05yiv7ctscvug",
+    "fields": {
+        "session_data": "eyJ1c2VyIjoyfQ:1quWHa:5uOmlcLEyy7q1FE2V27Cs3oxnk8c4j4GmzOG7Csdp5I",
+        "expire_date": "2023-11-05T11:06:10.621Z"
+    }
+},
+{
+    "model": "CICO.usercico",
+    "fields": {
+        "password": "pbkdf2_sha256$600000$kHQWx5zn6ja2cNgnCFc437$p5J09Vps024sfWOGMgNrgHr++FsdVkfFLjZtFOxLuJ8=",
+        "last_login": null,
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2023-10-11T10:34:23.581Z",
+        "ownedDevice": "",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "CICO.usercico",
+    "fields": {
+        "password": "pbkdf2_sha256$600000$XYhutwtvdqDkeqD1G7msPY$b1B8GwxH5Hndtfx36F/8H6Bzeg1bKQUtBe7y17BjiCQ=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "test",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2023-10-11T10:45:13.951Z",
+        "ownedDevice": "1",
+        "groups": [],
+        "user_permissions": []
+    }
+}
 ]

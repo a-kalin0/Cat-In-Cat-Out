@@ -10,6 +10,7 @@ from CICO.forms import NewAccountForm
 import logging
 from django.contrib.auth import authenticate
 logger = logging.getLogger('django')
+from django.http import HttpResponse
 
 
 def Empty(request):
@@ -38,13 +39,10 @@ def connection(request, formId):
                     logger.info("This email is already used") #these texts will need to be displayed on the page
                 elif form.cleaned_data["password"] != form.cleaned_data["confirmPassword"]:
                     logger.info("Passwords not identical")
-                elif form.cleaned_data["serial"] == False: #Insert here serial check function
-                    logger.info("Wrong serial number")
                 else:
                     # No backend authenticated the credentials
                     newUser = UserCICO.objects.create(email=form.cleaned_data["email"],
-                                                      username=form.cleaned_data["identification"],
-                                                      ownedDevice=form.cleaned_data["serial"])
+                                                      username=form.cleaned_data["identification"])
                     newUser.set_password(form.cleaned_data["password"])
                     newUser.save()
                     request.session['user'] = newUser.id  # A backend authenticated the credentials
@@ -79,7 +77,7 @@ def profileIndex(request):
         user = None
     print(user)
     if (user==None):
-        return render(request, 'CICO/unauthorized.html')
+        return render(request, 'CICO/unauthorized.html', status=401)
     return render(request, 'CICO/profileIndex.html', {"items": items, "user":user})
 
 

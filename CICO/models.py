@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class UserCICO(AbstractUser):
-    ownedDevice = models.CharField(max_length=100, unique=True)
+    ownedDevice = models.CharField(max_length=100, unique=True, null=True)
 
 class ToDoItem(models.Model):
     text = models.CharField(max_length=100)

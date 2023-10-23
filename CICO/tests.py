@@ -3,6 +3,7 @@ from django.urls import reverse
 from .models import CiCoItem
 
 
+
 def create_item(text):
     return CiCoItem.objects.create(text=text)
 

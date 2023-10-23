@@ -1,0 +1,7 @@
+Mise en place de la création d'utilisateur avec un form
+
+Avancée dans l'US 1.4.2
+Il manque la vérification du serial number, qui viendra quand le systeme de numéro de séries sera clarifié
+
+Ajout du fichier "commit_message", qui permet d'écrire confortablement le message de commit dans un fichier texte. Le commit se fait donc avec la commande: "git commit --file commit_message.txt"
+Pensez à bien effacer le contenu du fichier avant d'y écrire votre commit.

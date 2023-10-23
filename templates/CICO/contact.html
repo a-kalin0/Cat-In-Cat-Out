@@ -1,0 +1,88 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<section>
+  <div
+    class="container-fluid d-inline-flex h-100"
+    style="
+      display: inline;
+      border-style: none;
+      padding-right: 0px;
+      padding-left: 0px;
+    "
+  >
+    <div
+      class="flex-fill py-5 container-fluid"
+      style="
+        background: url('{% static 'CICO/img/background-contact.jpg' %}') left /
+          cover;
+      "
+      data-bs-theme="light"
+    >
+      <div class="row g-0 h-100">
+        <div
+          class="col-md-10 col-xl-8 text-center d-flex d-sm-flex d-md-flex justify-content-center align-items-center mx-auto justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-center justify-content-xl-center justify-content-xxl-center"
+        >
+          <div>
+            <h1
+              class="text-uppercase fw-bold text-dark align-self-center mb-3"
+              style="text-align: center"
+            >
+              Contact
+            </h1>
+            <p class="text-dark mb-4">
+              Vous avez des question concernant notre produit ? Vous avez les
+              informations ici !
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="position-relative py-4 py-xl-5">
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-6 col-xl-4">
+        <div>
+          <form class="p-3 p-xl-4" method="post">
+            <h4>Nous contacter</h4>
+            <p class="text-muted">
+              Vous pouvez nous contacter directement via téléphone ou par mail
+            </p>
+            <div class="d-flex flex-row mb-3">
+              <i
+                class="fa-regular fa-envelope"
+                style="font-size: 29px; margin-right: 3px"
+              >
+              </i>
+              <p style="margin-left: 16px">blabla@bla.com</p>
+            </div>
+            <div class="d-flex flex-row mb-3">
+              <i
+                class="fas fa-phone"
+                style="font-size: 29px; margin-right: 3px"
+              ></i>
+              <p style="margin-left: 16px">+32 (0)987 65 43 21</p>
+            </div>
+            <div class="d-flex flex-row mb-3">
+              <i class="far fa-map" style="font-size: 29px"></i>
+              <p style="margin-left: 16px">
+                Avenue de Ciseau 15, 1348 Louvain-la-Neuve
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="col">
+        <iframe
+          allowfullscreen=""
+          frameborder="0"
+          loading="lazy"
+          src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAiXtP-FQJn5dNe1frueZoYdIXd9X2ljxs&amp;q=Avenue+de+Sciseau+15&amp;zoom=18"
+          width="100%"
+          height="100%"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

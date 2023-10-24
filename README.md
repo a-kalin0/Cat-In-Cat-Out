@@ -25,4 +25,13 @@ Projet d'intégration 3T
 
 4: Le fichier db.json devrais avoir été modifié
 
+## Le fichier dependencies.txt contiens tout les packages nécessaires au fonctionnement du code.
+
+Pour l'utiliser:
+depuis le terminal dans le dossier  du projet-> pip install -r dependencies.txt
+
+Pour le mettre a jour:
+Si vous avez installé un nouveau package qui sera requis par la suite->pip freeze > dependencies.txt
+cela réecrira le fichier avec tout les packages, y compris le nouveau.
+
 

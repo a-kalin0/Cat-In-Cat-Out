@@ -38,10 +38,30 @@ def vue(request):
 
 
 def connection(request, formId):
-    logout(request)
-    request.session['IP'] = ""
 
-    if (formId == 2):
+    if (formId == 0):
+        logout(request)
+        request.session['IP'] = ""
+        formId = 1
+
+    if (formId == 1):
+        if (request.method == "POST"):
+            form = ConnectionForm(request.POST)
+            if form.is_valid():
+                #newItem = CiCoItem(text=form.cleaned_data["message"])
+                #newItem.save()
+                user = authenticate(username=form.cleaned_data["identification"], password=form.cleaned_data["password"])
+                if user is not None:
+                    login(request, user)
+                    request.session['IP'] = request.META.get("REMOTE_ADDR")
+                    request.session['user'] = user.id                # A backend authenticated the credentials
+                    return redirect('profileIndex')
+                else:
+                    # No backend authenticated the credentials
+                    logger.info("login failed")
+        else:
+            form = ConnectionForm()
+    elif (formId == 2):
         if (request.method == "POST"):
             form = NewAccountForm(request.POST)
             if form.is_valid():
@@ -71,23 +91,7 @@ def connection(request, formId):
                     ...
         else:
             form = RequestNewPasswordForm()
-    else:
-        if (request.method == "POST"):
-            form = ConnectionForm(request.POST)
-            if form.is_valid():
-                #newItem = CiCoItem(text=form.cleaned_data["message"])
-                #newItem.save()
-                user = authenticate(username=form.cleaned_data["identification"], password=form.cleaned_data["password"])
-                if user is not None:
-                    login(request, user)
-                    request.session['IP'] = request.META.get("REMOTE_ADDR")
-                    request.session['user'] = user.id                # A backend authenticated the credentials
-                    return redirect('profileIndex')
-                else:
-                    # No backend authenticated the credentials
-                    logger.info("login failed")
-        else:
-            form = ConnectionForm()
+
     return render(request, 'CICO/connexion.html', {"form": form})
 
 

@@ -42,10 +42,10 @@
       <div class="container-fluid">
         <button
           data-bs-toggle="collapse"
-          class="navbar-toggler text-center d-sm-flex ms-auto justify-content-sm-end invisible"
+          class="navbar-toggler text-center d-sm-flex ms-auto justify-content-sm-end"
           data-bs-target="#navcol-1"
         >
-          <span class="visually-hidden invisible">Toggle navigation</span
+          <span class="visually-hidden">Toggle navigation</span
           ><span class="navbar-toggler-icon"
             ><i
               class="fas fa-bars d-sm-flex d-md-none d-lg-none align-items-center justify-content-sm-center align-items-sm-start navbar-toggler-icon"
@@ -69,7 +69,7 @@
               <a
                 class="nav-link active d-lg-flex align-items-lg-center"
                 href="#"
-                ><i class="far fa-user fs-6" style="margin-right: 5px"></i
+                ><i class="fas fa-user fs-6" style="margin-right: 5px"></i
                 >Profil</a
               >
             </li>
@@ -90,63 +90,8 @@
             </li>
           </ul>
         </div>
-        <nav class="navbar navbar-expand-md bg-body">
-          <div class="container-fluid">
-            <button
-              data-bs-toggle="collapse"
-              class="navbar-toggler text-center d-sm-flex ms-auto justify-content-sm-end"
-              data-bs-target="#navcol-1"
-            >
-              <span class="visually-hidden">Toggle navigation</span
-              ><span class="navbar-toggler-icon"
-                ><i
-                  class="fas fa-bars d-sm-flex d-md-none d-lg-none align-items-center justify-content-sm-center align-items-sm-start navbar-toggler-icon"
-                  style="
-                    font-size: 25px;
-                    padding-bottom: 10px;
-                    padding-left: 2px;
-                    padding-right: 12px;
-                    padding-top: 2px;
-                  "
-                ></i
-              ></span>
-            </button>
-            <div
-              class="collapse navbar-collapse justify-content-end"
-              id="navcol-1"
-              style="width: 50%"
-            >
-              <ul class="navbar-nav">
-                <li class="nav-item">
-                  <a
-                    class="nav-link active d-lg-flex align-items-lg-center"
-                    href="#"
-                    ><i class="fas fa-user fs-6" style="margin-right: 5px"></i
-                    >Profil</a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link d-lg-flex align-items-lg-center" href="#"
-                    ><i class="fas fa-cog fs-6" style="margin-right: 5px"></i
-                    >Paramètres</a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link d-lg-flex align-items-lg-center" href="#"
-                    ><i
-                      class="fas fa-sign-out-alt fs-6"
-                      style="margin-right: 5px"
-                    ></i
-                    >Se déconnecter</a
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
       </div>
     </nav>
-
     {% block content %}{% endblock %}
   </body>
 </html>

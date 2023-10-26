@@ -1,97 +1,73 @@
 {% extends "baseProfil.html" %} {% load static %} {% block content %}
-<div
-  class="text-center border rounded-0 shadow-sm mx-auto profile-box"
-  style="
+<div class="text-center border rounded-0 shadow-sm mx-auto profile-box" style="
     width: 318px;
     height: 182px;
     background-color: #ffffff;
     margin: 5px;
     margin-top: 15px;
     margin-bottom: 15px;
-  "
->
-  <div
-    style="
+  ">
+    <div style="
       height: 50px;
       background-color: rgba(54, 162, 177, 0);
       background-image: url('{% static 'CICO/img/bg-pattern.png' %}');
-    "
-  >
-    <span
-      class="bs-icon-sm d-flex justify-content-center align-items-center ms-auto me-2 bs-icon"
-      style="color: rgb(27, 52, 89)"
-      ><a href="#"
-        ><i class="fas fa-cog" style="color: var(--bs-body-color)"></i></a
-    ></span>
-  </div>
-  <div class="my-auto">
-    <img
-      class="rounded-circle"
-      src="{% static 'CICO/img/bg-cta.jpg' %}"
-      width="60px"
-      height="60px"
-      style="background-color: rgb(255, 255, 255); padding: 2px"
-    />
-  </div>
-  <div class="my-auto" style="height: 80px">
-    <h4>Master</h4>
-    <p style="font-size: 12px">El Master</p>
-  </div>
+    ">
+        <span class="bs-icon-sm d-flex justify-content-center align-items-center ms-auto me-2 bs-icon"
+            style="color: rgb(27, 52, 89)"><a href="#"><i class="fas fa-cog"
+                    style="color: var(--bs-body-color)"></i></a></span>
+    </div>
+    <div class="my-auto">
+        <img class="rounded-circle" src="{% static 'CICO/img/bg-cta.jpg' %}" width="60px" height="60px"
+            style="background-color: rgb(255, 255, 255); padding: 2px" />
+    </div>
+    <div class="my-auto" style="height: 80px">
+        <h4>Master</h4>
+        <p style="font-size: 12px">El Master</p>
+    </div>
 </div>
 <div>
-  <div class="table-responsive">
-    <table class="table table-striped table-hover table-bordered">
-      <thead>
-        <tr>
-          <th>
-            <button
-              class="btn d-flex my-auto justify-content-xl-start"
-              type="button"
-              data-bs-target="#modal-1"
-              data-bs-toggle="modal"
-              style="width: 100%"
-            >
-              <i class="fas fa-plus fs-4" style="margin-right: 10px"></i>Ajouter
-              un nouveau chat
-            </button>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Cell 1</td>
-        </tr>
-        <tr>
-          <td>Cell 3</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        <button class="btn d-flex my-auto justify-content-xl-start" type="button"
+                            data-bs-target="#modal-1" data-bs-toggle="modal" style="width: 100%">
+                            <i class="fas fa-plus fs-4" style="margin-right: 10px"></i>Ajouter
+                            un nouveau chat
+                        </button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Cell 1</td>
+                </tr>
+                <tr>
+                    <td>Cell 3</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <div class="modal fade" role="dialog" tabindex="-1" id="modal-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <i class="fas fa-cat fs-1" style="margin-right: 10px"></i>
-        <h4 class="modal-title">Ajouter un nouveau chat</h4>
-        <button
-          class="btn-close"
-          type="button"
-          aria-label="Close"
-          data-bs-dismiss="modal"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <p>The content of your modal.</p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-light" type="button" data-bs-dismiss="modal">
-          Annuler</button
-        ><button class="btn btn-primary" type="button">Ajouter</button>
-      </div>
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-cat fs-1" style="margin-right: 10px"></i>
+                <h4 class="modal-title">Ajouter un nouveau chat</h4>
+                <button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>The content of your modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-light" type="button" data-bs-dismiss="modal">
+                    Annuler</button><button class="btn btn-primary" type="button">Ajouter</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 {% endblock %}

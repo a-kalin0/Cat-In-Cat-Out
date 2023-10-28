@@ -18,12 +18,12 @@
       class="col-lg-5 col-xl-5 col-xxl-5 offset-xl-0 offset-xxl-0 text-center align-self-center"
       style="align-self: center"
     >
-    {% csrf_token %}
+
 
       <div class="row g-0">
         <div class="col" style="margin-left: 15px; margin-right: 15px">
           <form action="" method="post" style="padding-left: 45px; padding-right: 45px; margin-top: 10px">
-
+            {% csrf_token %}
             {% if form.prefix == "newAccount" %}
             <div class="row g-0">
                 <div class="col" style="height: 87px">

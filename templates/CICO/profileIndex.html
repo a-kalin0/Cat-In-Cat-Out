@@ -15,15 +15,16 @@
     <span class="bs-icon-sm d-flex justify-content-center align-items-center ms-auto me-2 bs-icon"
         style="color: rgb(27, 52, 89)"><a href="#"><i class="fas fa-cog"
                 style="color: var(--bs-body-color)"></i></a></span>
+    <div class="my-auto">
+        <img class="rounded-circle" src="{% static 'CICO/img/bg-cta.jpg' %}" width="60px" height="60px"
+            style="background-color: rgb(255, 255, 255); padding: 2px" />
+    </div>
+    <div class="my-auto" style="height: 80px">
+        <h4>{{user}}</h4>
+        <p style="font-size: 12px">el {{user}}</p>
+    </div>
 </div>
-<div class="my-auto">
-    <img class="rounded-circle" src="{% static 'CICO/img/bg-cta.jpg' %}" width="60px" height="60px"
-        style="background-color: rgb(255, 255, 255); padding: 2px" />
-</div>
-<div class="my-auto" style="height: 80px">
-    <h4>{{user}}</h4>
-    <p style="font-size: 12px">el {{user}}</p>
-</div>
+
 </div>
 <div>
     <div class="table-responsive">

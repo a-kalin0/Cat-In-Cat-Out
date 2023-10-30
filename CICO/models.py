@@ -33,9 +33,8 @@ class UserSettings(models.Model):
     #add other settings as required
 
 class DeviceRecords(models.Model):
-    deviceId = models.ForeignKey(UserCICO, to_field="ownedDevice", on_delete=models.PROTECT)
+    deviceId = models.ForeignKey(UserCICO, to_field="ownedDevice", on_delete=models.PROTECT,name="deviceId")
     recordId = models.AutoField(primary_key=True)
-    UniqueConstraint(fields=['deviceId', 'recordId'], name='composite_PK')
     time = models.DateTimeField(auto_now_add=True)
 
     EVENTS_CHOICES = [
@@ -46,14 +45,12 @@ class DeviceRecords(models.Model):
     isCat = models.BooleanField()
 
 class Cats(models.Model):
-    ...
-    ownerId = models.ForeignKey(UserCICO, on_delete=models.CASCADE)
+    ownerId = models.ForeignKey(UserCICO, on_delete=models.CASCADE, name = "ownerId")
     catId = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     #add other details if needed
 
 
 class Trigger(models.Model):
-    ...
-    catId = models.ForeignKey(Cats, on_delete=models.CASCADE)
-    recordId = models.ForeignKey(DeviceRecords,primary_key=True,  to_field="recordId", on_delete=models.CASCADE)
+    catId = models.ForeignKey(Cats, on_delete=models.CASCADE, to_field="catId", name="catId")
+    recordId = models.ForeignKey(DeviceRecords,primary_key=True,  to_field="recordId", on_delete=models.CASCADE, name = "recordId")

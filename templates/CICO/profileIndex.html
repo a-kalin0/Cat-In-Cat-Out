@@ -58,14 +58,26 @@
         </tr>
       </thead>
       <tbody>
+
+      {% for record in recordList  %}
+
         <tr>
-          <td>Cell 1</td>
+          <td>{{record.catName}}</td>
+          <td>{{record.event}}</td>
+          <td>{{record.time}}</td>
         </tr>
-        <tr>
-          <td>Cell 3</td>
-        </tr>
+
+
+      {% endfor %}
+
       </tbody>
     </table>
+      <a href='{% url "profileIndex" listButton="récent"%}'>
+        <button>récent</button>
+      </a>
+      <a href='{% url "profileIndex" listButton="ancien"%}'>
+        <button>ancien</button>
+      </a>
   </div>
 </div>
 

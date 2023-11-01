@@ -79,9 +79,9 @@
                                 </div>
                             </div>
                             <div class="col-md-auto col-auto align-self-xl-center align-self-xxl-center"><input
-                                    class="border rounded-pill form-control-lg d-flex" type="text" name="name"
-                                    placeholder="Nom" style="width: 100%;margin-top: 15px;margin-bottom: 15px;"
-                                    required="">
+                                    id="catName" class="border rounded-pill form-control-lg d-flex" type="text"
+                                    name="name" placeholder="Nom"
+                                    style="width: 100%;margin-top: 15px;margin-bottom: 15px;" required="">
                             </div>
                         </div>
                     </div>
@@ -114,7 +114,7 @@
             success: function (response) {
                 if (response.success) {
                     // Add the cat information to the page
-                    var catRow = '<div><span>' + response.cat_name + '</span><i class="fas fa-cat"></i></div>';
+                    var catRow = '<div><span>' + response.name + '</span><i class="fas fa-cat"></i></div>';
                     $("#catList").append(catRow);
                 } else {
                     console.log('Error submitting form: ' + JSON.stringify(response.errors));

@@ -1,14 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from .models import CiCoItem
 from .models import Statuses
 from .models import UserCICO
-from .models import Cat
-from django.shortcuts import redirect
 from CICO.forms import ContactUsForm
 from CICO.forms import ConnectionForm
 from CICO.forms import NewAccountForm
 from CICO.forms import RequestNewPasswordForm
+from CICO.forms import CatSubmitForm
 import logging
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
@@ -16,8 +15,7 @@ from django.contrib.auth import logout
 logger = logging.getLogger('django')
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 
 
@@ -139,30 +137,15 @@ class PageStatus(ListView):
     template_name = "CICO/pageStatus.html"
     ordering = ['heure']
 
-@csrf_exempt # this is a security measure to allow POST requests without a CSRF token
-@require_POST # this is a security measure to allow only POST requests
+@login_required
 def add_cat(request):
-    image_front = request.FILES['image_front']
-    image_back = request.FILES['image_back']
-    image_right = request.FILES['image_right']
-    image_left = request.FILES['image_left']
-    name = request.POST['catName']
-
-    # Save the cat to the database
-    cat = Cat.objects.create(
-        image_front=image_front,
-        image_back=image_back,
-        image_right=image_right,
-        image_left=image_left,
-        name=name
-    )
-    
-    # Return the URL of the uploaded images and the cat's name
-    response_data: {
-        'image_front_url': cat.image_front.name,
-        'image_back_url': cat.image_back.name,
-        'image_right_url': cat.image_right.name,
-        'image_left_url': cat.image_left.name,
-        'name': cat.name
-    }
-    return JsonResponse(response_data)
+    if request.method == 'POST' and request.user.is_authenticated:
+        form = CatSubmitForm(request.POST, request.FILES)
+        if form.is_valid():
+            cat = form.save(commit=False)
+            cat.ownerId = request.user  # Set ownerId to the current user
+            cat.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    return JsonResponse({'success': False, 'errors': 'Invalid request'})

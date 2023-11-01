@@ -1,5 +1,7 @@
 
 from django import forms
+from .models import Cats
+
 class ContactUsForm(forms.Form):
    #name = forms.CharField(required=False)
    #email = forms.EmailField()
@@ -21,3 +23,8 @@ class NewAccountForm(forms.Form):
 class RequestNewPasswordForm(forms.Form):
    prefix = "newPwdRequest"
    email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+
+class CatSubmitForm(forms.ModelForm):
+   class Meta:
+      model = Cats
+      fields = ["name", "image"]

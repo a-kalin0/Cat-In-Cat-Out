@@ -11,6 +11,6 @@ urlpatterns = [
     path("contact",views.contact, name = "contact"),
     path("profileIndex", views.profileIndex, name ="profileIndex"),
     path("commande", views.commande, name ="commande"),
-
-
+    path("reinitpass", views.forgottenpassword, name = "resetpassword"),
+    path('activate/<str:uidb64>/<str:token>/', views.activate, name='activate'),
 ]

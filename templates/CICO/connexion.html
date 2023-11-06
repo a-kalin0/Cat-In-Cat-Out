@@ -102,9 +102,10 @@
               Password
             </label>
             {{form.password}}
+            
             <input
               class="btn border rounded btn-primary d-block mx-auto"
-              type="submit"
+              type="submit" 
               style="margin-top: 10px; text-align: center; margin-bottom: 10px"
               data-bs-theme="light"
             />
@@ -114,6 +115,7 @@
 
 
           </form>
+          <a href='{% url "resetpassword" %}'>Mot de passe oublié ?</a>
           <a href='{% url "connexion" formId=2%}'>Vous n'êtes pas encore inscrit ? Inscrivez vous !</a>
         </div>
       </div>

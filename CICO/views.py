@@ -1,16 +1,17 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView
-from .models import CiCoItem
-from .models import Statuses
-from .models import UserCICO
-from django.shortcuts import redirect
-from CICO.forms import ContactUsForm
-from CICO.forms import ConnectionForm
-from CICO.forms import NewAccountForm
+from .models import CiCoItem, Statuses, UserCICO
+from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword
 import logging
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, get_user_model
 logger = logging.getLogger('django')
 from django.http import HttpResponse
+from django.core.mail import EmailMessage
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+from .tokens import account_activation_token
 
 
 def Empty(request):
@@ -31,7 +32,7 @@ def vue(request):
 def connection(request, formId):
     request.session["user"] = None
 
-    if (formId == 2):
+    if (formId == 2): #inscription
         if (request.method == "POST"):
             form = NewAccountForm(request.POST)
             if form.is_valid():
@@ -45,8 +46,23 @@ def connection(request, formId):
                                                       username=form.cleaned_data["identification"])
                     newUser.set_password(form.cleaned_data["password"])
                     newUser.save()
-                    request.session['user'] = newUser.id  # A backend authenticated the credentials
-                    return redirect('profileIndex')
+                    current_site = get_current_site(request)
+                    mail_subject = "Confirmation d'inscription"
+                    message = render_to_string('CICO/acc_activate_email.html', {
+                                'user': newUser,
+                                'domain': current_site.domain,
+                                'uid':urlsafe_base64_encode(force_bytes(newUser.pk)),
+                                'token':account_activation_token.make_token(newUser),
+                            })
+                    to_email = form.cleaned_data.get('email')
+                    email = EmailMessage(
+                                mail_subject, message, to=[to_email]
+                    )
+                    email.send()
+                    return HttpResponse('Please confirm your email address to complete the registration')
+
+                    #request.session['user'] = newUser.id  # A backend authenticated the credentials
+                    #return redirect('profileIndex')
         else:
             form = NewAccountForm()
     else:
@@ -92,6 +108,10 @@ def contact(request):
 def commande(request):
     return render(request, 'CICO/commande.html')
 
+def forgottenpassword(request):
+    form = ForgottenPassword()
+    return render(request, 'CICO/resetpassword.html', {"form": form})
+
 
 class PageMotE(ListView):
     model = CiCoItem
@@ -105,3 +125,31 @@ class PageStatus(ListView):
     model = Statuses
     template_name = "CICO/pageStatus.html"
     ordering = ['heure']
+
+
+def activate(request, uidb64, token):
+    User = get_user_model()
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        return redirect('/CICO')
+    else:
+        return HttpResponse('Activation link is invalid!')
+    
+
+def resetpassword():
+# faut que le formulaire soit valide ==> adresse mail dans la db 
+# si il n'est pas valide ==> message en rouge (Votre adresse mail n'est pas valide)
+# si il est valide ==> Message en vert (Un mail de réinitialisation vous a été envoyé)
+# envoi de mail => tu gères ça normalement
+# cliquage sur lien = formulaire avec nouveau mot de passe + confirmation de mot de passe
+# si okay alors remplacer le mdp dans la db ==> faire gaffe aux potentielles attaques par injection
+# si pas okay ==> message en rouge 
+# retour à la page d'accueil
+    return ("hello world")

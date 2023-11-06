@@ -15,3 +15,10 @@ class NewAccountForm(forms.Form):
    email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
    confirmPassword = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=100)
    #serial = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+
+class ForgottenPassword(forms.Form):
+   email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+
+class NewPassword(forms.Form):
+   newPassword = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=100)
+   confirmPassword = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=100)

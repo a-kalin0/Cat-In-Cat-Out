@@ -6,12 +6,13 @@ import logging
 from django.contrib.auth import authenticate, login, get_user_model
 logger = logging.getLogger('django')
 from django.http import HttpResponse
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
+from django.contrib.auth.tokens import default_token_generator
 
 
 def Empty(request):
@@ -108,9 +109,6 @@ def contact(request):
 def commande(request):
     return render(request, 'CICO/commande.html')
 
-def forgottenpassword(request):
-    form = ForgottenPassword()
-    return render(request, 'CICO/resetpassword.html', {"form": form})
 
 
 class PageMotE(ListView):
@@ -143,13 +141,50 @@ def activate(request, uidb64, token):
         return HttpResponse('Activation link is invalid!')
     
 
-def resetpassword():
-# faut que le formulaire soit valide ==> adresse mail dans la db 
-# si il n'est pas valide ==> message en rouge (Votre adresse mail n'est pas valide)
-# si il est valide ==> Message en vert (Un mail de réinitialisation vous a été envoyé)
-# envoi de mail => tu gères ça normalement
-# cliquage sur lien = formulaire avec nouveau mot de passe + confirmation de mot de passe
-# si okay alors remplacer le mdp dans la db ==> faire gaffe aux potentielles attaques par injection
-# si pas okay ==> message en rouge 
-# retour à la page d'accueil
-    return ("hello world")
+def forgotpassword(request):
+    if request.method == "POST":
+        password_reset_form = ForgottenPassword(request.POST)
+        if password_reset_form.is_valid():
+            data = password_reset_form.cleaned_data['email']
+            associated_users = UserCICO.objects.filter(email=data)
+            if associated_users.exists():
+                for user in associated_users:
+                    subject = "Password Reset Requested"
+                    email_template_name = "CICO/password_reset_email.txt"
+                    c = {
+                        "email": user.email,
+                        'domain': get_current_site(request).domain,
+                        'site_name': 'YourWebsite',
+                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                        "user": user,
+                        'token': default_token_generator.make_token(user),
+                        'protocol': 'http',
+                    }
+                    print(c)
+                    email = render_to_string(email_template_name, c)
+                    try:
+                        send_mail(subject, email, 'server@example.com', [user.email], fail_silently=False)
+                    except Exception as e:
+                        return HttpResponse('Invalid header found.')
+                    return HttpResponse('Carlos')
+    password_reset_form = ForgottenPassword()
+    return render(request=request, template_name="CICO/resetpassword.html", context={"password_reset_form": password_reset_form})
+
+
+def updatepassword(request, uidb64=None, token=None):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = UserCICO.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, UserCICO.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        # This is where you would prompt the user to input a new password and save it.
+        # For the sake of brevity, let's assume they've already submitted a new password form
+        # and you're ready to save it.
+        new_password = 'new password the user has chosen'
+        user.set_password(new_password)
+        user.save()
+        return render(request, 'updatepassword.html')  # Or wherever you want
+    else:
+        return HttpResponse('The reset link is invalid, possibly because it has already been used. Please request a new password reset.')

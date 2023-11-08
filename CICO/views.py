@@ -30,6 +30,10 @@ def vue(request):
     return render(request, 'CICO/index.html')
 
 
+def mail_sent(request):
+    return render(request, 'CICO/mail_sent.html')    
+
+
 def connection(request, formId):
     request.session["user"] = None
 
@@ -46,7 +50,9 @@ def connection(request, formId):
                     newUser = UserCICO.objects.create(email=form.cleaned_data["email"],
                                                       username=form.cleaned_data["identification"])
                     newUser.set_password(form.cleaned_data["password"])
+                    newUser.is_active = False
                     newUser.save()
+                    
                     current_site = get_current_site(request)
                     mail_subject = "Confirmation d'inscription"
                     message = render_to_string('CICO/acc_activate_email.html', {
@@ -60,7 +66,7 @@ def connection(request, formId):
                                 mail_subject, message, to=[to_email]
                     )
                     email.send()
-                    return HttpResponse('Please confirm your email address to complete the registration')
+                    return redirect('../mail_sent')
 
                     #request.session['user'] = newUser.id  # A backend authenticated the credentials
                     #return redirect('profileIndex')
@@ -126,12 +132,14 @@ class PageStatus(ListView):
 
 
 def activate(request, uidb64, token):
+    """Check the activation token sent via mail"""
     User = get_user_model()
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
+
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
@@ -150,7 +158,7 @@ def forgotpassword(request):
             if associated_users.exists():
                 for user in associated_users:
                     subject = "Password Reset Requested"
-                    email_template_name = "CICO/password_reset_email.txt"
+                    email_template_name = "CICO/password_reset_email.html"
                     c = {
                         "email": user.email,
                         'domain': get_current_site(request).domain,
@@ -166,15 +174,16 @@ def forgotpassword(request):
                         send_mail(subject, email, 'server@example.com', [user.email], fail_silently=False)
                     except Exception as e:
                         return HttpResponse('Invalid header found.')
-                    return HttpResponse('Carlos')
+                return redirect('mail_sent')
     password_reset_form = ForgottenPassword()
     return render(request=request, template_name="CICO/resetpassword.html", context={"password_reset_form": password_reset_form})
 
 
-def updatepassword(request, uidb64=None, token=None):
+def newpassword(request, uidb64=None, token=None):
+    User = get_user_model()
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = UserCICO.objects.get(pk=uid)
+        user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, UserCICO.DoesNotExist):
         user = None
 
@@ -182,9 +191,9 @@ def updatepassword(request, uidb64=None, token=None):
         # This is where you would prompt the user to input a new password and save it.
         # For the sake of brevity, let's assume they've already submitted a new password form
         # and you're ready to save it.
-        new_password = 'new password the user has chosen'
+        new_password = request.POST.get('new_password')
         user.set_password(new_password)
         user.save()
-        return render(request, 'updatepassword.html')  # Or wherever you want
+        return redirect('newpassword')  # template
     else:
         return HttpResponse('The reset link is invalid, possibly because it has already been used. Please request a new password reset.')

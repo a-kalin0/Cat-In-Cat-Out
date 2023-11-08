@@ -13,6 +13,7 @@ urlpatterns = [
     path("profileIndex", views.profileIndex, name ="profileIndex"),
     path("commande", views.commande, name ="commande"),
     path("forgotpassword", views.forgotpassword, name = "forgotpassword"),
-    path("updatepassword/<str:uidb64>/<str:token>/", views.updatepassword, name = "updatepassword"),
+    path("newpassword/<str:uidb64>/<str:token>/", views.newpassword, name="newpassword"),
     path('activate/<str:uidb64>/<str:token>/', views.activate, name='activate'),
+    path('mail_sent',views.mail_sent,name="mail_sent")
 ]

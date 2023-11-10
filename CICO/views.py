@@ -73,7 +73,7 @@ def connection(request, formId):
                     login(request, user)
                     request.session['IP'] = request.META.get("REMOTE_ADDR")
                     request.session['user'] = user.id  # A backend authenticated the credentials
-                    return redirect('profileIndex')
+                    return redirect('profileIndex', listButton="None")
                 else:
                     # No backend authenticated the credentials
                     logger.info("login failed")
@@ -93,7 +93,7 @@ def connection(request, formId):
                                                       username=form.cleaned_data["identification"])
                     newUser.set_password(form.cleaned_data["password"])
                     newUser.save()
-                    return redirect('profileIndex/None')
+                    return redirect('profileIndex', listButton="None")
         else:
             form = NewAccountForm()
 

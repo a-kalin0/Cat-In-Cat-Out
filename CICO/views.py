@@ -148,7 +148,7 @@ class PageStatus(ListView):
 
 @login_required
 def add_cat(request):
-    if request.method == 'POST' and request.user.is_authenticated:
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         form = CatSubmitForm(request.POST, request.FILES)
         if form.is_valid():
             try:
@@ -172,8 +172,8 @@ class UserCatList(generics.ListAPIView):
         return Cats.objects.filter(user=self.request.user)
     
 @login_required
-def get_cats_for_user(request):
-    user = request.user
-    cats = Cats.objects.filter(user=user)
-    serializer = CatSerializer(cats, many=True)
-    return JsonResponse(serializer.data, safe=False)
+def get_cats(request):
+    if request.user.is_authenticated:
+        user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', flat=True)
+        return JsonResponse(list(user_cats), safe=False)
+    return JsonResponse({'error': 'User not authenticated'}, status=401)

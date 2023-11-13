@@ -21,6 +21,8 @@ urlpatterns = [
     path("newpassword", views.newpassword, name="newpassword"),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('mail_sent',views.mail_sent,name="mail_sent"),
-    path('reset_done', views.reset_done, name="reset_done")
+    path('reset_done', views.reset_done, name="reset_done"),
+    path("profileNoDevice", views.profileNoDevice, name ="profileNoDevice" )
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

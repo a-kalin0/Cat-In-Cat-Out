@@ -1,0 +1,64 @@
+{% extends "baseProfil.html" %} {% load static %} {% block content %}
+<div
+  class="text-center border rounded-0 shadow-sm mx-auto profile-box"
+  style="
+    width: 318px;
+    height: 182px;
+    background-color: #ffffff;
+    margin: 5px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+  "
+>
+  <div
+    style="
+      height: 50px;
+      background-color: rgba(54, 162, 177, 0);
+      background-image: url('{% static 'CICO/img/bg-pattern.png' %}');
+    "
+  >
+    <span
+      class="bs-icon-sm d-flex justify-content-center align-items-center ms-auto me-2 bs-icon"
+      style="color: rgb(27, 52, 89)"
+      ><a href="#"
+        ><i class="fas fa-cog" style="color: var(--bs-body-color)"></i></a
+    ></span>
+  </div>
+  <div class="my-auto">
+    <img
+      class="rounded-circle"
+      src="{% static 'CICO/img/bg-cta.jpg' %}"
+      width="60px"
+      height="60px"
+      style="background-color: rgb(255, 255, 255); padding: 2px"
+    />
+  </div>
+  <div class="my-auto" style="height: 80px">
+    <h4>{{user}}</h4>
+    <p style="font-size: 12px">el {{user}}</p>
+  </div>
+</div>
+
+
+Vous n'avez pas de chatière connectée a votre profil, vous devez l'ajouter pour acceder aux fonctionalités associées
+
+<form action="" method="post" style="padding-left: 45px; padding-right: 45px; margin-top: 10px">
+            {% csrf_token %}
+
+            <div class="row g-0">
+
+
+              <label>
+              Entrez le numéro de votre accessoire CICO
+              </label>
+              {{form.deviceNumber}}
+              <input class="btn border rounded btn-primary d-block mx-auto" type="submit" style="margin-top: 10px; text-align: center; margin-bottom: 10px" data-bs-theme="light"/>
+              <span>{{ message }}</span>
+            </div>
+
+
+
+          </form>
+
+
+{% endblock %}

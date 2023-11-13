@@ -1,0 +1,5 @@
+CICO/__pycache__/*
+CICO/migrations/__pycache__/*
+Code/__pycache__/*
+db.sqlite3
+```

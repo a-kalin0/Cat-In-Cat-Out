@@ -5,6 +5,14 @@ from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPas
 from django.contrib.auth import authenticate, login, get_user_model, logout
 
 from .models import Statuses, UserCICO, Cats, DeviceRecords, Trigger
+
+from django.shortcuts import redirect
+from CICO.forms import ContactUsForm
+from CICO.forms import ConnectionForm
+from CICO.forms import NewAccountForm
+
+from CICO.forms import AddDeviceNumber
+
 import logging
 
 logger = logging.getLogger('django')
@@ -149,10 +157,12 @@ def connection(request, formType):
     return render(request, 'CICO/connexion.html', {"form": form})
 
 
+
 def profileIndex(request):
     if not checkIP(request) or not request.user.is_authenticated:
         return render(request, 'CICO/unauthorized.html', status=401)
-
+    if (UserCICO.objects.get(username=request.user).ownedDevice == ""):
+        return redirect("profileNoDevice")
     try:
         request.session['listStart']
     except:
@@ -193,8 +203,25 @@ def profileIndex(request):
 
 
 def getProfileIndex(request, recordList):
-    return render(request, 'CICO/profileIndex.html',
-                  {"user": request.user.username, "recordList": recordList})
+    return render(request, 'CICO/profileIndex.html')
+
+def profileNoDevice(request):
+    message = ""
+    if (request.method == "POST"):
+        form = AddDeviceNumber(request.POST)
+        if form.is_valid():
+            number = form.cleaned_data["deviceNumber"]
+            if number in UserCICO.objects.values_list("ownedDevice", flat=True):
+                message = "Wrong device number"
+                return render(request, 'CICO/profileNoDevice.html', {"form": form, "message": message})
+            user = UserCICO.objects.get(username=request.user)
+            user.ownedDevice = number
+            user.save()
+            return redirect('profileIndex', listButton="None")
+    else:
+        form = AddDeviceNumber()
+        return render(request, 'CICO/profileNoDevice.html', {"form":form})
+
 
 def faq(request):
     return render(request, 'CICO/faq.html')

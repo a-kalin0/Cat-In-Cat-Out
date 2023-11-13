@@ -1,3 +1,4 @@
+
 #61 Modification du système de confirmation par mail pour le reset de mdp
 
 Qui: @PirLucas, basé sur le travail de @a-kalin0
@@ -14,5 +15,4 @@ Après réflexion, il se trouve qu'un code de vérification est aussi une maniè
 Comment: Le mail de vérification contient un code, la page qui confirme l'envoi du mail contiend un formulaire dans lequel on doit entrer le code. Si le code correspond à celui géneré par le serveur, l'utilisateur est redirigé vers la page de nouveau mot de passe.
 
 notes:
-
 

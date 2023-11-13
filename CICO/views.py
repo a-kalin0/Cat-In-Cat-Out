@@ -40,6 +40,7 @@ def Empty(request):
 # Create your views here.
 
 def checkIP(request):
+    print(request.session['IP'], request.META.get("REMOTE_ADDR"))
     if request.session['IP'] != request.META.get("REMOTE_ADDR"):
         return False
     else:
@@ -122,6 +123,7 @@ def profileIndex(request, listButton="None"):
         request.session['listStart'] += LIST_SIZE
 
     if not checkIP(request):
+        print("no")
         return render(request, 'CICO/unauthorized.html', status=401)
     items = CiCoItem.objects.all()
     print(request.user)

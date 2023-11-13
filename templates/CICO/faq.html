@@ -1,4 +1,197 @@
-{% extends "base.html" %}
-{% block content %}
-    <h1>Ceci est la page de faq</h1>
+{% extends "base.html" %} {% block content %} {% load static %}
+<section>
+  <div
+    class="container-fluid d-inline-flex h-100"
+    style="
+      display: inline;
+      border-style: none;
+      padding-right: 0px;
+      padding-left: 0px;
+    "
+  >
+    <div
+      class="flex-fill py-5 container-fluid"
+      style="
+        background: url('{% static 'CICO/img/background-contact.jpg' %}') left /
+          cover;
+      "
+      data-bs-theme="light"
+    >
+      <div class="row g-0 h-100">
+        <div
+          class="col-md-10 col-xl-8 text-center d-flex d-sm-flex d-md-flex justify-content-center align-items-center mx-auto justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-center justify-content-xl-center justify-content-xxl-center"
+        >
+          <div>
+            <h1
+              class="text-uppercase fw-bold text-dark align-self-center mb-3"
+              style="text-align: center"
+            >
+              FaQ
+            </h1>
+            <p class="text-dark mb-4">
+              Vous avez des question concernant notre produit ? Vous avez les
+              informations ici !
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div id="faqlist" class="accordion accordion-flush">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="btn accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#content-accordion-1"
+                style="
+                  border-style: solid;
+                  border-color: var(--bs-primary);
+                  background-color: lightgray;
+                  font-weight: bold;
+                "
+              >
+                What is Lorem Ipsum?
+              </button>
+            </h2>
+            <div
+              id="content-accordion-1"
+              class="accordion-collapse collapse"
+              data-bs-parent="#faqlist"
+            >
+              <p class="accordion-body">
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the industry's standard dummy
+                text ever since the 1500s.
+              </p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="btn accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#content-accordion-2"
+                style="
+                  border-style: solid;
+                  border-color: var(--bs-primary);
+                  background-color: lightgray;
+                  font-weight: bold;
+                "
+              >
+                What is Lorem Ipsum?
+              </button>
+            </h2>
+            <div
+              id="content-accordion-2"
+              class="accordion-collapse collapse"
+              data-bs-parent="#faqlist"
+            >
+              <p class="accordion-body">
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the industry's standard dummy
+                text ever since the 1500s.
+              </p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="btn accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#content-accordion-3"
+                style="
+                  border-style: solid;
+                  border-color: var(--bs-primary);
+                  background-color: lightgray;
+                  font-weight: bold;
+                "
+              >
+                What is Lorem Ipsum?
+              </button>
+            </h2>
+            <div
+              id="content-accordion-3"
+              class="accordion-collapse collapse"
+              data-bs-parent="#faqlist"
+            >
+              <p class="accordion-body">
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the industry's standard dummy
+                text ever since the 1500s.
+              </p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="btn accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#content-accordion-4"
+                style="
+                  border-style: solid;
+                  border-color: var(--bs-primary);
+                  background-color: lightgray;
+                  font-weight: bold;
+                "
+              >
+                What is Lorem Ipsum?
+              </button>
+            </h2>
+            <div
+              id="content-accordion-4"
+              class="accordion-collapse collapse"
+              data-bs-parent="#faqlist"
+            >
+              <p class="accordion-body">
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the industry's standard dummy
+                text ever since the 1500s.
+              </p>
+            </div>
+          </div>
+          <div class="accordion-item" style="border-style: solid">
+            <h2 class="accordion-header">
+              <button
+                class="btn accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#content-accordion-5"
+                style="
+                  border-style: solid;
+                  border-color: var(--bs-primary);
+                  background-color: lightgray;
+                  font-weight: bold;
+                "
+              >
+                What is Lorem Ipsum?
+              </button>
+            </h2>
+            <div
+              id="content-accordion-5"
+              class="accordion-collapse collapse"
+              data-bs-parent="#faqlist"
+            >
+              <p class="accordion-body">
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the industry's standard dummy
+                text ever since the 1500s.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}

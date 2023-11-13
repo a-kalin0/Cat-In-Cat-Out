@@ -6,5 +6,18 @@ class ContactUsForm(forms.Form):
    message = forms.CharField(max_length=1000)
 
 class ConnectionForm(forms.Form):
-   indentification = forms.CharField(max_length=100)
-   password = forms.CharField(max_length=100)
+   prefix = "connection"
+   identification = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+   password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=100)
+
+class NewAccountForm(forms.Form):
+   prefix = "newAccount"
+   identification = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+   password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=100)
+   email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+   confirmPassword = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=100)
+   #serial = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+
+class RequestNewPasswordForm(forms.Form):
+   prefix = "newPwdRequest"
+   email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)

@@ -3,6 +3,8 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.db.models import UniqueConstraint
+import uuid
+
 
 
 class UserCICO(AbstractUser):
@@ -52,7 +54,7 @@ def cat_directory_path(instance, filename):
 class Cats(models.Model):
     ...
     ownerId = models.ForeignKey(UserCICO, on_delete=models.CASCADE)
-    catId = models.AutoField(primary_key=True)
+    catId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to='media/cats/', null=True, blank=True)
     #add other details if needed

@@ -15,7 +15,7 @@ urlpatterns = [
     path("profileIndex", views.profileIndex, name ="profileIndex"),
     path("commande", views.commande, name ="commande"),
     path('add_cat/', views.add_cat, name='add_cat'),
-    path('api/cats/get_cats_for_user/', views.get_cats_for_user, name='get-cats-for-user'),
+    path('get_cats_for_user/', views.get_cats_for_user, name='get-cats-for-user'),
 
 
 

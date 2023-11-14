@@ -3,6 +3,7 @@ from django.views.generic import ListView
 from .models import CiCoItem
 from .models import Statuses
 from .models import UserCICO
+from .models import Cats
 from CICO.forms import ContactUsForm
 from CICO.forms import ConnectionForm
 from CICO.forms import NewAccountForm
@@ -17,6 +18,11 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .serializers import CatSerializer
+
+
 
 
 def Empty(request):
@@ -149,3 +155,17 @@ def add_cat(request):
         else:
             return JsonResponse({'success': False, 'errors': form.errors})
     return JsonResponse({'success': False, 'errors': 'Invalid request'})
+
+class UserCatList(generics.ListAPIView):
+    serializer_class = CatSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Cats.objects.filter(user=self.request.user)
+    
+@login_required
+def get_cats_for_user(request):
+    user = request.user
+    cats = Cats.objects.filter(user=user)
+    serializer = CatSerializer(cats, many=True)
+    return JsonResponse(serializer.data, safe=False)

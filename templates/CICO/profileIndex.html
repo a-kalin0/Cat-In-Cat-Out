@@ -1,4 +1,7 @@
 {% extends "baseProfil.html" %} {% load static %} {% block content %}
+
+<input type="hidden" id="userId" value="{{ user.id }}">
+
 <div class="text-center border rounded-0 shadow-sm mx-auto profile-box" style="
     width: 318px;
     height: 182px;
@@ -136,7 +139,7 @@
                 if (response.success) {
                     console.log(response)
                     // Add the cat information to the page
-                    var catRow = '<button class="btn d-flex my-auto justify-content-xl-start" type="button" style="width: 100%">' + response.catName + '<i class="fas fa-cat"></i></button>';
+                    var catRow = '<th><button class="btn d-flex my-auto justify-content-xl-start" type="button" style="width: 100%">' + response.catName + '<i class="fas fa-cat fs-4" style="margin-left: 10px"></i></button></th>';
                     $("#catList").append(catRow);
                     // Show the success toast
                     var toast = new bootstrap.Toast(document.getElementById('successToast'));
@@ -188,6 +191,11 @@
         $('#imgFrontPreview').attr('src', "{% static 'CICO/img/silhouette%20face.jpg' %}");
     });
 
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadCats();
+    });
 </script>
 
 

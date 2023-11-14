@@ -147,6 +147,7 @@ class PageStatus(ListView):
     template_name = "CICO/pageStatus.html"
     ordering = ['heure']
 
+@login_required
 def add_cat(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         form = CatSubmitForm(request.POST, request.FILES)

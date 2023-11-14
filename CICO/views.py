@@ -31,7 +31,7 @@ def UpdateList(request, deviceId):
     return newList
 
 def GetRecords(deviceId):
-    querySet = DeviceRecords.objects.all().annotate(catName=F('trigger__catId__name'))
+    querySet = DeviceRecords.objects.filter(deviceId=deviceId).annotate(catName=F('trigger__catId__name'))
     return querySet.values()
 
 def Empty(request):

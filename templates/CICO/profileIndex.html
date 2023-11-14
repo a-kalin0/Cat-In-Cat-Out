@@ -45,6 +45,7 @@
                 </tr>
             </thead>
             <tbody id="catList">
+                <!-- Cats will be added here -->
             </tbody>
         </table>
     </div>
@@ -139,7 +140,7 @@
                 if (response.success) {
                     console.log(response)
                     // Add the cat information to the page
-                    var catRow = '<th><button class="btn d-flex my-auto justify-content-xl-start" type="button" style="width: 100%">' + response.catName + '<i class="fas fa-cat fs-4" style="margin-left: 10px"></i></button></th>';
+                    var catRow = '<tr><td><button class="btn d-flex my-auto justify-content-xl-start" type="button" style="width: 100%">' + response.catName + '<i class="fas fa-cat fs-4" style="margin-left: 10px"></i></button></td></tr>';
                     $("#catList").append(catRow);
                     // Show the success toast
                     var toast = new bootstrap.Toast(document.getElementById('successToast'));

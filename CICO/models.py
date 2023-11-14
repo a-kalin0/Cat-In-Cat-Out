@@ -24,4 +24,11 @@ class Statuses(models.Model):
 
     def __str__(self):
         return f"{self.status} à {self.hour}"
+    
+class Cat(models.Model):
+    image_front = models.ImageField(upload_to='images/')
+    image_back = models.ImageField(upload_to='images/')
+    image_right = models.ImageField(upload_to='images/')
+    image_left = models.ImageField(upload_to='images/')
+    name = models.CharField(max_length=100)
 

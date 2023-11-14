@@ -1,5 +1,7 @@
 {% extends "baseProfil.html" %} {% load static %} {% block content %}
 
+<input type="hidden" id="userId" value="{{ user.id }}">
+
 <div class="text-center border rounded-0 shadow-sm mx-auto profile-box" style="
     width: 318px;
     height: 182px;
@@ -124,6 +126,49 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    $("#addCatForm").submit(function (e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            type: 'POST',
+            url: '/CICO/add_cat/',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },  // Include the CSRF token in the request headers
+            success: function (response) {
+                if (response.success) {
+                    console.log(response)
+                    // Add the cat information to the page
+                    var catRow = '<th><button class="btn d-flex my-auto justify-content-xl-start" type="button" style="width: 100%">' + response.catName + '<i class="fas fa-cat fs-4" style="margin-left: 10px"></i></button></th>';
+                    $("#catList").append(catRow);
+                    // Show the success toast
+                    var toast = new bootstrap.Toast(document.getElementById('successToast'));
+                    toast.show();
+
+                    // Close the modal
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('modal-1'));
+                    modal.hide();
+
+                } else {
+                    console.log('Error submitting form: ' + JSON.stringify(response.errors));
+
+                    // Show the error toast
+                    var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                    errorToast.show();
+                }
+            },
+            error: function () {
+                console.log('An error occurred');
+
+                // Show the error toast
+                var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                errorToast.show();
+            }
+        });
+    });
+
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -216,5 +261,11 @@
         submitAddCatForm();
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadCats();
+    });
+</script>
+
 
 {% endblock %}

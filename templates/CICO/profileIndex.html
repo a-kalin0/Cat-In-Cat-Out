@@ -160,8 +160,13 @@
                 }
             },
             error: function () {
-                console.log('An error occurred');
-
+                if (response.status === 400) {
+                    const errors = response.responseJSON.error;
+                    if ('name' in errors) {
+                        alert("A cat with this name already exists!");
+                    }
+                    // Handle other potential errors
+                }
                 // Show the error toast
                 var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
                 errorToast.show();

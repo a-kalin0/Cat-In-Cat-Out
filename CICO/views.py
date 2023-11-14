@@ -23,6 +23,8 @@ from django.core.files.storage import default_storage
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CatSerializer
+from django.core.exceptions import ValidationError
+
 
 
 
@@ -145,7 +147,6 @@ class PageStatus(ListView):
     template_name = "CICO/pageStatus.html"
     ordering = ['heure']
 
-@login_required
 def add_cat(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         form = CatSubmitForm(request.POST, request.FILES)

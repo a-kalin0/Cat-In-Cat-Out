@@ -158,10 +158,11 @@ def connection(request, formType):
 
 
 
+
 def profileIndex(request):
     if not checkIP(request) or not request.user.is_authenticated:
         return render(request, 'CICO/unauthorized.html', status=401)
-    if (UserCICO.objects.get(username=request.user).ownedDevice == ""):
+    if (UserCICO.objects.get(username=request.user).ownedDevice == None):
         return redirect("profileNoDevice")
     try:
         request.session['listStart']

@@ -4,7 +4,6 @@ from .models import CiCoItem
 from .models import Statuses
 from .models import UserCICO
 from .models import Cats
-from .models import Cats
 from CICO.forms import ContactUsForm
 from CICO.forms import ConnectionForm
 from CICO.forms import NewAccountForm

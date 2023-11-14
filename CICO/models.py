@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.db.models import UniqueConstraint
+from django.core.exceptions import ValidationError
 import uuid
 
 
@@ -58,6 +59,14 @@ class Cats(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to=cat_directory_path, null=True, blank=True)
     #add other details if needed
+
+    def clean(self):
+        if Cats.objects.filter(name=self.name).exists():
+            raise ValidationError("A cat with this name already exists for this user.")
+                                  
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
 
 class Trigger(models.Model):

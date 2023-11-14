@@ -1,4 +1,5 @@
 {% extends "baseProfil.html" %} {% load static %} {% block content %}
+
 <div class="text-center border rounded-0 shadow-sm mx-auto profile-box" style="
     width: 318px;
     height: 182px;
@@ -42,6 +43,7 @@
                 </tr>
             </thead>
             <tbody id="catList">
+                <!-- Cats will be added here -->
             </tbody>
         </table>
     </div>
@@ -120,58 +122,15 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
-    $("#addCatForm").submit(function (e) {
-        e.preventDefault();
-        var formData = new FormData(this);
-        $.ajax({
-            type: 'POST',
-            url: '/CICO/add_cat/',
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            headers: { 'X-CSRFToken': getCookie('csrftoken') },  // Include the CSRF token in the request headers
-            success: function (response) {
-                if (response.success) {
-                    console.log(response)
-                    // Add the cat information to the page
-                    var catRow = '<button class="btn d-flex my-auto justify-content-xl-start" type="button" style="width: 100%">' + response.catName + '<i class="fas fa-cat"></i></button>';
-                    $("#catList").append(catRow);
-                    // Show the success toast
-                    var toast = new bootstrap.Toast(document.getElementById('successToast'));
-                    toast.show();
-
-                    // Close the modal
-                    var modal = bootstrap.Modal.getInstance(document.getElementById('modal-1'));
-                    modal.hide();
-
-                } else {
-                    console.log('Error submitting form: ' + JSON.stringify(response.errors));
-
-                    // Show the error toast
-                    var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
-                    errorToast.show();
-                }
-            },
-            error: function () {
-                console.log('An error occurred');
-
-                // Show the error toast
-                var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
-                errorToast.show();
-            }
-        });
-    });
-
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
             var cookies = document.cookie.split(';');
             for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.startsWith(name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
                 }
@@ -179,15 +138,83 @@
         }
         return cookieValue;
     }
-</script>
-<script>
-    $('#modal-1').on('hidden.bs.modal', function () {
-        $(this).find('form').trigger('reset');
 
-        // Reset image preview to default image
-        $('#imgFrontPreview').attr('src', "{% static 'CICO/img/silhouette%20face.jpg' %}");
+    function submitAddCatForm() {
+        $("#addCatForm").submit(function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                type: 'POST',
+                url: '/CICO/add_cat/',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: handleAddCatSuccess,
+                error: handleAddCatError
+            });
+        });
+    }
+
+    function handleAddCatSuccess(response) {
+        if (response.success) {
+            console.log(response);
+            appendCatRow(response.catName);
+            showToast('successToast');
+            closeModal('modal-1');
+        } else {
+            console.log('Error submitting form:', JSON.stringify(response.errors));
+            showToast('errorToast');
+        }
+    }
+
+    function handleAddCatError() {
+        if (response.status === 400) {
+            const errors = response.responseJSON.error;
+            if ('name' in errors) {
+                alert("A cat with this name already exists!");
+            }
+        }
+        showToast('errorToast');
+    }
+
+    function appendCatRow(catName) {
+        var catRow = '<tr><td><button class="btn d-flex my-auto justify-content-xl-start" type="button" style="width: 100%;">' + catName + '<i class="fas fa-cat fs-4" style="margin-left: 10px;"></i></button></td></tr>';
+        $('#catList').append(catRow);
+    }
+
+    function showToast(toastId) {
+        var toast = new bootstrap.Toast(document.getElementById(toastId));
+        toast.show();
+    }
+
+    function closeModal(modalId) {
+        var modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+        modal.hide();
+    }
+
+    function loadCats() {
+        $.ajax({
+            url: '/CICO/get_cats/',
+            type: 'GET',
+            success: function (catNames) {
+                catNames.forEach(appendCatRow);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching user cats:', error);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        loadCats();
+        submitAddCatForm();
     });
-
 </script>
 
 

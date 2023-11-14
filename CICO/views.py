@@ -3,6 +3,7 @@ from django.views.generic import ListView
 from .models import CiCoItem
 from .models import Statuses
 from .models import UserCICO
+from .models import Cats
 from CICO.forms import ContactUsForm
 from CICO.forms import ConnectionForm
 from CICO.forms import NewAccountForm
@@ -16,7 +17,15 @@ logger = logging.getLogger('django')
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.forms.models import model_to_dict
 from django.core.files.storage import default_storage
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .serializers import CatSerializer
+from django.core.exceptions import ValidationError
+
+
+
 
 
 def Empty(request):
@@ -139,13 +148,32 @@ class PageStatus(ListView):
 
 @login_required
 def add_cat(request):
-    if request.method == 'POST' and request.user.is_authenticated:
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         form = CatSubmitForm(request.POST, request.FILES)
         if form.is_valid():
-            cat = form.save(commit=False)
-            cat.ownerId = request.user  # Set ownerId to the current user
-            cat.save()
-            return JsonResponse({'success': True, 'catName' : cat.name})
+            try:
+                cat = form.save(commit=False)
+                cat.ownerId = request.user  # Set ownerId to the current user
+                cat.clean()  # Call full_clean to run all other validations including clean()
+                cat.save()
+                return JsonResponse({'success': True, 'catName' : cat.name}, status=201)  # Or any other success response
+            
+            except ValidationError:
+                return JsonResponse({'success': False, 'errors': form.errors}, status=400)
         else:
-            return JsonResponse({'success': False, 'errors': form.errors})
-    return JsonResponse({'success': False, 'errors': 'Invalid request'})
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+    return JsonResponse({'success': False, 'errors': 'Invalid request'}, status=400)
+
+class UserCatList(generics.ListAPIView):
+    serializer_class = CatSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Cats.objects.filter(user=self.request.user)
+    
+@login_required
+def get_cats(request):
+    if request.user.is_authenticated:
+        user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', flat=True)
+        return JsonResponse(list(user_cats), safe=False)
+    return JsonResponse({'error': 'User not authenticated'}, status=401)

@@ -15,6 +15,8 @@ urlpatterns = [
     path("profileIndex", views.profileIndex, name ="profileIndex"),
     path("commande", views.commande, name ="commande"),
     path('add_cat/', views.add_cat, name='add_cat'),
+    path('get_cats/', views.get_cats, name='get_cats'),
+
 
 
 

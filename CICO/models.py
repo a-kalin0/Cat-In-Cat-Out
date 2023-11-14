@@ -26,13 +26,6 @@ class Statuses(models.Model):
     def __str__(self):
         return f"{self.status} à {self.hour}"
     
-class Cat(models.Model):
-    image_front = models.ImageField(upload_to='images/')
-    image_back = models.ImageField(upload_to='images/')
-    image_right = models.ImageField(upload_to='images/')
-    image_left = models.ImageField(upload_to='images/')
-    name = models.CharField(max_length=100)
-
 
 class UserSettings(models.Model):
     userId = models.OneToOneField(UserCICO, primary_key=True, on_delete=models.PROTECT)
@@ -52,11 +45,16 @@ class DeviceRecords(models.Model):
     event = models.CharField(max_length=3, choices=EVENTS_CHOICES)
     isCat = models.BooleanField()
 
+def cat_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'user_{0}/cat_{1}/{2}'.format(instance.ownerId, instance.catId, filename)
+
 class Cats(models.Model):
     ...
     ownerId = models.ForeignKey(UserCICO, on_delete=models.CASCADE)
     catId = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='cats/')
     #add other details if needed
 
 

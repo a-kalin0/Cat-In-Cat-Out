@@ -54,7 +54,7 @@ class Cats(models.Model):
     ownerId = models.ForeignKey(UserCICO, on_delete=models.CASCADE)
     catId = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='cats/')
+    image = models.ImageField(upload_to='media/cats/')
     #add other details if needed
 
 

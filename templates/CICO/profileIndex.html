@@ -96,30 +96,9 @@
     </div>
 </div>
 
-<script src="{% static 'CICO/js/submitCat.js' %}"></script>
+<script src="{% static 'CICO/js/showCatImg.js' %}"></script>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    document.getElementById('addCatForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        var formData = new FormData(this);
-        console.log('Form Data:', formData); // Add this line to log form data
-
-        fetch('/CICO/add_cat/', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-            },
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch((error) => {
-                console.error('Error submitting form:', error);
-            });
-    });
-
-</script>
 <script>
     $("#addCatForm").submit(function (e) {
         e.preventDefault();

@@ -11,6 +11,8 @@ from CICO.forms import NewAccountForm
 from CICO.forms import RequestNewPasswordForm
 import logging
 from django.contrib.auth import authenticate
+from django.contrib.auth import login
+from django.contrib.auth import logout
 logger = logging.getLogger('django')
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -24,6 +26,12 @@ def Empty(request):
 
 # Create your views here.
 
+def checkIP(request):
+    if request.session['IP'] != request.META.get("REMOTE_ADDR"):
+        return False
+    else:
+        return True
+
 
 class Void(ListView):
     model = CiCoItem
@@ -35,7 +43,8 @@ def vue(request):
 
 
 def connection(request, formId):
-    request.session["user"] = None
+    logout(request)
+    request.session['IP'] = ""
 
     if (formId == 2):
         if (request.method == "POST"):
@@ -75,6 +84,8 @@ def connection(request, formId):
                 #newItem.save()
                 user = authenticate(username=form.cleaned_data["identification"], password=form.cleaned_data["password"])
                 if user is not None:
+                    login(request, user)
+                    request.session['IP'] = request.META.get("REMOTE_ADDR")
                     request.session['user'] = user.id                # A backend authenticated the credentials
                     return redirect('profileIndex')
                 else:
@@ -86,17 +97,17 @@ def connection(request, formId):
 
 
 def profileIndex(request):
-    items = CiCoItem.objects.all()
-    print(request.session['user'])
-    user = None
-    try:
-        user = UserCICO.objects.get(id=request.session['user'])
-    except (KeyError, UserCICO.DoesNotExist):
-        user = None
-    print(user)
-    if (user==None):
+    if not checkIP(request):
         return render(request, 'CICO/unauthorized.html', status=401)
-    return render(request, 'CICO/profileIndex.html', {"items": items, "user":user})
+    items = CiCoItem.objects.all()
+    print(request.user)
+    print(request.META.get("REMOTE_ADDR"))
+    user = request.user
+    if request.user.is_authenticated:
+        return render(request, 'CICO/profileIndex.html', {"items": items, "user": user.username})
+    else:
+        return render(request, 'CICO/unauthorized.html', status=401)
+
 
 
 def faq(request):

@@ -4,4 +4,4 @@ Code/__pycache__/*
 CICO/Migrations/__pycache__/*
 .idea/
 db.sqlite3
-
+CICO/memorial.py

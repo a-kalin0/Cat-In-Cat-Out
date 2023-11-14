@@ -61,7 +61,7 @@
 
       {% for record in recordList  %}
 
-        <tr>
+        <tr id=row_{{forloop.counter}}>
           <td>{{record.catName}}</td>
           <td>{{record.event}}</td>
           <td>{{record.time}}</td>

@@ -49,14 +49,14 @@ class DeviceRecords(models.Model):
 
 def cat_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    return 'user_{0}/cat_{1}/{2}'.format(instance.ownerId, instance.catId, filename)
+    return 'media/user_{0}/cat_{1}/{2}'.format(instance.ownerId_id, instance.catId, filename)
 
 class Cats(models.Model):
     ...
     ownerId = models.ForeignKey(UserCICO, on_delete=models.CASCADE)
     catId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='media/cats/', null=True, blank=True)
+    image = models.ImageField(upload_to=cat_directory_path, null=True, blank=True)
     #add other details if needed
 
 

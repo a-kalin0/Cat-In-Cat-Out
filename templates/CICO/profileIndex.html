@@ -42,12 +42,6 @@
                 </tr>
             </thead>
             <tbody id="catList">
-                <tr>
-                    <td>Cell 1</td>
-                </tr>
-                <tr>
-                    <td>Cell 3</td>
-                </tr>
             </tbody>
         </table>
     </div>
@@ -74,7 +68,8 @@
                                         </p><img id="imgFrontPreview" class="border rounded d-flex m-auto" width="100%"
                                             height="200" src="{% static 'CICO/img/silhouette%20face.jpg' %}"><input
                                             id="imgFrontInput" name="image" type="file"
-                                            style="margin-top: 15px;width: 100%;" required="" accept="image/*">
+                                            style="margin-top: 15px;width: 100%;" required="" accept="image/*"
+                                            onchange="updateImagePreview(this, 'imgFrontPreview')">
                                     </div>
                                 </div>
                             </div>
@@ -96,7 +91,33 @@
     </div>
 </div>
 
-<script src="{% static 'CICO/js/showCatImg.js' %}"></script>
+<div id="toastContainer" class="toast-container position-fixed top-0 start-50 translate-middle-x p-3"
+    style="z-index: 11;">
+    <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert"
+        aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Le chat a été ajouté avec succès
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 11">
+    <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert"
+        aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                There was an error adding the cat. Please try again.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -113,15 +134,32 @@
             headers: { 'X-CSRFToken': getCookie('csrftoken') },  // Include the CSRF token in the request headers
             success: function (response) {
                 if (response.success) {
+                    console.log(response)
                     // Add the cat information to the page
-                    var catRow = '<div><span>' + response.name + '</span><i class="fas fa-cat"></i></div>';
+                    var catRow = '<button class="btn d-flex my-auto justify-content-xl-start" type="button" style="width: 100%">' + response.catName + '<i class="fas fa-cat"></i></button>';
                     $("#catList").append(catRow);
+                    // Show the success toast
+                    var toast = new bootstrap.Toast(document.getElementById('successToast'));
+                    toast.show();
+
+                    // Close the modal
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('modal-1'));
+                    modal.hide();
+
                 } else {
                     console.log('Error submitting form: ' + JSON.stringify(response.errors));
+
+                    // Show the error toast
+                    var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                    errorToast.show();
                 }
             },
             error: function () {
                 console.log('An error occurred');
+
+                // Show the error toast
+                var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                errorToast.show();
             }
         });
     });
@@ -141,6 +179,15 @@
         }
         return cookieValue;
     }
+</script>
+<script>
+    $('#modal-1').on('hidden.bs.modal', function () {
+        $(this).find('form').trigger('reset');
+
+        // Reset image preview to default image
+        $('#imgFrontPreview').attr('src', "{% static 'CICO/img/silhouette%20face.jpg' %}");
+    });
+
 </script>
 
 

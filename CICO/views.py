@@ -145,7 +145,7 @@ def add_cat(request):
             cat = form.save(commit=False)
             cat.ownerId = request.user  # Set ownerId to the current user
             cat.save()
-            return JsonResponse({'success': True})
+            return JsonResponse({'success': True, 'catName' : cat.name})
         else:
             return JsonResponse({'success': False, 'errors': form.errors})
     return JsonResponse({'success': False, 'errors': 'Invalid request'})

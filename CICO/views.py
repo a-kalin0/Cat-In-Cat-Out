@@ -8,6 +8,7 @@ from django.shortcuts import redirect
 from CICO.forms import ContactUsForm
 from CICO.forms import ConnectionForm
 from CICO.forms import NewAccountForm
+from CICO.forms import RequestNewPasswordForm
 import logging
 from django.contrib.auth import authenticate
 logger = logging.getLogger('django')
@@ -54,6 +55,18 @@ def connection(request, formId):
                     return redirect('profileIndex')
         else:
             form = NewAccountForm()
+
+    elif (formId == 3):
+        ...
+        if (request.method == "POST"):
+            form = RequestNewPasswordForm(request.POST)
+            if form.is_valid():
+                emails = UserCICO.objects.values_list('email')
+                if form.cleaned_data["email"] in emails:
+                    #send mail
+                    ...
+        else:
+            form = RequestNewPasswordForm()
     else:
         if (request.method == "POST"):
             form = ConnectionForm(request.POST)

@@ -28,7 +28,7 @@
           <form action="" method="post" style="padding-left: 45px; padding-right: 45px; margin-top: 10px">
             {% csrf_token %}
 
-            {% if form.confirmPassword != None %}
+            {% if form.prefix == "newAccount" %}
 
             <label class="form-control-plaintext" style="text-align: left">Identification</label>
             {{form.identification}}
@@ -54,7 +54,7 @@
             <input class="btn border rounded btn-primary d-block mx-auto" type="submit"
               style="margin-top: 10px; text-align: center; margin-bottom: 10px" data-bs-theme="light" />
 
-            {% else %}
+            {% elif form.prefix == "connection" %}
 
             <label class="form-control-plaintext" style="text-align: left">Identification</label>
             {{form.identification}}
@@ -64,12 +64,23 @@
             {{form.password}}
             <input class="btn border rounded btn-primary d-block mx-auto" type="submit"
               style="margin-top: 10px; text-align: center; margin-bottom: 10px" data-bs-theme="light" />
+            {% else%}
+
+
+            Entrez votre adresse mail
+            </label>
+            {{form.email}}
+            <input class="btn border rounded btn-primary d-block mx-auto" type="submit"
+              style="margin-top: 10px; text-align: center; margin-bottom: 10px" data-bs-theme="light" />
+
 
             {% endif %}
 
 
 
           </form>
+          <a href='{% url "connexion" formId=3%}'>Mot de passe oublié?</a>
+          <br>
           <a href='{% url "connexion" formId=2%}'>Vous n'êtes pas encore inscrit ? Inscrivez vous !</a>
         </div>
       </div>

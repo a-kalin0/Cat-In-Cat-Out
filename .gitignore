@@ -6,3 +6,4 @@ CICO/Migrations/__pycache__/*
 media/
 db.sqlite3
 CICO/memorial.py
+.env

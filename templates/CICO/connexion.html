@@ -24,6 +24,7 @@
         <div class="col" style="margin-left: 15px; margin-right: 15px">
           <form action="" method="post" style="padding-left: 45px; padding-right: 45px; margin-top: 10px">
             {% csrf_token %}
+
             {% if form.prefix == "newAccount" %}
             <div class="row g-0">
                 <div class="col" style="height: 87px">
@@ -109,9 +110,10 @@
 
 
           </form>
-            <a href='{% url "connexion" formId=3%}'>Mot de passe oublié?</a>
-        <br>
-            <a href='{% url "connexion" formId=2%}'>Vous n'êtes pas encore inscrit ? Inscrivez vous !</a>
+
+          <a href='{% url "forgotpassword" %}'>Mot de passe oublié ?</a>
+          <a href='{% url "connexion" formId=2%}'>Vous n'êtes pas encore inscrit ? Inscrivez vous !</a>
+
         </div>
       </div>
     </div>

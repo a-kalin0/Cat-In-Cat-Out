@@ -11,8 +11,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
-from .tokens import account_activation_token
-from django.contrib.auth.tokens import default_token_generator
+from .tokens import account_activation_token, password_reset_token
+
 
 
 def Empty(request):
@@ -31,7 +31,11 @@ def vue(request):
 
 
 def mail_sent(request):
-    return render(request, 'CICO/mail_sent.html')    
+    return render(request, 'CICO/mail_sent.html')   
+
+
+def reset_done(request):
+     return render(request, "CICO/password_reset_complete.html")
 
 
 def connection(request, formId):
@@ -116,7 +120,6 @@ def commande(request):
     return render(request, 'CICO/commande.html')
 
 
-
 class PageMotE(ListView):
     model = CiCoItem
     template_name = "CICO/pageE.html"
@@ -165,10 +168,9 @@ def forgotpassword(request):
                         'site_name': 'YourWebsite',
                         "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                         "user": user,
-                        'token': default_token_generator.make_token(user),
+                        'token': password_reset_token.make_token(user),
                         'protocol': 'http',
                     }
-                    print(c)
                     email = render_to_string(email_template_name, c)
                     try:
                         send_mail(subject, email, 'server@example.com', [user.email], fail_silently=False)
@@ -176,24 +178,31 @@ def forgotpassword(request):
                         return HttpResponse('Invalid header found.')
                 return redirect('mail_sent')
     password_reset_form = ForgottenPassword()
-    return render(request=request, template_name="CICO/resetpassword.html", context={"password_reset_form": password_reset_form})
+    return render(request, "CICO/resetpassword.html", context={"password_reset_form": password_reset_form})
 
 
 def newpassword(request, uidb64=None, token=None):
-    User = get_user_model()
+    assert uidb64 is not None and token is not None
+
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
+        user = UserCICO.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, UserCICO.DoesNotExist):
         user = None
 
-    if user is not None and default_token_generator.check_token(user, token):
-        # This is where you would prompt the user to input a new password and save it.
-        # For the sake of brevity, let's assume they've already submitted a new password form
-        # and you're ready to save it.
-        new_password = request.POST.get('new_password')
-        user.set_password(new_password)
-        user.save()
-        return redirect('newpassword')  # template
+    if user is not None and password_reset_token.check_token(user, token):
+        # Le jeton est valide, l'utilisateur peut réinitialiser son mot de passe
+        if request.method == 'POST':
+            new_password_form = NewPassword(request.POST)
+            if new_password_form.is_valid():
+                new_password = new_password_form.cleaned_data['newPassword']
+                user.set_password(new_password)
+                user.save()
+                logger.info(f"Password changed for user {user.username}")
+                return redirect('reset_done')  # Rediriger vers la page de réussite
+        else:
+            new_password_form = NewPassword()
+
+        return render(request, "CICO/newpassword.html", context={"form": new_password_form})
     else:
         return HttpResponse('The reset link is invalid, possibly because it has already been used. Please request a new password reset.')

@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.views.generic import ListView
-from .models import CiCoItem
 from .models import Statuses
 from .models import UserCICO
 from .models import Cats
@@ -47,9 +46,7 @@ def checkIP(request):
         return True
 
 
-class Void(ListView):
-    model = CiCoItem
-    template_name = "CICO/indexDefault.html"
+
 
 
 def vue(request):
@@ -66,17 +63,14 @@ def connection(request, formId):
         if (request.method == "POST"):
             form = ConnectionForm(request.POST)
             if form.is_valid():
-                # newItem = CiCoItem(text=form.cleaned_data["message"])
-                # newItem.save()
                 user = authenticate(username=form.cleaned_data["identification"],
                                     password=form.cleaned_data["password"])
                 if user is not None:
                     login(request, user)
                     request.session['IP'] = request.META.get("REMOTE_ADDR")
-                    request.session['user'] = user.id  # A backend authenticated the credentials
+                    request.session['user'] = user.id
                     return redirect('profileIndex')
                 else:
-                    # No backend authenticated the credentials
                     logger.info("login failed")
         else:
             form = ConnectionForm()
@@ -89,7 +83,6 @@ def connection(request, formId):
                 elif form.cleaned_data["password"] != form.cleaned_data["confirmPassword"]:
                     logger.info("Passwords not identical")
                 else:
-                    # No backend authenticated the credentials
                     newUser = UserCICO.objects.create(email=form.cleaned_data["email"],
                                                       username=form.cleaned_data["identification"])
                     newUser.set_password(form.cleaned_data["password"])
@@ -99,7 +92,6 @@ def connection(request, formId):
             form = NewAccountForm()
 
     elif (formId == 3):
-        ...
         if (request.method == "POST"):
             form = RequestNewPasswordForm(request.POST)
             if form.is_valid():
@@ -117,15 +109,17 @@ def profileIndex(request):
     if not checkIP(request) or not request.user.is_authenticated:
         return render(request, 'CICO/unauthorized.html', status=401)
 
+    try:
+        request.session['listStart']
+    except:
+        request.session['listStart'] = 0
+
     user = request.user
     recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice)
 
 
     if request.method == "GET":
-        try:
-            request.session['listStart']
-        except :
-            request.session['listStart'] = 0
+
         return render(request, 'CICO/profileIndex.html',
                       {"user": user.username, "recordList": recordList})
 
@@ -140,9 +134,6 @@ def profileIndex(request):
             request.session['listStart'] += LIST_SIZE
 
 
-    print(request.user)
-
-    recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice)
     return redirect("profileIndex")
 
 
@@ -161,15 +152,3 @@ def commande(request):
     return render(request, 'CICO/commande.html')
 
 
-class PageMotE(ListView):
-    model = CiCoItem
-    template_name = "CICO/pageE.html"
-
-    def get_queryset(self):
-        return CiCoItem.objects.filter(text__icontains="e")
-
-
-class PageStatus(ListView):
-    model = Statuses
-    template_name = "CICO/pageStatus.html"
-    ordering = ['heure']

@@ -1,7 +1,6 @@
 import django.test
 from django.test import TestCase
 from django.urls import reverse
-from .models import CiCoItem
 from .models import UserCICO
 from .models import Cats
 from .models import DeviceRecords
@@ -11,9 +10,6 @@ from django.contrib.auth import login
 import math
 
 
-
-def create_item(text):
-    return CiCoItem.objects.create(text=text)
 
 
 def createSession():

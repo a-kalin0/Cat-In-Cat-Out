@@ -8,15 +8,7 @@ from django.db.models import UniqueConstraint
 class UserCICO(AbstractUser):
     ownedDevice = models.CharField(max_length=100, unique=True, null=True)
 
-class ToDoItem(models.Model):
-    text = models.CharField(max_length=100)
-    due_date = models.DateField(default=timezone.now)
 
-class CiCoItem(models.Model):
-    text = models.CharField(max_length=100)
-
-    def __str__(self):
-        return f"{self.text}"
 # Create your models here.
 
 class Statuses(models.Model):

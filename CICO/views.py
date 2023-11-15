@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
-from .models import CiCoItem, Statuses, UserCICO
-from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword
+
+from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword, ContactUsForm
+from django.contrib.auth import authenticate, login, get_user_model, logout
+
+from .models import Statuses, UserCICO, Cats, DeviceRecords, Trigger
+from django.shortcuts import redirect
 import logging
-from django.contrib.auth import authenticate, login, get_user_model
+
 logger = logging.getLogger('django')
 from django.http import HttpResponse
 from django.core.mail import EmailMessage, send_mail
@@ -14,16 +18,36 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token, password_reset_token
 
 
+from django.db.models import F
+
+LIST_SIZE = 2
+
+def UpdateList(request, deviceId):
+    recordList = GetRecords(deviceId)[::-1]
+    newList = recordList[request.session['listStart']:request.session['listStart'] + LIST_SIZE]
+    if len(newList) == 0:
+        newList = recordList[request.session['listStart'] - LIST_SIZE:request.session['listStart']]
+        request.session['listStart'] -= LIST_SIZE
+    return newList
+
+def GetRecords(deviceId):
+    querySet = DeviceRecords.objects.filter(deviceId=deviceId).annotate(catName=F('trigger__catId__name'))
+    return querySet.values()
 
 def Empty(request):
     return redirect("CICO/")
 
 # Create your views here.
 
+def checkIP(request):
+    print(request.session['IP'], request.META.get("REMOTE_ADDR"))
+    if request.session['IP'] != request.META.get("REMOTE_ADDR"):
+        return False
+    else:
+        return True
 
-class Void(ListView):
-    model = CiCoItem
-    template_name = "CICO/indexDefault.html"
+
+
 
 
 def vue(request):
@@ -39,24 +63,42 @@ def reset_done(request):
 
 
 def connection(request, formId):
-    request.session["user"] = None
+    if (formId == 0):
+        logout(request)
+        request.session['IP'] = ""
+        formId = 1
 
-    if (formId == 2): #inscription
+
+    if (formId == 1):
+        if (request.method == "POST"):
+            form = ConnectionForm(request.POST)
+            if form.is_valid():
+                user = authenticate(username=form.cleaned_data["identification"],
+                                    password=form.cleaned_data["password"])
+                if user is not None:
+                    login(request, user)
+                    request.session['IP'] = request.META.get("REMOTE_ADDR")
+                    request.session['user'] = user.id
+                    return redirect('profileIndex')
+                else:
+                    logger.info("login failed")
+        else:
+            form = ConnectionForm()
+    elif (formId == 2):
         if (request.method == "POST"):
             form = NewAccountForm(request.POST)
             if form.is_valid():
-                if form.cleaned_data["email"] in UserCICO.objects.values_list("email", flat = True):
-                    logger.info("This email is already used") #these texts will need to be displayed on the page
+                if form.cleaned_data["email"] in UserCICO.objects.values_list("email", flat=True):
+                    logger.info("This email is already used")  # these texts will need to be displayed on the page
                 elif form.cleaned_data["password"] != form.cleaned_data["confirmPassword"]:
                     logger.info("Passwords not identical")
                 else:
-                    # No backend authenticated the credentials
                     newUser = UserCICO.objects.create(email=form.cleaned_data["email"],
                                                       username=form.cleaned_data["identification"])
                     newUser.set_password(form.cleaned_data["password"])
                     newUser.is_active = False
                     newUser.save()
-                    
+    
                     current_site = get_current_site(request)
                     mail_subject = "Confirmation d'inscription"
                     message = render_to_string('CICO/acc_activate_email.html', {
@@ -74,38 +116,57 @@ def connection(request, formId):
 
                     #request.session['user'] = newUser.id  # A backend authenticated the credentials
                     #return redirect('profileIndex')
+
         else:
             form = NewAccountForm()
-    else:
+
+    elif (formId == 3):
         if (request.method == "POST"):
-            form = ConnectionForm(request.POST)
+            form = RequestNewPasswordForm(request.POST)
             if form.is_valid():
-                #newItem = CiCoItem(text=form.cleaned_data["message"])
-                #newItem.save()
-                user = authenticate(username=form.cleaned_data["identification"], password=form.cleaned_data["password"])
-                if user is not None:
-                    request.session['user'] = user.id                # A backend authenticated the credentials
-                    return redirect('profileIndex')
-                else:
-                    # No backend authenticated the credentials
-                    logger.info("login failed")
+                emails = UserCICO.objects.values_list('email')
+                if form.cleaned_data["email"] in emails:
+                    # send mail
+                    ...
         else:
-            form = ConnectionForm()
+            form = RequestNewPasswordForm()
+
     return render(request, 'CICO/connexion.html', {"form": form})
 
 
 def profileIndex(request):
-    items = CiCoItem.objects.all()
-    print(request.session['user'])
-    user = None
-    try:
-        user = UserCICO.objects.get(id=request.session['user'])
-    except (KeyError, UserCICO.DoesNotExist):
-        user = None
-    print(user)
-    if (user==None):
+    if not checkIP(request) or not request.user.is_authenticated:
         return render(request, 'CICO/unauthorized.html', status=401)
-    return render(request, 'CICO/profileIndex.html', {"items": items, "user":user})
+
+    try:
+        request.session['listStart']
+    except:
+        request.session['listStart'] = 0
+
+    user = request.user
+    recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice)
+
+
+    if request.method == "GET":
+
+        return render(request, 'CICO/profileIndex.html',
+                      {"user": user.username, "recordList": recordList})
+
+    elif request.method == "POST":
+
+        #check if bouton exists
+
+        if request.POST["bouton"] == "récent":
+            request.session['listStart'] = max(0, request.session[
+            'listStart'] - LIST_SIZE)  # the max function is used to prevent the substraction from resulting in a negative
+        elif request.POST["bouton"] == "ancien":
+            request.session['listStart'] += LIST_SIZE
+
+
+    return redirect("profileIndex")
+
+
+
 
 
 def faq(request):
@@ -119,19 +180,6 @@ def contact(request):
 def commande(request):
     return render(request, 'CICO/commande.html')
 
-
-class PageMotE(ListView):
-    model = CiCoItem
-    template_name = "CICO/pageE.html"
-
-    def get_queryset(self):
-        return CiCoItem.objects.filter(text__icontains= "e")
-
-
-class PageStatus(ListView):
-    model = Statuses
-    template_name = "CICO/pageStatus.html"
-    ordering = ['heure']
 
 
 def activate(request, uidb64, token):
@@ -206,3 +254,4 @@ def newpassword(request, uidb64=None, token=None):
         return render(request, "CICO/newpassword.html", context={"form": new_password_form})
     else:
         return HttpResponse('The reset link is invalid, possibly because it has already been used. Please request a new password reset.')
+

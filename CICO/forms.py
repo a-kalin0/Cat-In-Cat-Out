@@ -6,10 +6,12 @@ class ContactUsForm(forms.Form):
    message = forms.CharField(max_length=1000)
 
 class ConnectionForm(forms.Form):
+   prefix = "connection"
    identification = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
    password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=100)
 
 class NewAccountForm(forms.Form):
+   prefix = "newAccount"
    identification = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
    password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=100)
    email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
@@ -22,3 +24,4 @@ class ForgottenPassword(forms.Form):
 class NewPassword(forms.Form):
    newPassword = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=100)
    confirmPassword = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=100)
+

@@ -72,12 +72,22 @@
 
       </tbody>
     </table>
-      <a href='{% url "profileIndex" listButton="récent"%}'>
-        <button>récent</button>
-      </a>
-      <a href='{% url "profileIndex" listButton="ancien"%}'>
-        <button>ancien</button>
-      </a>
+        <form action="" method="post">
+            {% csrf_token %}
+        <input type="hidden" name="bouton" value="récent"/>
+        <a href="#" onclick="this.parentNode.submit();">
+          <button>récent</button>
+        </a>
+        </form>
+
+        <form action="" method="post">
+            {% csrf_token %}
+        <input type="hidden" name="bouton" value="ancien"/>
+        <a href="#" onclick="this.parentNode.submit();">
+          <button>ancien</button>
+        </a>
+        </form>
+
   </div>
 </div>
 

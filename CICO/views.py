@@ -125,7 +125,6 @@ def profileIndex(request, listButton="None"):
     if not checkIP(request):
         print("no")
         return render(request, 'CICO/unauthorized.html', status=401)
-    items = CiCoItem.objects.all()
     print(request.user)
     print(request.META.get("REMOTE_ADDR"))
     user = request.user
@@ -133,7 +132,7 @@ def profileIndex(request, listButton="None"):
 
     if request.user.is_authenticated:
         return render(request, 'CICO/profileIndex.html',
-                      {"items": items, "user": user.username, "recordList": recordList})
+                      {"user": user.username, "recordList": recordList})
     else:
         return render(request, 'CICO/unauthorized.html', status=401)
 

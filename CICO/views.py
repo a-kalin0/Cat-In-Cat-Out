@@ -114,27 +114,39 @@ def connection(request, formId):
 
 
 def profileIndex(request, listButton="None"):
-    if listButton == "None":
-        request.session['listStart'] = 0
-    elif listButton == "récent":
-        request.session['listStart'] = max(0, request.session[
-            'listStart'] - LIST_SIZE)  # the max function is used to prevent the substraction from resulting in a negative
-    elif listButton == "ancien":
-        request.session['listStart'] += LIST_SIZE
-
-    if not checkIP(request):
-        print("no")
+    if not checkIP(request) or not request.user.is_authenticated:
         return render(request, 'CICO/unauthorized.html', status=401)
-    print(request.user)
-    print(request.META.get("REMOTE_ADDR"))
+    
     user = request.user
     recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice)
 
-    if request.user.is_authenticated:
+
+    if request.method == "GET":
+        try:
+            request.session['listStart']
+        except :
+            request.session['listStart'] = 0
         return render(request, 'CICO/profileIndex.html',
                       {"user": user.username, "recordList": recordList})
-    else:
-        return render(request, 'CICO/unauthorized.html', status=401)
+
+    elif request.method == "POST":
+
+        #check if bouton exists
+
+        if request.POST["bouton"] == "récent":
+            request.session['listStart'] = max(0, request.session[
+            'listStart'] - LIST_SIZE)  # the max function is used to prevent the substraction from resulting in a negative
+        elif request.POST["bouton"] == "ancien":
+            request.session['listStart'] += LIST_SIZE
+
+
+    print(request.user)
+
+    recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice)
+    return redirect("profileIndex", listButton="None")
+
+
+
 
 
 def faq(request):

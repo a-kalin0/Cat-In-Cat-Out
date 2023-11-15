@@ -74,7 +74,7 @@ def connection(request, formId):
                     login(request, user)
                     request.session['IP'] = request.META.get("REMOTE_ADDR")
                     request.session['user'] = user.id  # A backend authenticated the credentials
-                    return redirect('profileIndex', listButton="None")
+                    return redirect('profileIndex')
                 else:
                     # No backend authenticated the credentials
                     logger.info("login failed")
@@ -94,7 +94,7 @@ def connection(request, formId):
                                                       username=form.cleaned_data["identification"])
                     newUser.set_password(form.cleaned_data["password"])
                     newUser.save()
-                    return redirect('profileIndex', listButton="None")
+                    return redirect('profileIndex')
         else:
             form = NewAccountForm()
 
@@ -113,10 +113,10 @@ def connection(request, formId):
     return render(request, 'CICO/connexion.html', {"form": form})
 
 
-def profileIndex(request, listButton="None"):
+def profileIndex(request):
     if not checkIP(request) or not request.user.is_authenticated:
         return render(request, 'CICO/unauthorized.html', status=401)
-    
+
     user = request.user
     recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice)
 
@@ -143,7 +143,7 @@ def profileIndex(request, listButton="None"):
     print(request.user)
 
     recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice)
-    return redirect("profileIndex", listButton="None")
+    return redirect("profileIndex")
 
 
 

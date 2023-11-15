@@ -1,42 +1,32 @@
 {% extends "baseProfil.html" %} {% load static %} {% block content %}
-<div
-  class="text-center border rounded-0 shadow-sm mx-auto profile-box"
-  style="
+
+<div class="text-center border rounded-0 shadow-sm mx-auto profile-box" style="
     width: 318px;
     height: 182px;
     background-color: #ffffff;
     margin: 5px;
     margin-top: 15px;
     margin-bottom: 15px;
-  "
->
-  <div
-    style="
+  ">
+    <span class="bs-icon-sm d-flex justify-content-center align-items-center ms-auto me-2 bs-icon"
+        style="color: rgb(27, 52, 89)"><a href="#"><i class="fas fa-cog"
+                style="color: var(--bs-body-color)"></i></a></span>
+    <div style="
       height: 50px;
       background-color: rgba(54, 162, 177, 0);
       background-image: url('{% static 'CICO/img/bg-pattern.png' %}');
-    "
-  >
-    <span
-      class="bs-icon-sm d-flex justify-content-center align-items-center ms-auto me-2 bs-icon"
-      style="color: rgb(27, 52, 89)"
-      ><a href="#"
-        ><i class="fas fa-cog" style="color: var(--bs-body-color)"></i></a
-    ></span>
-  </div>
-  <div class="my-auto">
-    <img
-      class="rounded-circle"
-      src="{% static 'CICO/img/bg-cta.jpg' %}"
-      width="60px"
-      height="60px"
-      style="background-color: rgb(255, 255, 255); padding: 2px"
-    />
-  </div>
-  <div class="my-auto" style="height: 80px">
-    <h4>{{user}}</h4>
-    <p style="font-size: 12px">el {{user}}</p>
-  </div>
+    "></div>
+
+    <div class="my-auto">
+        <img class="rounded-circle" src="{% static 'CICO/img/bg-cta.jpg' %}" width="60px" height="60px"
+            style="background-color: rgb(255, 255, 255); padding: 2px" />
+    </div>
+    <div class="my-auto" style="height: 80px">
+        <h4>{{user}}</h4>
+        <p style="font-size: 12px">el {{user}}</p>
+    </div>
+</div>
+
 </div>
 <div>
   <div class="table-responsive">
@@ -57,7 +47,9 @@
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="catList">
+
+        <!-- Cats will be added here by the legend -->
 
       {% for record in recordList  %}
 
@@ -92,28 +84,182 @@
 </div>
 
 <div class="modal fade" role="dialog" tabindex="-1" id="modal-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <i class="fas fa-cat fs-1" style="margin-right: 10px"></i>
-        <h4 class="modal-title">Ajouter un nouveau chat</h4>
-        <button
-          class="btn-close"
-          type="button"
-          aria-label="Close"
-          data-bs-dismiss="modal"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <p>The content of your modal.</p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-light" type="button" data-bs-dismiss="modal">
-          Annuler</button
-        ><button class="btn btn-primary" type="button">Ajouter</button>
-      </div>
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header"><i class="fas fa-cat fs-1" style="margin-right: 10px;"></i>
+                <h4 class="modal-title">Ajouter un nouveau chat</h4><button class="btn-close" type="button"
+                    aria-label="Close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCatForm" enctype="multipart/form-data" method="post" action="{% url 'add_cat' %}">
+                    {% csrf_token %}
+                    <div class="container">
+                        <div class="row flex-md-column flex-lg-column flex-xl-row">
+                            <div class="col">
+                                <div class="row row-cols-3">
+                                    <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto align-self-center m-auto"
+                                        style="margin: 15px;">
+                                        <p class="text-center bg-body-secondary border rounded">Choisir une photo de
+                                            face
+                                        </p><img id="imgFrontPreview" class="border rounded d-flex m-auto" width="100%"
+                                            height="200" src="{% static 'CICO/img/silhouette%20face.jpg' %}"><input
+                                            id="imgFrontInput" name="image" type="file"
+                                            style="margin-top: 15px;width: 100%;" required="" accept="image/*"
+                                            onchange="updateImagePreview(this, 'imgFrontPreview')">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-auto col-auto align-self-xl-center align-self-xxl-center"><input
+                                    id="catName" class="border rounded-pill form-control-lg d-flex" type="text"
+                                    name="name" placeholder="Nom"
+                                    style="width: 100%;margin-top: 15px;margin-bottom: 15px;" required="">
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-light border rounded-pill" type="button"
+                    data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary border rounded-pill"
+                    type="submit">Ajouter</button>
+            </div>
+            </form>
+
+        </div>
     </div>
-  </div>
 </div>
+
+<div id="toastContainer" class="toast-container position-fixed top-0 start-50 translate-middle-x p-3"
+    style="z-index: 11;">
+    <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert"
+        aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Le chat a été ajouté avec succès
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 11">
+    <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert"
+        aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                There was an error adding the cat. Please try again.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#modal-1').on('hidden.bs.modal', function () {
+        $(this).find('form').trigger('reset');
+        // Reset image preview to default image
+        $('#imgFrontPreview').attr('src', "{% static 'CICO/img/silhouette%20face.jpg' %}");
+    });
+</script>
+
+<script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function submitAddCatForm() {
+        $("#addCatForm").submit(function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                type: 'POST',
+                url: '/CICO/add_cat/',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: handleAddCatSuccess,
+                error: handleAddCatError
+            });
+        });
+    }
+
+    function handleAddCatSuccess(response) {
+        if (response.success) {
+            console.log(response);
+            appendCatRow(response.catName);
+            showToast('successToast');
+            closeModal('modal-1');
+        } else {
+            console.log('Error submitting form:', JSON.stringify(response.errors));
+            showToast('errorToast');
+        }
+    }
+
+    function handleAddCatError(xhr) {
+        console.log("AJAX error status code: ", xhr.status);
+        console.log("AJAX error response text: ", xhr.responseText);
+        if (xhr.responseText) {
+            const errors = xhr.responseText;
+            if (xhr.responseText) {
+                console.log("A cat with this name already exists for this user", errors)
+            }
+        }
+        showToast('errorToast');
+    }
+
+    function appendCatRow(catName) {
+        var catRow = '<tr><td><button class="btn d-flex my-auto justify-content-xl-start" type="button" style="width: 100%;">' + catName + '<i class="fas fa-cat fs-4" style="margin-left: 10px;"></i></button></td></tr>';
+        $('#catList').append(catRow);
+    }
+
+    function showToast(toastId) {
+        var toast = new bootstrap.Toast(document.getElementById(toastId));
+        toast.show();
+    }
+
+    function closeModal(modalId) {
+        var modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+        modal.hide();
+    }
+</script>
+<script>
+    function loadCats() {
+        $.ajax({
+            url: '/CICO/get_cats/',
+            type: 'GET',
+            success: function (catNames) {
+                catNames.forEach(appendCatRow);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching user cats:', error);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        loadCats();
+        submitAddCatForm();
+    });
+</script>
+
 
 {% endblock %}

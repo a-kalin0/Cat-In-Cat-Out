@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
 
-from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword, ContactUsForm
+from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword, ContactUsForm, CatSubmitForm
 from django.contrib.auth import authenticate, login, get_user_model, logout
 
 from .models import Statuses, UserCICO, Cats, DeviceRecords, Trigger
-from django.shortcuts import redirect
 import logging
 
 logger = logging.getLogger('django')
@@ -16,9 +15,15 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token, password_reset_token
-
-
 from django.db.models import F
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.forms.models import model_to_dict
+from django.core.files.storage import default_storage
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .serializers import CatSerializer
+from django.core.exceptions import ValidationError
 
 LIST_SIZE = 2
 
@@ -45,9 +50,6 @@ def checkIP(request):
         return False
     else:
         return True
-
-
-
 
 
 def vue(request):
@@ -119,17 +121,6 @@ def connection(request, formId):
 
         else:
             form = NewAccountForm()
-
-    elif (formId == 3):
-        if (request.method == "POST"):
-            form = RequestNewPasswordForm(request.POST)
-            if form.is_valid():
-                emails = UserCICO.objects.values_list('email')
-                if form.cleaned_data["email"] in emails:
-                    # send mail
-                    ...
-        else:
-            form = RequestNewPasswordForm()
 
     return render(request, 'CICO/connexion.html', {"form": form})
 
@@ -255,3 +246,27 @@ def newpassword(request, uidb64=None, token=None):
     else:
         return HttpResponse('The reset link is invalid, possibly because it has already been used. Please request a new password reset.')
 
+@login_required
+def add_cat(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        form = CatSubmitForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                cat = form.save(commit=False)
+                cat.ownerId = request.user  # Set ownerId to the current user
+                cat.clean()  # Call full_clean to run all other validations including clean()
+                cat.save()
+                return JsonResponse({'success': True, 'catName' : cat.name}, status=201)  # Or any other success response
+            
+            except ValidationError:
+                return JsonResponse({'success': False, 'errors': form.errors}, status=405)
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+    return JsonResponse({'success': False, 'errors': 'Invalid request'}, status=400)
+    
+@login_required
+def get_cats(request):
+    if request.user.is_authenticated:
+        user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', flat=True)
+        return JsonResponse(list(user_cats), safe=False)
+    return JsonResponse({'error': 'User not authenticated'}, status=401)

@@ -2,22 +2,12 @@
 
 <div class="container-fluid d-inline">
   <div class="row g-0 d-inline d-md-inline d-lg-flex d-xl-flex d-xxl-flex">
-    <div
-      class="col-lg-7 col-xl-7 col-xxl-7 d-none d-sm-none d-md-none d-lg-block d-xl-block d-xxl-block"
-      style="padding: 0px"
-    >
-      <img
-        class="img-fluid"
-        src="{% static 'CICO/img/cat.jpg' %}"
-        alt="cat"
-        height="50"
-        width="100%"
-      />
+    <div class="col-lg-7 col-xl-7 col-xxl-7 d-none d-sm-none d-md-none d-lg-block d-xl-block d-xxl-block"
+      style="padding: 0px">
+      <img class="img-fluid" src="{% static 'CICO/img/cat.jpg' %}" alt="cat" height="50" width="100%" />
     </div>
-    <div
-      class="col-lg-5 col-xl-5 col-xxl-5 offset-xl-0 offset-xxl-0 text-center align-self-center"
-      style="align-self: center"
-    >
+    <div class="col-lg-5 col-xl-5 col-xxl-5 offset-xl-0 offset-xxl-0 text-center align-self-center"
+      style="align-self: center">
 
 
       <div class="row g-0">
@@ -27,84 +17,87 @@
 
             {% if form.prefix == "newAccount" %}
             <div class="row g-0">
-                <div class="col" style="height: 87px">
-                  <div class="card" style="margin-top: 10px">
-                    <div class="card-img-overlay text-center" style="
+              <div class="col" style="height: 87px">
+                <div class="card" style="margin-top: 10px">
+                  <div class="card-img-overlay text-center" style="
                         background: #0d6efd;
                         color: var(--bs-body-bg);
                         height: 64px;
                         margin-right: 12px;
                         margin-left: 12px;
                       ">
-                      <h4 class="text-center">Nouveau compte</h4>
-                    </div>
+                    <h4 class="text-center">Nouveau compte</h4>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <label class="form-control-plaintext" style="text-align: left">Identification</label>
-              {{form.identification}}
+            <label class="form-control-plaintext" style="text-align: left">Identification</label>
+            {{form.identification}}
 
-              <label for="form.id_password" class="form-control-plaintext" style="text-align: left">
-                email
-              </label>
-              {{form.email}}
-              <label class="form-control-plaintext" style="text-align: left">
-                Password
-              </label>
-              {{form.password}}
-              <label for="form.id_confirmPassword" class="form-control-plaintext" style="text-align: left">
-                Confirm Password
-              </label>
-              {{form.confirmPassword}}
-              <input class="btn border rounded btn-primary d-block mx-auto" type="submit" style="margin-top: 10px; text-align: center; margin-bottom: 10px" data-bs-theme="light"/>
+            <label for="form.id_password" class="form-control-plaintext" style="text-align: left">
+              email
+            </label>
+            {{form.email}}
+            <label class="form-control-plaintext" style="text-align: left">
+              Password
+            </label>
+            {{form.password}}
+            <label for="form.id_confirmPassword" class="form-control-plaintext" style="text-align: left">
+              Confirm Password
+            </label>
+            {{form.confirmPassword}}
+            <input class="btn border rounded btn-primary d-block mx-auto" type="submit"
+              style="margin-top: 10px; text-align: center; margin-bottom: 10px" data-bs-theme="light" />
 
             {% elif form.prefix == "connection" %}
             <div class="row g-0">
-                <div class="col" style="height: 87px">
-                  <div class="card" style="margin-top: 10px">
-                    <div class="card-img-overlay text-center" style="
+              <div class="col" style="height: 87px">
+                <div class="card" style="margin-top: 10px">
+                  <div class="card-img-overlay text-center" style="
                         background: #0d6efd;
                         color: var(--bs-body-bg);
                         height: 64px;
                         margin-right: 12px;
                         margin-left: 12px;
                       ">
-                      <h4 class="text-center">Se connecter</h4>
-                    </div>
+                    <h4 class="text-center">Se connecter</h4>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <label class="form-control-plaintext" style="text-align: left">Identification</label>
-              {{form.identification}}
-              <label for="form.id_password" class="form-control-plaintext" style="text-align: left">
-                Password
-              </label>
-              {{form.password}}
-              <input class="btn border rounded btn-primary d-block mx-auto" type="submit" style="margin-top: 10px; text-align: center; margin-bottom: 10px" data-bs-theme="light"/>
+            <label class="form-control-plaintext" style="text-align: left">Identification</label>
+            {{form.identification}}
+            <label for="form.id_password" class="form-control-plaintext" style="text-align: left">
+              Password
+            </label>
+            {{form.password}}
+            <input class="btn border rounded btn-primary d-block mx-auto" type="submit"
+              style="margin-top: 10px; text-align: center; margin-bottom: 10px" data-bs-theme="light" />
 
             {% else%}
             <div class="row g-0">
-                <div class="col" style="height: 87px">
-                  <div class="card" style="margin-top: 10px">
-                    <div class="card-img-overlay text-center" style="
+              <div class="col" style="height: 87px">
+                <div class="card" style="margin-top: 10px">
+                  <div class="card-img-overlay text-center" style="
                         background: #0d6efd;
                         color: var(--bs-body-bg);
                         height: 64px;
                         margin-right: 12px;
                         margin-left: 12px;
                       ">
-                      <h4 class="text-center">Reinitialiser mot de passe</h4>
-                    </div>
+                    <h4 class="text-center">Reinitialiser mot de passe</h4>
                   </div>
                 </div>
               </div>
-              <label>
+            </div>
+            <label>
               Entrez votre adresse mail
-              </label>
-              {{form.email}}
-              <input class="btn border rounded btn-primary d-block mx-auto" type="submit" style="margin-top: 10px; text-align: center; margin-bottom: 10px" data-bs-theme="light"/>
+            </label>
+            {{form.email}}
+            <input class="btn border rounded btn-primary d-block mx-auto" type="submit"
+              style="margin-top: 10px; text-align: center; margin-bottom: 10px" data-bs-theme="light" />
             {% endif %}
 
 

@@ -159,17 +159,10 @@ def add_cat(request):
                 return JsonResponse({'success': True, 'catName' : cat.name}, status=201)  # Or any other success response
             
             except ValidationError:
-                return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+                return JsonResponse({'success': False, 'errors': form.errors}, status=405)
         else:
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     return JsonResponse({'success': False, 'errors': 'Invalid request'}, status=400)
-
-class UserCatList(generics.ListAPIView):
-    serializer_class = CatSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Cats.objects.filter(user=self.request.user)
     
 @login_required
 def get_cats(request):

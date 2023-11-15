@@ -122,6 +122,13 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#modal-1').on('hidden.bs.modal', function () {
+        $(this).find('form').trigger('reset');
+        // Reset image preview to default image
+        $('#imgFrontPreview').attr('src', "{% static 'CICO/img/silhouette%20face.jpg' %}");
+    });
+</script>
 
 <script>
     function getCookie(name) {
@@ -173,11 +180,13 @@
         }
     }
 
-    function handleAddCatError() {
-        if (response.status === 400) {
-            const errors = response.responseJSON.error;
-            if ('name' in errors) {
-                alert("A cat with this name already exists!");
+    function handleAddCatError(xhr) {
+        console.log("AJAX error status code: ", xhr.status);
+        console.log("AJAX error response text: ", xhr.responseText);
+        if (xhr.responseText) {
+            const errors = xhr.responseText;
+            if (xhr.responseText) {
+                console.log("A cat with this name already exists for this user", errors)
             }
         }
         showToast('errorToast');
@@ -197,7 +206,8 @@
         var modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
         modal.hide();
     }
-
+</script>
+<script>
     function loadCats() {
         $.ajax({
             url: '/CICO/get_cats/',

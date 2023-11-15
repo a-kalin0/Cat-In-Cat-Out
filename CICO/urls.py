@@ -1,5 +1,8 @@
 from django.urls import path
 from . import views
+from django.conf.urls.static import static
+from django.conf import settings
+
 
 urlpatterns = [
 
@@ -11,6 +14,10 @@ urlpatterns = [
     path("contact",views.contact, name = "contact"),
     path("profileIndex", views.profileIndex, name ="profileIndex"),
     path("commande", views.commande, name ="commande"),
+    path('add_cat/', views.add_cat, name='add_cat'),
+    path('get_cats/', views.get_cats, name='get_cats'),
 
 
-]
+
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

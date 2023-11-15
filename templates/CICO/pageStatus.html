@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Content of table:</h1>
-    <table>
-        {% for item in object_list %}
-        <tr>
-            <td>{{ item.status }}</td>
-            <td>{{ item.hour }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+<h1>Content of table:</h1>
+<table>
+    {% for item in object_list %}
+    <tr>
+        <td>{{ item.status }}</td>
+        <td>{{ item.hour }}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}

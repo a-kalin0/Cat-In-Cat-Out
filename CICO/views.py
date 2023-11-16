@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
 
-from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword, ContactUsForm, CatSubmitForm
+from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword, ContactUsForm, CatSubmitForm, CodeForm
 from django.contrib.auth import authenticate, login, get_user_model, logout
 
 from .models import Statuses, UserCICO, Cats, DeviceRecords, Trigger
@@ -24,6 +24,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CatSerializer
 from django.core.exceptions import ValidationError
+from random import randint
 
 LIST_SIZE = 2
 
@@ -55,9 +56,22 @@ def checkIP(request):
 def vue(request):
     return render(request, 'CICO/index.html')
 
+def generateCode():
+    return str(randint(100000,999999)) #starts from 100000 to be sure that the number has at least 6 digits (and i'm too lazy to find a better way to do it)
 
 def mail_sent(request):
-    return render(request, 'CICO/mail_sent.html')   
+    if request.method == "POST":
+        form = CodeForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data["code"] == request.session["validationCode"]:
+                request.session["validationCode"] = ""
+                return redirect(newpassword)
+            else:
+                print("wrong code")
+        else:
+            print("form invalid")
+    form = CodeForm()
+    return render(request, 'CICO/mail_sent.html', {"form":form})
 
 
 def reset_done(request):
@@ -177,6 +191,8 @@ def commande(request):
 def activate(request, uidb64, token):
     """Check the activation token sent via mail"""
     User = get_user_model()
+    print(request.POST["uidb64"])
+    print(request.POST["token"])
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -197,6 +213,8 @@ def forgotpassword(request):
         password_reset_form = ForgottenPassword(request.POST)
         if password_reset_form.is_valid():
             data = password_reset_form.cleaned_data['email']
+            request.session["passwordResetEmail"] = data
+            request.session["validationCode"] = generateCode()
             associated_users = UserCICO.objects.filter(email=data)
             if associated_users.exists():
                 for user in associated_users:
@@ -204,11 +222,9 @@ def forgotpassword(request):
                     email_template_name = "CICO/password_reset_email.html"
                     c = {
                         "email": user.email,
-                        'domain': get_current_site(request).domain,
                         'site_name': 'YourWebsite',
-                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                         "user": user,
-                        'token': password_reset_token.make_token(user),
+                        "code": request.session["validationCode"],
                         'protocol': 'http',
                     }
                     email = render_to_string(email_template_name, c)
@@ -221,9 +237,25 @@ def forgotpassword(request):
     return render(request, "CICO/resetpassword.html", context={"password_reset_form": password_reset_form})
 
 
-def newpassword(request, uidb64=None, token=None):
-    print(request.POST["uidb64"])
-    print(request.POST["token"])
+def newpassword(request):
+    if request.method == 'POST':
+        new_password_form = NewPassword(request.POST)
+        if new_password_form.is_valid():
+            new_password = new_password_form.cleaned_data['newPassword']
+            user = UserCICO.objects.get(email=request.session["passwordResetEmail"])
+            user.set_password(new_password)
+            user.save()
+            request.session["passwordResetEmail"] = ""
+            logger.info(f"Password changed for user {user.username}")
+            return redirect('reset_done')  # Rediriger vers la page de réussite
+    else:
+        new_password_form = NewPassword()
+
+    return render(request, "CICO/newpassword.html", context={"form": new_password_form})
+
+
+    """
+
     assert uidb64 is not None and token is not None
 
     try:
@@ -248,7 +280,7 @@ def newpassword(request, uidb64=None, token=None):
         return render(request, "CICO/newpassword.html", context={"form": new_password_form})
     else:
         return HttpResponse('The reset link is invalid, possibly because it has already been used. Please request a new password reset.')
-
+    """
 @login_required
 def add_cat(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':

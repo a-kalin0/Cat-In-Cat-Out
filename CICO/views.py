@@ -222,6 +222,8 @@ def forgotpassword(request):
 
 
 def newpassword(request, uidb64=None, token=None):
+    print(request.POST["uidb64"])
+    print(request.POST["token"])
     assert uidb64 is not None and token is not None
 
     try:

@@ -1,25 +1,13 @@
-#XX Modification des paramètres de la page connexion et création de la page logout
+#XX Titre
 
 Qui: Lucas (PirLucas)
 
 Quoi: 
 
-Modification des paramètres de la page connexion
-Ajout d'une page logout
-la déconnection passe par la page de logout
-
 Pourquoi: 
-
-Choisir entre le formulaire de connexion ou de création de compte via l'url n'est pas une faille de sécurité, donc on peut garder ça, mais il fallait rendre ça plus clair, avec des mot plutot que des id.
-C'est plus propre de créer une page de logout plutot que de faire le logout dans la page de connexion avec un certain paramètre.
 
 
 Comment:
-
-
-formId remplacé par formType
-les valeurs int remplacées par les noms des formulaires pour plus de clarté
-création d'une vue et d'une url de logout
 
 notes:
 

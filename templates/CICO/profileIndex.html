@@ -51,6 +51,20 @@
 
         <!-- Cats will be added here by the legend -->
 
+
+
+      </tbody>
+    </table>
+
+    <table class="table table-striped table-hover table-bordered" id="tableRecords">
+      <thead>
+        <tr>
+            <th>Historique</th>
+        </tr>
+      </thead>
+      <tbody>
+
+
       {% for record in recordList  %}
 
         <tr id=row_{{forloop.counter}}>
@@ -64,22 +78,23 @@
 
       </tbody>
     </table>
+        <div>
+            <form action="" method="post" style="float:left">
+                {% csrf_token %}
+            <input type="hidden" name="bouton" value="récent"/>
+            <a href="#" onclick="this.parentNode.submit();">
+              <button>récent</button>
+            </a>
+            </form>
 
-        <form action="" method="post">
-            {% csrf_token %}
-        <input type="hidden" name="bouton" value="récent"/>
-        <a href="#" onclick="this.parentNode.submit();">
-          <button>récent</button>
-        </a>
-        </form>
-
-        <form action="" method="post">
-            {% csrf_token %}
-        <input type="hidden" name="bouton" value="ancien"/>
-        <a href="#" onclick="this.parentNode.submit();">
-          <button>ancien</button>
-        </a>
-        </form>
+            <form action="" method="post">
+                {% csrf_token %}
+            <input type="hidden" name="bouton" value="ancien"/>
+            <a href="#" onclick="this.parentNode.submit();">
+              <button>ancien</button>
+            </a>
+            </form>
+        </div>
 
   </div>
 </div>

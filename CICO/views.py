@@ -63,15 +63,16 @@ def mail_sent(request):
 def reset_done(request):
      return render(request, "CICO/password_reset_complete.html")
 
-
-def connection(request, formId):
-    if (formId == 0):
-        logout(request)
-        request.session['IP'] = ""
-        formId = 1
+def logoutPage(request):
+    logout(request)
+    request.session['IP'] = ""
+    return redirect("connexion", formType="connexion")
 
 
-    if (formId == 1):
+def connection(request, formType):
+
+
+    if (formType == "connexion"):
         if (request.method == "POST"):
             form = ConnectionForm(request.POST)
             if form.is_valid():
@@ -86,7 +87,7 @@ def connection(request, formId):
                     logger.info("login failed")
         else:
             form = ConnectionForm()
-    elif (formId == 2):
+    elif (formType == "nouveauCompte"):
         if (request.method == "POST"):
             form = NewAccountForm(request.POST)
             if form.is_valid():

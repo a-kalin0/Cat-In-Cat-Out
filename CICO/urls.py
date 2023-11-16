@@ -8,7 +8,8 @@ from django.conf import settings
 urlpatterns = [
 
     path("", views.vue, name="index"),
-    path("connexion/<int:formId>", views.connection, name ="connexion"),
+    path("connexion/<str:formType>", views.connection, name ="connexion"),
+    path("logout", views.logoutPage, name ="logout"),
     path("faq",views.faq, name = "faq"),
     path("contact",views.contact, name = "contact"),
     path("profileIndex", views.profileIndex, name ="profileIndex"),

@@ -1,36 +1,26 @@
-#62 Réalisation de l'US03, historique des entrées-sorties
+#XX Modification des paramètres de la page connexion et création de la page logout
 
 Qui: Lucas (PirLucas)
 
-Quoi: US 3: En tant qu'utilisateur, je veux avoir acces a un historique des entrées et sorties de tout mes chat dès ma connexion, afin d'avoir un apperçu rapide du comportement de mes chats.
+Quoi: 
 
-Ajout sur la page d'accueil du profil utilisateur d'une liste générée à partir des enregistrement que sa chatière. Cette liste contiens dans l'ordre chronologique descendant tout les passages enregistrés.
-Un nombre limité d'élément s'affiche a la fois, l'utilisateur dispose de deux boutons pour naviguer dans le reste de la liste.
+Modification des paramètres de la page connexion
+Ajout d'une page logout
+la déconnection passe par la page de logout
 
-Pourquoi: Cette fonctionnalité a été rajoutée pour permettre à l'utilisateur d'avoir un apreçu rapide de tout les passages récents de ses chats dès qu'il se connecte
+Pourquoi: 
+
+Choisir entre le formulaire de connexion ou de création de compte via l'url n'est pas une faille de sécurité, donc on peut garder ça, mais il fallait rendre ça plus clair, avec des mot plutot que des id.
+C'est plus propre de créer une page de logout plutot que de faire le logout dans la page de connexion avec un certain paramètre.
+
 
 Comment:
 
-urls.py: L'URL "profileIndex" a été modifiée pour utiliser un parametre "listButton", ce parametre contiens une chaine de caractère envoyée par un des deux boutons ajoutés à la page profileIndex.html, il est utilisé par la vue profileIndex pour obtenir une nouvelle liste a afficher à l'écran. Ce parametre doit valoir "None" quand on accede à cette page sans avoir utilisé un de ces deux boutons.
 
-views.py:
--Création de la constante LIST_SIZE, qui représente la ne nombre d'éléments de la liste qui seront affiché sur la page
-
--Création de la fonction "GetRecords" qui cherche dans la DB l'ensemble des enregistrements associés à un deviceId (=un utilisateur unique) et retourne le résultat sous forme de liste
-
--Création de la variable de session "listStart" qui représente l'indice du premier élément qui sera affiché à l'écran. Cet indice est incrémenté ou décrémenté en fonction du bouton de navigation utilisé. Si la décrémentation ou incrémentation sortirait de la liste des enregistrements, sa valeur reviens à son état précédent.
-
--Création de la fonctione "UpdateList" qui utilise le retour de GetRecords, l'inverse afin d'avoir la liste dans l'ordre chronologique décroissant (du plus récent au plus ancien) et retourne une nouvelle liste de longueur LIST_SIZE qui commence à partir de l'indice contenu dans la variable de session "listStart"
-
--Modification de profileIndex afin d'utiliser le parametre "listButton" envoyé dans l'url. Le parametre "récent" décrémente la valeur de "listStart" de LIST_SIZE, afin d'obtenir les éléments plus récent de la liste d'énregistrements. Le parametre "ancien" incrémente la valeur de "listStart" de LIST_SIZE.
-La variable "recordList" contiens le retour de la fonction "UpdateList", cette variable est envoyée à la page profileIndex.html pour être affichée.
-
-templates/profileIndex.html:
-
--Ajout d'une boucle parcourant la liste recordList qui pour chaque élément crée une cellule de tableau contenant le nom du chat, l'évenement et la date
--Ajout des boutons de navigations redirigeant sur la même page, avec le paramètre utilisé par la vue "profileIndex"
+formId remplacé par formType
+les valeurs int remplacées par les noms des formulaires pour plus de clarté
+création d'une vue et d'une url de logout
 
 notes:
-- Seul le contenu de la liste qui est affiché est envoyé, afin de ne pas demander toute la liste des enregistrements a chaque fois mais ça implique que la navigation dans la liste rafraichisse toute la page, car ce n'est pas possible de modifier dynamiquement le contenu de celle-ci sans utiliser du JS pour faire une requête ajax
 
 

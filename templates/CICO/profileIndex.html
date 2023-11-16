@@ -29,59 +29,54 @@
 
 </div>
 <div>
-  <div class="table-responsive">
-    <table class="table table-striped table-hover table-bordered">
-      <thead>
-        <tr>
-          <th>
-            <button
-              class="btn d-flex my-auto justify-content-xl-start"
-              type="button"
-              data-bs-target="#modal-1"
-              data-bs-toggle="modal"
-              style="width: 100%"
-            >
-              <i class="fas fa-plus fs-4" style="margin-right: 10px"></i>Ajouter
-              un nouveau chat
-            </button>
-          </th>
-        </tr>
-      </thead>
-      <tbody id="catList">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        <button class="btn d-flex my-auto justify-content-xl-start" type="button"
+                            data-bs-target="#modal-1" data-bs-toggle="modal" style="width: 100%">
+                            <i class="fas fa-plus fs-4" style="margin-right: 10px"></i>Ajouter
+                            un nouveau chat
+                        </button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="catList">
 
-        <!-- Cats will be added here by the legend -->
+                <!-- Cats will be added here by the legend -->
 
-      {% for record in recordList  %}
+                {% for record in recordList %}
 
-        <tr id=row_{{forloop.counter}}>
-          <td>{{record.catName}}</td>
-          <td>{{record.event}}</td>
-          <td>{{record.time}}</td>
-        </tr>
+                <tr id=row_{{forloop.counter}}>
+                    <td>{{record.catName}}</td>
+                    <td>{{record.event}}</td>
+                    <td>{{record.time}}</td>
+                </tr>
 
 
-      {% endfor %}
+                {% endfor %}
 
-      </tbody>
-    </table>
+            </tbody>
+        </table>
 
         <form action="" method="post">
             {% csrf_token %}
-        <input type="hidden" name="bouton" value="récent"/>
-        <a href="#" onclick="this.parentNode.submit();">
-          <button>récent</button>
-        </a>
+            <input type="hidden" name="bouton" value="récent" />
+            <a href="#" onclick="this.parentNode.submit();">
+                <button>récent</button>
+            </a>
         </form>
 
         <form action="" method="post">
             {% csrf_token %}
-        <input type="hidden" name="bouton" value="ancien"/>
-        <a href="#" onclick="this.parentNode.submit();">
-          <button>ancien</button>
-        </a>
+            <input type="hidden" name="bouton" value="ancien" />
+            <a href="#" onclick="this.parentNode.submit();">
+                <button>ancien</button>
+            </a>
         </form>
 
-  </div>
+    </div>
 </div>
 
 <div class="modal fade" role="dialog" tabindex="-1" id="modal-1">

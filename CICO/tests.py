@@ -36,7 +36,7 @@ class AllTest(TestCase):
         session.save()
 
 
-        response = client.get(reverse('profileIndex', kwargs={'listButton':"None"}))
+        response = client.get(reverse('profileIndex'))
         #print(response.context["recordList"][0]["recordId"])
 
 
@@ -58,7 +58,7 @@ class AllTest(TestCase):
         testRecord = DeviceRecords.objects.create(deviceId=testUser, event="IN", isCat=True)
         testTrigger = Trigger.objects.create(catId=testCat, recordId=testRecord)
 
-        response = testClient.get(reverse('profileIndex', kwargs={'listButton': "None"}))
+        response = testClient.get(reverse('profileIndex'))
 
         self.assertContains(response, '<tr id=row_1>')
 
@@ -79,13 +79,14 @@ class AllTest(TestCase):
 
         testRecord3 = DeviceRecords.objects.create(deviceId=testUser, event="IN", isCat=True)
         Trigger.objects.create(catId=testCat, recordId=testRecord3)
-        response = testClient.get(reverse('profileIndex', kwargs={'listButton': "None"}))
+        response = testClient.get(reverse('profileIndex'))
         testList = []
         for i in range(math.ceil(len(DeviceRecords.objects.all())/2)):
             testSession['listStart'] = i * 2
             for j in range(len(response.context["recordList"])):
                 testList.append(response.context["recordList"][j]["recordId"])
-            response = testClient.get(reverse('profileIndex', kwargs={'listButton': "ancien"}))
+            testClient.post(reverse("profileIndex"),{"bouton":"ancien"})
+            response = testClient.get(reverse('profileIndex'))
 
         self.assertEqual(testList, list(DeviceRecords.objects.values_list('recordId', flat=True))[::-1])
 

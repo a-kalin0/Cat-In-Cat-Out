@@ -25,6 +25,8 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import CatSerializer
 from django.core.exceptions import ValidationError
 from random import randint
+from datetime import datetime
+from django.urls import reverse
 
 LIST_SIZE = 2
 
@@ -149,16 +151,21 @@ def profileIndex(request):
     except:
         request.session['listStart'] = 0
 
-    user = request.user
-    recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice)
 
 
     if request.method == "GET":
-
-        return render(request, 'CICO/profileIndex.html',
-                      {"user": user.username, "recordList": recordList})
+        recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice)
+        return redirect("getProfileIndex", {"recordList":recordList})
 
     elif request.method == "POST":
+        try:
+            dateObject = datetime.strptime(request.POST["bouton"], '%Y-%m-%d').date()
+            querySet = DeviceRecords.objects.filter(deviceId=UserCICO.objects.get(username=request.user).ownedDevice,
+                                                    time__year=dateObject.year,time__month=dateObject.month,time__day=dateObject.day).annotate(
+                catName=F('trigger__catId__name'))
+            recordList = querySet.values()
+        except:
+            print("error")
 
         #check if bouton exists
 
@@ -168,12 +175,15 @@ def profileIndex(request):
         elif request.POST["bouton"] == "ancien":
             request.session['listStart'] += LIST_SIZE
 
+    
+    return redirect(("getProfileIndex", {"recordList":recordList}))
+    return redirect(reverse("getProfileIndex", kwargs={"recordList":recordList}))
 
-    return redirect("profileIndex")
 
 
-
-
+def getProfileIndex(request, recordList):
+    return render(request, 'CICO/profileIndex.html',
+                  {"user": request.user.username, "recordList": recordList})
 
 def faq(request):
     return render(request, 'CICO/faq.html')

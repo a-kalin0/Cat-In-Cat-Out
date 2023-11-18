@@ -1,35 +1,17 @@
 [
 {
     "model": "sessions.session",
-    "pk": "csitvmmpiu9nbi30h460ge97le4zcvyz",
+    "pk": "0d1kmtpqtm6itn4cqzpxk95xdbxd60bi",
     "fields": {
-        "session_data": ".eJxVjEEKwyAURO_iOojfqtEsu-uiUOgBwvdrmrQhgWhWpXevQjZhdvNm3pfdHqxjIFsuSoA1rMc9j_2e4tZPoTB57jzSJy4VhDcur5XTuuRt8rxO-EETv68hztdjexKMmMbyVtHLiwEH1mpjvDNGWdJC04DgW-naSFJTtCoA-Esph1YhghPkhCWs0qpjnWzYPKX8zLhl1onfH61YQiA:1r1TTB:JDzOrx8HBwA0PZeDTHV9BFr59XQAPzxxLShrPbTInE4",
-        "expire_date": "2023-11-24T15:30:53.226Z"
-    }
-},
-{
-    "model": "CICO.usercico",
-    "fields": {
-        "password": "pbkdf2_sha256$600000$kHQWx5zn6ja2cNgnCFc437$p5J09Vps024sfWOGMgNrgHr++FsdVkfFLjZtFOxLuJ8=",
-        "last_login": "2023-10-25T18:27:36.260Z",
-        "is_superuser": true,
-        "username": "admin",
-        "first_name": "",
-        "last_name": "",
-        "email": "",
-        "is_staff": true,
-        "is_active": true,
-        "date_joined": "2023-10-11T10:34:23.581Z",
-        "ownedDevice": "",
-        "groups": [],
-        "user_permissions": []
+        "session_data": ".eJxVjMsKwjAURP8l6xJyY55dunMhCH5AublNbbW00KQr8d9NoAtldmdmzpt1uOex21PcuqlnLZOs-WUB6RWXWvRPXB4rp3XJ2xR4nfCjTfy69nE-H9s_wYhpLG8VgzwZ8OCcNiZ4Y5QjLTQNCMFKbyNJTdGpHiCcChysQgQvyAtHWKWXW_GAtFyUQAHVz1rZsHlK-Z5xy6xVny8r_kIk:1r41Tj:U7BpqhdIV-IfzZ7NLArkAR0ApDg5pXSSVJsbphMuGi0",
+        "expire_date": "2023-12-01T16:13:59.129Z"
     }
 },
 {
     "model": "CICO.usercico",
     "fields": {
         "password": "pbkdf2_sha256$600000$XYhutwtvdqDkeqD1G7msPY$b1B8GwxH5Hndtfx36F/8H6Bzeg1bKQUtBe7y17BjiCQ=",
-        "last_login": "2023-11-10T15:20:27.501Z",
+        "last_login": "2023-11-17T16:05:04.557Z",
         "is_superuser": false,
         "username": "test",
         "first_name": "",
@@ -46,17 +28,53 @@
 {
     "model": "CICO.usercico",
     "fields": {
-        "password": "pbkdf2_sha256$600000$q1J4ZUv3KeuWemgtKvMzW9$/yrTgy+jtL4cdPmdHuAbB8RtXSzexvKTismZADXModI=",
-        "last_login": null,
+        "password": "pbkdf2_sha256$600000$1uypFXQ0zY20tIBfDPIfSG$dbqN5MUn9u0pRJqOHdTbtglX1Bxve/iR8C1raI7BNdw=",
+        "last_login": "2023-11-16T15:02:40.963Z",
         "is_superuser": false,
         "username": "teste",
         "first_name": "",
         "last_name": "",
-        "email": "l.pironet@st.be",
+        "email": "l.pironet@students.ephec.be",
         "is_staff": false,
         "is_active": true,
         "date_joined": "2023-10-23T13:10:35.435Z",
         "ownedDevice": null,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "CICO.usercico",
+    "fields": {
+        "password": "pbkdf2_sha256$600000$UAsPjxFgNpDfFkEDjc0lw3$1wWxo5IYxc/bu02K+XReCY6lxAdkh1B0mDMY5aAW/IA=",
+        "last_login": "2023-11-15T14:58:23.535Z",
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2023-11-13T20:29:39.096Z",
+        "ownedDevice": "12",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "CICO.usercico",
+    "fields": {
+        "password": "pbkdf2_sha256$600000$eUTg8ocXGISZ1vbcUB3NiC$7yPLutFUPTANNteZi2Xb9fpUJzzMcVdFdMs56eHMWyI=",
+        "last_login": "2023-11-14T13:35:34.711Z",
+        "is_superuser": false,
+        "username": "truc",
+        "first_name": "",
+        "last_name": "",
+        "email": "azrzre@azra.bav",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2023-11-14T13:34:36.390Z",
+        "ownedDevice": "61",
         "groups": [],
         "user_permissions": []
     }
@@ -144,70 +162,4 @@
         "event": "IN",
         "isCat": true
     }
-},
-{
-    "model": "CICO.cats",
-    "pk": 1,
-    "fields": {
-        "ownerId": [
-            "test"
-        ],
-        "name": "poilu"
-    }
-},
-{
-    "model": "CICO.cats",
-    "pk": 2,
-    "fields": {
-        "ownerId": [
-            "test"
-        ],
-        "name": "machin"
-    }
-},
-{
-    "model": "CICO.cats",
-    "pk": 3,
-    "fields": {
-        "ownerId": [
-            "test"
-        ],
-        "name": "truc"
-    }
-},
-{
-    "model": "CICO.trigger",
-    "pk": 3,
-    "fields": {
-        "catId": 1
-    }
-},
-{
-    "model": "CICO.trigger",
-    "pk": 4,
-    "fields": {
-        "catId": 1
-    }
-},
-{
-    "model": "CICO.trigger",
-    "pk": 5,
-    "fields": {
-        "catId": 1
-    }
-},
-{
-    "model": "CICO.trigger",
-    "pk": 6,
-    "fields": {
-        "catId": 2
-    }
-},
-{
-    "model": "CICO.trigger",
-    "pk": 7,
-    "fields": {
-        "catId": 2
-    }
 }
-]

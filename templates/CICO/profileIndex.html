@@ -60,7 +60,8 @@
     <div>
         <form  action="" method="post" style="float:left">
             {% csrf_token %}
-            <input type="date" name="bouton" onchange="this.parentNode.submit();">
+            <input type="date" name="bouton" value="{{ date }}" onchange="this.parentNode.submit();">
+            <input type="submit" name="bouton" value="Annuler">
         </form>
     </div>
     <table class="table table-striped table-hover table-bordered" id="tableRecords">

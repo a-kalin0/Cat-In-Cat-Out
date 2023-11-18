@@ -30,16 +30,23 @@ from django.urls import reverse
 
 LIST_SIZE = 2
 
-def UpdateList(request, deviceId):
-    recordList = GetRecords(deviceId)[::-1]
+def UpdateList(request, deviceId, date="00-00-000"):
+    recordList = GetRecords(deviceId, date)[::-1]
     newList = recordList[request.session['listStart']:request.session['listStart'] + LIST_SIZE]
     if len(newList) == 0:
         newList = recordList[request.session['listStart'] - LIST_SIZE:request.session['listStart']]
         request.session['listStart'] -= LIST_SIZE
+
     return newList
 
-def GetRecords(deviceId):
-    querySet = DeviceRecords.objects.filter(deviceId=deviceId).annotate(catName=F('trigger__catId__name'))
+def GetRecords(deviceId,date):
+    if date == "00-00-0000":
+        querySet = DeviceRecords.objects.filter(deviceId=deviceId).annotate(catName=F('trigger__catId__name'))
+    else:
+        dateObject = datetime.strptime(date, '%Y-%m-%d').date()
+        querySet = DeviceRecords.objects.filter(deviceId=deviceId,
+            time__year=dateObject.year, time__month=dateObject.month,
+                                            time__day=dateObject.day).annotate(catName=F('trigger__catId__name'))
     return querySet.values()
 
 def Empty(request):
@@ -151,33 +158,37 @@ def profileIndex(request):
     except:
         request.session['listStart'] = 0
 
+    try:
+        request.session["filterDate"]
+    except:
+        request.session["filterDate"] = "00-00-0000"
+
 
 
     if request.method == "GET":
-        recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice)
-        return redirect("getProfileIndex", {"recordList":recordList})
+        recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice, request.session["filterDate"] )
+        return render(request, 'CICO/profileIndex.html',
+                      {"user": request.user.username, "recordList": recordList, "date":request.session["filterDate"]})
 
     elif request.method == "POST":
         try:
-            dateObject = datetime.strptime(request.POST["bouton"], '%Y-%m-%d').date()
-            querySet = DeviceRecords.objects.filter(deviceId=UserCICO.objects.get(username=request.user).ownedDevice,
-                                                    time__year=dateObject.year,time__month=dateObject.month,time__day=dateObject.day).annotate(
-                catName=F('trigger__catId__name'))
-            recordList = querySet.values()
+            datetime.strptime(request.POST["bouton"], '%Y-%m-%d').date()
         except:
-            print("error")
+            print("no date selected, using default value")
+        else:
+            request.session["filterDate"] = request.POST["bouton"]
+            request.session['listStart'] = 0
 
-        #check if bouton exists
-
-        if request.POST["bouton"] == "récent":
+        if request.POST["bouton"] == "Annuler":
+            request.session["filterDate"] = "00-00-0000"
+        elif request.POST["bouton"] == "récent":
             request.session['listStart'] = max(0, request.session[
             'listStart'] - LIST_SIZE)  # the max function is used to prevent the substraction from resulting in a negative
         elif request.POST["bouton"] == "ancien":
             request.session['listStart'] += LIST_SIZE
 
     
-    return redirect(("getProfileIndex", {"recordList":recordList}))
-    return redirect(reverse("getProfileIndex", kwargs={"recordList":recordList}))
+    return redirect("profileIndex")
 
 
 

@@ -257,7 +257,7 @@ def add_cat(request):
                 cat.ownerId = request.user  # Set ownerId to the current user
                 cat.clean()  # Call full_clean to run all other validations including clean()
                 cat.save()
-                return JsonResponse({'success': True, 'catName' : cat.name}, status=201)  # Or any other success response
+                return JsonResponse({'success': True, 'catName' : cat.name, 'catId': cat.catId}, status=201)  # Or any other success response
             
             except ValidationError:
                 return JsonResponse({'success': False, 'errors': form.errors}, status=405)

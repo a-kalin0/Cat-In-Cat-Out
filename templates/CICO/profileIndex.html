@@ -203,7 +203,7 @@
     function handleAddCatSuccess(response) {
         if (response.success) {
             console.log(response);
-            appendCatRow(response.catName);
+            appendCatRow(response.catName, response.catId);
             showToast('successToast');
             closeModal('modal-1');
         } else {
@@ -224,10 +224,11 @@
         showToast('errorToast');
     }
 
-    function appendCatRow(catName) {
-        var catRow = '<tr><td><button class="btn d-flex my-auto justify-content-xl-start" type="button" style="width: 100%;">' + catName + '<i class="fas fa-cat fs-4" style="margin-left: 10px;"></i></button></td></tr>';
+    function appendCatRow(catName, catId) {
+        var catRow = '<tr><td><button class="btn d-flex my-auto justify-content-xl-start cat-btn" data-cat-id="' + catId + '" type="button" style="width: 100%;">' + catName + '<i class="fas fa-cat fs-4" style="margin-left: 10px;"></i></button></td></tr>';
         $('#catList').append(catRow);
     }
+
 
     function showToast(toastId) {
         var toast = new bootstrap.Toast(document.getElementById(toastId));

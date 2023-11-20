@@ -337,6 +337,9 @@ def profile(request):
     user = UserCICO.objects.get(username=request.user)
 
     if request.method == "POST":
+        if list(request.POST.keys())[1] == "deleteAccount":
+            user.delete()
+            return redirect("connexion", formType="connexion")
         setattr(user,str(list(request.POST.keys())[1]), str(list(request.POST.values())[1]))
         user.save()
         return redirect("profile")

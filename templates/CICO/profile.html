@@ -18,6 +18,15 @@
             `
     }
 
+    function confirm(){
+
+        if (document.getElementById("confirm").style.visibility == "hidden"){
+            document.getElementById("confirm").style="visibility: visible"}
+        else{
+            document.getElementById("confirm").style="visibility: hidden"
+        }
+    }
+
 
 
 </script>
@@ -42,6 +51,18 @@
 <div id="email">
     {{ user.email }}
     <button onclick="edit(this.parentNode.id,'{{ user.email }}')">edit</button>
+</div>
+
+<button onclick="confirm()">Delete account</button>
+
+<div id="confirm" style="visibility: hidden">
+
+    <form action="" method="post" >
+        {% csrf_token %}
+        <input type="hidden" name="deleteAccount"/>
+        <input type="submit" value="Confirm"/>
+    </form>
+
 </div>
 
 

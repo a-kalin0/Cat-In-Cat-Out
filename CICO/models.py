@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import F
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
@@ -58,6 +59,9 @@ class Cats(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
+
+    def getStatus(self):
+        return Cats.objects.filter(catId=self.catId).annotate(status=F("trigger__recordId_id__event")).values("status").last()
 
 
 class Trigger(models.Model):

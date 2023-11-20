@@ -23,12 +23,12 @@ class Statuses(models.Model):
     
 
 class UserSettings(models.Model):
-    userId = models.OneToOneField(UserCICO, primary_key=True, on_delete=models.PROTECT)
+    userId = models.OneToOneField(UserCICO, primary_key=True, on_delete=models.CASCADE)
     setting1 = models.CharField(max_length=100)
     #add other settings as required
 
 class DeviceRecords(models.Model):
-    deviceId = models.ForeignKey(UserCICO, to_field="ownedDevice", on_delete=models.PROTECT,name="deviceId")
+    deviceId = models.ForeignKey(UserCICO, to_field="ownedDevice", on_delete=models.CASCADE,name="deviceId")
     recordId = models.AutoField(primary_key=True)
     time = models.DateTimeField(auto_now_add=True)
 

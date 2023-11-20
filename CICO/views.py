@@ -326,3 +326,17 @@ def get_cats(request):
         user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', flat=True)
         return JsonResponse(list(user_cats), safe=False)
     return JsonResponse({'error': 'User not authenticated'}, status=401)
+
+
+def profile(request):
+    if not checkIP(request) or not request.user.is_authenticated:
+        return render(request, 'CICO/unauthorized.html', status=401)
+
+    user = UserCICO.objects.get(username=request.user)
+
+    if request.method == "POST":
+        setattr(user,str(list(request.POST.keys())[1]), str(list(request.POST.values())[1]))
+        user.save()
+        return redirect("profile")
+    else:
+        return render(request, "CICO/profile.html", {"user":user})

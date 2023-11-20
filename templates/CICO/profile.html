@@ -1,0 +1,49 @@
+{% extends "baseProfil.html" %} {% load static %} {% block content %}
+
+<script>
+    function edit(id, value) {
+        document.getElementById(id).innerHTML=`
+            <form action="" method="post" >
+            {% csrf_token %}
+                <input type="text" name=${ id } value="${ value }"/>
+                <input type="submit" value="save"/>
+            </form>
+            `
+    }
+
+    function saved(id, value) {
+        document.getElementById(id).innerHTML=`
+            ${value}
+            <button onclick="edit(this.parentNode.id)">edit</button>
+            `
+    }
+
+
+
+</script>
+
+
+
+<div id="username">
+    {{ user.username }}
+    <button onclick="edit(this.parentNode.id,'{{ user.username }}')">edit</button>
+</div>
+
+<div id="first_name">
+    {{ user.first_name }}
+    <button onclick="edit(this.parentNode.id,'{{ user.first_name }}')">edit</button>
+</div>
+
+<div id="last_name">
+    {{ user.last_name }}
+    <button onclick="edit(this.parentNode.id,'{{ user.last_name }}')">edit</button>
+</div>
+
+<div id="email">
+    {{ user.email }}
+    <button onclick="edit(this.parentNode.id,'{{ user.email }}')">edit</button>
+</div>
+
+
+
+{% endblock %}

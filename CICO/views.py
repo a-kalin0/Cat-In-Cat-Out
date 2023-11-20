@@ -24,6 +24,9 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CatSerializer
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
+import uuid
+
 
 LIST_SIZE = 2
 
@@ -268,6 +271,15 @@ def add_cat(request):
 @login_required
 def get_cats(request):
     if request.user.is_authenticated:
-        user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', flat=True)
+        user_cats = Cats.objects.filter(ownerId_id=request.user).values('name', 'catId')
         return JsonResponse(list(user_cats), safe=False)
     return JsonResponse({'error': 'User not authenticated'}, status=401)
+
+@login_required
+def get_cat_details(request, catId):
+    # Fetch the cat details
+    cat = Cats.objects.get(ownerId_id=request.user, catId=catId)
+    return JsonResponse({
+        'name': cat.name,
+        'image_url': cat.image.url if cat.image else ''
+    })

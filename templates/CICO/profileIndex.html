@@ -45,7 +45,6 @@
             <tbody id="catList">
 
                 <!-- Cats will be added here by the legend -->
-                <!-- Cats will be added here by the legend -->
 
                 {% for record in recordList %}
 
@@ -130,7 +129,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Cat Details</h5>
+                <h5 class="modal-title">Détails du chat</h5>
                 <button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -138,6 +137,10 @@
             <div class="modal-body">
                 <h2 id="catNameModal"></h2>
                 <img id="catImageModal" src="" alt="Cat image" style="max-width: 100%;">
+            </div>
+            <div class="modal-footer"><button class="btn btn-light border rounded-pill" type="button"
+                    data-bs-dismiss="modal">Annuler</button><button class="btn btn-danger border rounded-pill"
+                    type="submit">Supprimer chat</button>
             </div>
         </div>
     </div>

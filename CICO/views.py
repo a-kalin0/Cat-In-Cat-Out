@@ -91,7 +91,12 @@ def contact(request):
 
 def commande(request):
     return render(request, 'CICO/commande.html')
+    
+def postRaspberry (request):
+    
+    print(request.POST)
 
+    return None
 
 class PageMotE(ListView):
     model = CiCoItem

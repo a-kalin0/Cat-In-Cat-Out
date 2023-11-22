@@ -1,7 +1,7 @@
 import requests
 import json
 
-url = "http://adresse_ip_du_serveur:port/api/endpoint"
+url = "http://192.168.15.98:8000/CICO/endpoint"
 
 # Les données textuelles
 data = {
@@ -10,10 +10,11 @@ data = {
 }
 
 # La photo à envoyer
-files = {
-    'photo': open('/chemin/vers/la/photo.jpg', 'rb')
+#files = {
+#    'photo': open('/chemin/vers/la/photo.jpg', 'rb')
 }
 
 # Effectuer la requête POST
-response = requests.post(url, data=data, files=files)
+#response = requests.post(url, data=data, files=files)
+response = requests.post(url, data=data)
 print(response.text)

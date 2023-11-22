@@ -39,6 +39,12 @@ def GetRecords(deviceId):
     querySet = DeviceRecords.objects.filter(deviceId=deviceId).annotate(catName=F('trigger__catId__name'))
     return querySet.values()
 
+def postRaspberry(request):
+    if request.method == 'POST':
+        print(request.POST)
+        return None 
+
+
 def Empty(request):
     return redirect("CICO/")
 
@@ -225,8 +231,6 @@ def forgotpassword(request):
     password_reset_form = ForgottenPassword()
     return render(request, "CICO/resetpassword.html", context={"password_reset_form": password_reset_form})
 
-
-
 def newpassword(request, uidb64=None, token=None):
     assert uidb64 is not None and token is not None
 
@@ -277,3 +281,5 @@ def get_cats(request):
         user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', flat=True)
         return JsonResponse(list(user_cats), safe=False)
     return JsonResponse({'error': 'User not authenticated'}, status=401)
+
+

@@ -1,7 +1,7 @@
 import requests
 import json
 
-url = "http://172.20.10.6:8000/CICO/postRaspberry""
+url = "http://192.168.78.89:8000/CICO/postRaspberry""
 
 # Les données textuelles
 data = {

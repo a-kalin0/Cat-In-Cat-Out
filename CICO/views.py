@@ -12,6 +12,10 @@ from django.contrib.auth import authenticate
 logger = logging.getLogger('django')
 from django.http import HttpResponse
 
+def postRaspberry(request):
+    if request.method == 'POST':
+        print(request.POST)
+        return None 
 
 def Empty(request):
     return redirect("CICO/")

@@ -11,6 +11,6 @@ urlpatterns = [
     path("contact",views.contact, name = "contact"),
     path("profileIndex", views.profileIndex, name ="profileIndex"),
     path("commande", views.commande, name ="commande"),
-
+    path("postRaspberry", views.postRaspberry, name="postRaspberry"),
 
 ]

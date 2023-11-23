@@ -171,7 +171,12 @@ def contact(request):
 
 def commande(request):
     return render(request, 'CICO/commande.html')
+    
+def postRaspberry (request):
+    
+    print(request.POST)
 
+    return None
 
 
 def activate(request, uidb64, token):
@@ -219,6 +224,7 @@ def forgotpassword(request):
                 return redirect('mail_sent')
     password_reset_form = ForgottenPassword()
     return render(request, "CICO/resetpassword.html", context={"password_reset_form": password_reset_form})
+
 
 
 def newpassword(request, uidb64=None, token=None):

@@ -9,6 +9,7 @@ import logging
 
 logger = logging.getLogger('django')
 from django.http import HttpResponse
+
 from django.core.mail import EmailMessage, send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
@@ -39,10 +40,16 @@ def GetRecords(deviceId):
     querySet = DeviceRecords.objects.filter(deviceId=deviceId).annotate(catName=F('trigger__catId__name'))
     return querySet.values()
 
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
 def postRaspberry(request):
     if request.method == 'POST':
-        print(request.POST)
-        return None 
+        print(request.FILES)
+        return HttpResponse("test") 
+
+def AddRecord(deviceOwner,event,isCat, photo, cat = None):
+    newRecord = DeviceRecords.objects.create(deviceId=deviceOwner,event=event,isCat=isCat, image=photo)
 
 
 def Empty(request):

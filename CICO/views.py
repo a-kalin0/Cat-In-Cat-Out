@@ -25,7 +25,16 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CatSerializer
 from django.core.exceptions import ValidationError
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
+def postRaspberry(request):
+    owner =  UserCICO.objects.get(id=2)
+    if request.method == 'POST':
+        print(request.FILES)
+        AddRecord(owner,"IN", True, request.FILES["photo"])
+        return HttpResponse("test") 
+    
 LIST_SIZE = 2
 
 def UpdateList(request, deviceId):
@@ -40,13 +49,6 @@ def GetRecords(deviceId):
     querySet = DeviceRecords.objects.filter(deviceId=deviceId).annotate(catName=F('trigger__catId__name'))
     return querySet.values()
 
-from django.views.decorators.csrf import csrf_exempt
-
-@csrf_exempt
-def postRaspberry(request):
-    if request.method == 'POST':
-        print(request.FILES)
-        return HttpResponse("test") 
 
 def AddRecord(deviceOwner,event,isCat, photo, cat = None):
     newRecord = DeviceRecords.objects.create(deviceId=deviceOwner,event=event,isCat=isCat, image=photo)
@@ -184,11 +186,6 @@ def contact(request):
 def commande(request):
     return render(request, 'CICO/commande.html')
     
-def postRaspberry (request):
-    
-    print(request.POST)
-
-    return None
 
 
 def activate(request, uidb64, token):

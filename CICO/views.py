@@ -263,7 +263,7 @@ def add_cat(request):
                 return JsonResponse({'success': True, 'catName' : cat.name, 'catId': cat.catId}, status=201)  # Or any other success response
             
             except ValidationError:
-                return JsonResponse({'success': False, 'errors': form.errors}, status=405)
+                return JsonResponse({'success': False, 'errors': form.errors}, status=400)
         else:
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     return JsonResponse({'success': False, 'errors': 'Invalid request'}, status=400)

@@ -238,11 +238,15 @@
         }
     }
 
-    function handleAddCatError(xhr) {
-        if (xhr.responseText) {
-            const errors = xhr.responseText;
-            if (xhr.responseText) {
+    function handleAddCatError(response) {
+        if (response.responseText) {
+            const errors = response.responseText;
+            if (response.responseText) {
+                showToast('errorToast');
+                closeModal('modal-1');
+
                 return ("A cat with this name already exists for this user", errors)
+
             }
         }
         showToast('errorToast');

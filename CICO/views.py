@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger('django')
 from django.http import HttpResponse
-
+from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import EmailMessage, send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
@@ -50,7 +50,6 @@ def postRaspberry(request):
 
 def AddRecord(deviceOwner,event,isCat, photo, cat = None):
     newRecord = DeviceRecords.objects.create(deviceId=deviceOwner,event=event,isCat=isCat, image=photo)
-
 
 def Empty(request):
     return redirect("CICO/")

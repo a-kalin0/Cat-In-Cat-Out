@@ -10,6 +10,7 @@ import logging
 logger = logging.getLogger('django')
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+
 from django.core.mail import EmailMessage, send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
@@ -52,6 +53,7 @@ def GetRecords(deviceId):
 
 def AddRecord(deviceOwner,event,isCat, photo, cat = None):
     newRecord = DeviceRecords.objects.create(deviceId=deviceOwner,event=event,isCat=isCat, image=photo)
+
 
 def Empty(request):
     return redirect("CICO/")
@@ -284,5 +286,6 @@ def get_cats(request):
         user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', flat=True)
         return JsonResponse(list(user_cats), safe=False)
     return JsonResponse({'error': 'User not authenticated'}, status=401)
+
 
 

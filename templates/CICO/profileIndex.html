@@ -138,9 +138,10 @@
                 <h2 id="catNameModal"></h2>
                 <img id="catImageModal" src="" alt="Cat image" style="max-width: 100%;">
             </div>
-            <div class="modal-footer"><button class="btn btn-light border rounded-pill" type="button"
-                    data-bs-dismiss="modal">Annuler</button><button class="btn btn-danger border rounded-pill"
-                    type="submit">Supprimer chat</button>
+            <div class="modal-footer">
+                <button class="btn btn-light border rounded-pill" type="button" data-bs-dismiss="modal">Annuler</button>
+                <button class="btn btn-danger border rounded-pill deleteCatBtn" type="submit">Supprimer
+                    chat</button>
             </div>
         </div>
     </div>
@@ -223,7 +224,6 @@
 
     function handleAddCatSuccess(response) {
         if (response.success) {
-            console.log(response);
             let newCat = {
                 name: response.catName,
                 catId: response.catId,
@@ -233,25 +233,23 @@
             showToast('successToast');
             closeModal('modal-1');
         } else {
-            console.log('Error submitting form:', JSON.stringify(response.errors));
             showToast('errorToast');
+            return ('Error submitting form:', JSON.stringify(response.errors));
         }
     }
 
     function handleAddCatError(xhr) {
-        console.log("AJAX error status code: ", xhr.status);
-        console.log("AJAX error response text: ", xhr.responseText);
         if (xhr.responseText) {
             const errors = xhr.responseText;
             if (xhr.responseText) {
-                console.log("A cat with this name already exists for this user", errors)
+                return ("A cat with this name already exists for this user", errors)
             }
         }
         showToast('errorToast');
     }
 
     function appendCatRow(cat) {
-        var catRow = '<tr><td><button class="btn d-flex my-auto justify-content-xl-start cat-btn" data-cat-id="' + cat.catId + '" type="button" style="width: 100%;">' + cat.name + '<i class="fas fa-cat fs-4" style="margin-left: 10px;"></i></button></td></tr>';
+        var catRow = '<tr><td><button class="btn d-flex my-auto justify-content-xl-start cat-btn" data-cat-id="' + cat.catId.replace(/-/g, '') + '" type="button" style="width: 100%;">' + cat.name + '<i class="fas fa-cat fs-4" style="margin-left: 10px;"></i></button></td></tr>';
         $('#catList').append(catRow);
     }
 
@@ -289,7 +287,6 @@
 <script>
     $(document).on('click', '.cat-btn', function () {
         let catId = $(this).data('catId');
-        console.log("Clicked cat ID: ", catId);
         fetchAndDisplayCatDetails(catId);
     });
 
@@ -297,19 +294,48 @@
 
         var formattedCatId = catId.replace(/-/g, '');
 
-        console.log('formatted catId', formattedCatId);
-
         $.ajax({
             type: 'GET',
             url: '/CICO/get_cat_details/' + catId,  // URL to your Django view that returns cat details
             success: function (response) {
-                console.log(response);
                 $('#catNameModal').text(response.name);
+                $('#catDetailsModal').attr('data-cat-id', catId);
                 $('#catImageModal').attr('src', '.' + response.image_url); // Adjust according to the response
                 $('#catDetailsModal').modal('show');
             },
             error: function (error) {
-                console.log("Error fetching cat details: ", error);
+                return ("Error fetching cat details: ", error);
+            }
+        });
+    }
+</script>
+<script>
+    $(document).on('click', '.deleteCatBtn', function () {
+        var catId = $('#catDetailsModal').data('cat-id');
+        var formattedCatId = catId.replace(/-/g, '');
+        if (confirm('Are you sure you want to delete this cat?')) {
+            deleteCat(catId);
+        }
+    });
+
+    function deleteCat(catId) {
+        var formattedCatId = catId.replace(/-/g, '');
+
+        $.ajax({
+            type: 'DELETE',
+            url: '/CICO/delete_cat/' + catId,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')  // Make sure to include CSRF token
+            },
+            success: function (response) {
+                // Handle success (e.g., close modal, remove cat from list, show message)
+                $('#catDetailsModal').modal('hide');
+                $('button[data-cat-id="' + catId + '"]').closest('tr').remove(); // Remove cat from list
+                alert('Cat deleted successfully');
+            },
+            error: function (error) {
+                // Handle error
+                return ('Error deleting cat:', error);
             }
         });
     }

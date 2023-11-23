@@ -25,7 +25,7 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import CatSerializer
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
-import uuid
+import os
 
 
 LIST_SIZE = 2
@@ -283,3 +283,13 @@ def get_cat_details(request, catId):
         'name': cat.name,
         'image_url': cat.image.url if cat.image else ''
     })
+
+
+@login_required
+def delete_cat(request, catId):
+    cat = get_object_or_404(Cats, catId=catId, ownerId_id=request.user)
+    if cat.image:
+        if os.path.isfile(cat.image.path):
+            os.remove(cat.image.path)
+    cat.delete()
+    return JsonResponse({'message': 'Cat deleted successfully'})

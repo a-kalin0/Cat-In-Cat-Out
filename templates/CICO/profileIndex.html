@@ -84,6 +84,117 @@
   </div>
 </div>
 
+<h2>US PERSO GRAPHIQUES</h2>
+<div style =  'display : flex;'>
+    <div style = 'width: 50%; padding: 20px;'>
+        <canvas id="EntreesCat" style="width:100%;max-width:700px"></canvas>
+    </div>
+    <div style = 'width: 50%; padding: 20px;'>
+        <canvas id="SortiesCat" style="width:100%;max-width:700px"></canvas>
+    </div>
+</div>    
+
+<script>
+    var xValues = {{ xValues|safe }};
+    var barColors = {{ barColors|safe }};
+    var catData = {{ cat_data|safe }};
+
+    var entrees = Object.keys(catData).map(function (key, index) {
+        return {
+            label: key,
+            backgroundColor: barColors[index % barColors.length],
+            data: catData[key]['entrees'],  // Utilisez directement les entrées
+        };
+    });
+
+    var sorties = Object.keys(catData).map(function (key, index) {
+        return {
+            label: key,
+            backgroundColor: barColors[index % barColors.length],
+            data: catData[key]['sorties'],
+        };
+    });
+
+    new Chart("EntreesCat", {
+        type: "bar",
+        data: {
+            labels: xValues,
+            datasets: entrees,
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    stacked: false,
+                    barPercentage: 0.8,  
+                }],
+                yAxes: [{
+                    stacked: false,
+                    ticks: {
+                        beginAtZero: true,
+                    },
+                }],
+            },
+            title: {
+                display: true,
+                text: "Entrées de mes chats",
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || '';
+                        var dataIndex = tooltipItem.index;
+                        var entrees = catData[datasetLabel]['entrees'][dataIndex];
+                        return datasetLabel + ' : ' + entrees + ' entrées ';
+                    }
+                }
+            },
+        },
+    });
+
+    new Chart("SortiesCat", {
+        type: "bar",
+        data: {
+            labels: xValues,
+            datasets: sorties,
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    stacked: false,
+                    barPercentage: 0.8,  
+                }],
+                yAxes: [{
+                    stacked: false,  
+                    ticks: {
+                        beginAtZero: true,
+                    },
+                }],
+            },
+            title: {
+                display: true,
+                text: "Sorties de mes chats",
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || '';
+                        var dataIndex = tooltipItem.index;
+                        var sorties = catData[datasetLabel]['sorties'][dataIndex];
+                        return datasetLabel + ' : ' + sorties + ' sorties ';
+                    }
+                }
+            },
+        },
+    });
+
+
+</script>
+
+
 <div class="modal fade" role="dialog" tabindex="-1" id="modal-1">
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <div class="modal-content">

@@ -1,12 +1,8 @@
 from django.shortcuts import render, redirect
-from django.views.generic import ListView
-
 from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword, ContactUsForm, CatSubmitForm
 from django.contrib.auth import authenticate, login, get_user_model, logout
-
-from .models import Statuses, UserCICO, Cats, DeviceRecords, Trigger
+from .models import UserCICO, Cats, DeviceRecords, CatsAdventures
 import logging
-
 logger = logging.getLogger('django')
 from django.http import HttpResponse
 from django.core.mail import EmailMessage, send_mail
@@ -18,14 +14,12 @@ from .tokens import account_activation_token, password_reset_token
 from django.db.models import F
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.forms.models import model_to_dict
-from django.core.files.storage import default_storage
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
-from .serializers import CatSerializer
 from django.core.exceptions import ValidationError
+from datetime import timedelta
+from django.utils import timezone
 
 LIST_SIZE = 2
+
 
 def UpdateList(request, deviceId):
     recordList = GetRecords(deviceId)[::-1]
@@ -35,14 +29,15 @@ def UpdateList(request, deviceId):
         request.session['listStart'] -= LIST_SIZE
     return newList
 
+
 def GetRecords(deviceId):
     querySet = DeviceRecords.objects.filter(deviceId=deviceId).annotate(catName=F('trigger__catId__name'))
     return querySet.values()
 
+
 def Empty(request):
     return redirect("CICO/")
 
-# Create your views here.
 
 def checkIP(request):
     print(request.session['IP'], request.META.get("REMOTE_ADDR"))
@@ -62,6 +57,7 @@ def mail_sent(request):
 
 def reset_done(request):
      return render(request, "CICO/password_reset_complete.html")
+
 
 def logoutPage(request):
     logout(request)
@@ -125,7 +121,6 @@ def connection(request, formType):
 
     return render(request, 'CICO/connexion.html', {"form": form})
 
-
 def profileIndex(request):
     if not checkIP(request) or not request.user.is_authenticated:
         return render(request, 'CICO/unauthorized.html', status=401)
@@ -140,10 +135,41 @@ def profileIndex(request):
 
 
     if request.method == "GET":
+        user_cats = Cats.objects.filter(ownerId=request.user)
 
-        return render(request, 'CICO/profileIndex.html',
-                      {"user": user.username, "recordList": recordList})
+        end_date = timezone.now()
+        start_date = end_date - timedelta(days=end_date.weekday())
 
+        for cat in user_cats:
+            # Assurez-vous qu'il n'y a pas déjà des données pour cette semaine
+            if not CatsAdventures.objects.filter(cat=cat, timestamp__gte=start_date, timestamp__lt=start_date + timedelta(days=7)).exists():
+                cat.create_static_data()
+
+        cat_adventures = CatsAdventures.objects.filter(
+            cat__in=user_cats,
+            timestamp__gte=start_date,
+            timestamp__lt=start_date + timedelta(days=8)
+        )
+
+        xValues = [day.strftime("%A") for day in (start_date + timedelta(n) for n in range(7))]
+        barColors = ["red", "green", "blue", "orange", "brown"]
+
+        cat_data = {cat.name: {'entrees': [], 'sorties': []} for cat in user_cats}
+
+        for adventure in cat_adventures:
+            cat_data[adventure.cat.name]['entrees'].append(adventure.entrees)
+            cat_data[adventure.cat.name]['sorties'].append(adventure.sorties)
+
+        context = {
+            "user": user.username,
+            "recordList": recordList, 
+            "xValues": xValues,
+            "cat_data": cat_data,
+            "barColors": barColors,
+        }
+
+        return render(request, 'CICO/profileIndex.html', context)
+    
     elif request.method == "POST":
 
         #check if bouton exists
@@ -154,11 +180,7 @@ def profileIndex(request):
         elif request.POST["bouton"] == "ancien":
             request.session['listStart'] += LIST_SIZE
 
-
     return redirect("profileIndex")
-
-
-
 
 
 def faq(request):

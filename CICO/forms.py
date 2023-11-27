@@ -32,3 +32,7 @@ class CatSubmitForm(forms.ModelForm):
    class Meta:
       model = Cats
       fields = ["name", "image"]
+
+class CatAdventuresDateForm(forms.Form):
+    start = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    end = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))

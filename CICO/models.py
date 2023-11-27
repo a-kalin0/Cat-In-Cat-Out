@@ -1,10 +1,11 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
-from django.db.models import UniqueConstraint
 from django.core.exceptions import ValidationError
 import uuid
+from datetime import datetime, timedelta
+from random import randint
+import pytz
 
 
 
@@ -59,7 +60,32 @@ class Cats(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
+    def create_static_data(self):
+        start_date = timezone.now() - timedelta(days=datetime.now().weekday())
+        end_date = start_date + timedelta(days=7)
+
+        data = []
+
+        current_date = start_date
+        while current_date < end_date:
+            CatsAdventures.objects.create(
+                cat=self,
+                timestamp=current_date,
+                entrees=randint(1, 10),
+                sorties=randint(1, 10),
+            )
+            current_date += timedelta(days=1)
+        
+        return data
+        
 
 class Trigger(models.Model):
     catId = models.ForeignKey(Cats, on_delete=models.CASCADE, to_field="catId", name="catId")
     recordId = models.ForeignKey(DeviceRecords,primary_key=True,  to_field="recordId", on_delete=models.CASCADE, name = "recordId")
+
+
+class CatsAdventures(models.Model):
+    cat = models.ForeignKey(Cats, on_delete=models.CASCADE, default=1)
+    timestamp = models.DateTimeField(default=timezone.now)
+    entrees = models.IntegerField()
+    sorties = models.IntegerField()

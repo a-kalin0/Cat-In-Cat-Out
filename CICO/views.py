@@ -306,7 +306,10 @@ def newpassword(request):
 
     """
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0890a6e44288336efef074a694599d470227ea9c
     assert uidb64 is not None and token is not None
 
     try:

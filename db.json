@@ -1,40 +1,22 @@
 [
 {
     "model": "sessions.session",
-    "pk": "csitvmmpiu9nbi30h460ge97le4zcvyz",
+    "pk": "jzgr6l0f5bw5s1nqgid922rds0yaat26",
     "fields": {
-        "session_data": ".eJxVjEEKwyAURO_iOojfqtEsu-uiUOgBwvdrmrQhgWhWpXevQjZhdvNm3pfdHqxjIFsuSoA1rMc9j_2e4tZPoTB57jzSJy4VhDcur5XTuuRt8rxO-EETv68hztdjexKMmMbyVtHLiwEH1mpjvDNGWdJC04DgW-naSFJTtCoA-Esph1YhghPkhCWs0qpjnWzYPKX8zLhl1onfH61YQiA:1r1TTB:JDzOrx8HBwA0PZeDTHV9BFr59XQAPzxxLShrPbTInE4",
-        "expire_date": "2023-11-24T15:30:53.226Z"
-    }
-},
-{
-    "model": "CICO.usercico",
-    "fields": {
-        "password": "pbkdf2_sha256$600000$kHQWx5zn6ja2cNgnCFc437$p5J09Vps024sfWOGMgNrgHr++FsdVkfFLjZtFOxLuJ8=",
-        "last_login": "2023-10-25T18:27:36.260Z",
-        "is_superuser": true,
-        "username": "admin",
-        "first_name": "",
-        "last_name": "",
-        "email": "",
-        "is_staff": true,
-        "is_active": true,
-        "date_joined": "2023-10-11T10:34:23.581Z",
-        "ownedDevice": "",
-        "groups": [],
-        "user_permissions": []
+        "session_data": ".eJxVjbsOgzAMRf_FM42cAHkwVl06VKrUD0BOCIUWgZSEqeq_N1QsyJ7uuT7-wPUODXChGObhUEBLaxraNfrQjl1m4phZcm8_b6B70fxcmFvmFEbLtgrbaWS3pfPTee8eBAPFIV9X3opScsO1rqW0RspKuxpr1xO3Shjlnaid11XHuS1z2KuKiBt0BrWjTbrpoBEFTGNMj0QhQYMF9OOUfLhQ8vkN4um_iPD9Acf5SOw:1r54UU:jBaYhRTKa_t9WBcF0QRiR5QgyoS8-z8_i-Efzlu_7vY",
+        "expire_date": "2023-12-04T13:39:06.270Z"
     }
 },
 {
     "model": "CICO.usercico",
     "fields": {
         "password": "pbkdf2_sha256$600000$XYhutwtvdqDkeqD1G7msPY$b1B8GwxH5Hndtfx36F/8H6Bzeg1bKQUtBe7y17BjiCQ=",
-        "last_login": "2023-11-10T15:20:27.501Z",
+        "last_login": "2023-11-20T13:39:06.229Z",
         "is_superuser": false,
         "username": "test",
-        "first_name": "",
-        "last_name": "",
-        "email": "",
+        "first_name": "firstN",
+        "last_name": "lastN",
+        "email": "test@test.be",
         "is_staff": false,
         "is_active": true,
         "date_joined": "2023-10-11T10:45:13.951Z",
@@ -46,17 +28,35 @@
 {
     "model": "CICO.usercico",
     "fields": {
-        "password": "pbkdf2_sha256$600000$q1J4ZUv3KeuWemgtKvMzW9$/yrTgy+jtL4cdPmdHuAbB8RtXSzexvKTismZADXModI=",
-        "last_login": null,
+        "password": "pbkdf2_sha256$600000$1uypFXQ0zY20tIBfDPIfSG$dbqN5MUn9u0pRJqOHdTbtglX1Bxve/iR8C1raI7BNdw=",
+        "last_login": "2023-11-16T15:02:40.963Z",
         "is_superuser": false,
         "username": "teste",
         "first_name": "",
         "last_name": "",
-        "email": "l.pironet@st.be",
+        "email": "l.pironet@students.ephec.be",
         "is_staff": false,
         "is_active": true,
         "date_joined": "2023-10-23T13:10:35.435Z",
         "ownedDevice": null,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "CICO.usercico",
+    "fields": {
+        "password": "pbkdf2_sha256$600000$UAsPjxFgNpDfFkEDjc0lw3$1wWxo5IYxc/bu02K+XReCY6lxAdkh1B0mDMY5aAW/IA=",
+        "last_login": "2023-11-15T14:58:23.535Z",
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2023-11-13T20:29:39.096Z",
+        "ownedDevice": "12",
         "groups": [],
         "user_permissions": []
     }
@@ -146,68 +146,123 @@
     }
 },
 {
-    "model": "CICO.cats",
-    "pk": 1,
+    "model": "CICO.devicerecords",
+    "pk": 12,
     "fields": {
-        "ownerId": [
+        "deviceId": [
             "test"
         ],
-        "name": "poilu"
+        "time": "2023-11-19T13:24:17.861Z",
+        "event": "IN",
+        "isCat": true
     }
 },
 {
     "model": "CICO.cats",
-    "pk": 2,
+    "pk": "1d0d6f19-628e-485a-8ed6-e942cc5baa32",
     "fields": {
         "ownerId": [
             "test"
         ],
-        "name": "machin"
+        "name": "jin",
+        "image": "media/user_2/cat_1d0d6f19-628e-485a-8ed6-e942cc5baa32/835942032991977472.png"
     }
 },
 {
     "model": "CICO.cats",
-    "pk": 3,
+    "pk": "46ae652c-de39-42f4-9b11-f3f1f6566ad1",
     "fields": {
         "ownerId": [
             "test"
         ],
-        "name": "truc"
+        "name": "poilu",
+        "image": ""
+    }
+},
+{
+    "model": "CICO.cats",
+    "pk": "46ae652c-de39-42f4-9b11-f3f1f6566ad2",
+    "fields": {
+        "ownerId": [
+            "test"
+        ],
+        "name": "machin",
+        "image": ""
+    }
+},
+{
+    "model": "CICO.cats",
+    "pk": "46ae652c-de39-42f4-9b11-f3f1f6566ad3",
+    "fields": {
+        "ownerId": [
+            "test"
+        ],
+        "name": "truc",
+        "image": ""
+    }
+},
+{
+    "model": "CICO.cats",
+    "pk": "46ae652c-de39-42f4-9b11-f3f1f6566ada",
+    "fields": {
+        "ownerId": [
+            "test"
+        ],
+        "name": "definitely a cat",
+        "image": "media/user_2/cat_46ae652c-de39-42f4-9b11-f3f1f6566ada/12487055_138259023214693_763581287_1byZPoT.jpg"
+    }
+},
+{
+    "model": "CICO.cats",
+    "pk": "938f519c-dd5b-4389-9d24-0359a5797047",
+    "fields": {
+        "ownerId": [
+            "test"
+        ],
+        "name": "jin2",
+        "image": "media/user_2/cat_938f519c-dd5b-4389-9d24-0359a5797047/835942032991977472.png"
     }
 },
 {
     "model": "CICO.trigger",
     "pk": 3,
     "fields": {
-        "catId": 1
+        "catId": "46ae652c-de39-42f4-9b11-f3f1f6566ad1"
     }
 },
 {
     "model": "CICO.trigger",
     "pk": 4,
     "fields": {
-        "catId": 1
+        "catId": "46ae652c-de39-42f4-9b11-f3f1f6566ad1"
     }
 },
 {
     "model": "CICO.trigger",
     "pk": 5,
     "fields": {
-        "catId": 1
+        "catId": "46ae652c-de39-42f4-9b11-f3f1f6566ad1"
     }
 },
 {
     "model": "CICO.trigger",
     "pk": 6,
     "fields": {
-        "catId": 2
+        "catId": "46ae652c-de39-42f4-9b11-f3f1f6566ad2"
     }
 },
 {
     "model": "CICO.trigger",
     "pk": 7,
     "fields": {
-        "catId": 2
+        "catId": "46ae652c-de39-42f4-9b11-f3f1f6566ad2"
+    }
+},
+{
+    "model": "CICO.trigger",
+    "pk": 12,
+    "fields": {
+        "catId": "46ae652c-de39-42f4-9b11-f3f1f6566ad1"
     }
 }
 ]

@@ -357,7 +357,13 @@ def add_cat(request):
 def get_cats(request):
     if request.user.is_authenticated:
         user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', flat=True)
-        return JsonResponse(list(user_cats), safe=False)
+        catsAndStatus = []
+        for i in range(len(user_cats)-1):
+            catsAndStatus.append([user_cats[i], Cats.objects.filter(ownerId_id=request.user)[i].getStatus()["status"]])
+
+        print(catsAndStatus)
+        print(user_cats)
+        return JsonResponse(catsAndStatus, safe=False)
     return JsonResponse({'error': 'User not authenticated'}, status=401)
 
 

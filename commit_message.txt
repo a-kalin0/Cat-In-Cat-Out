@@ -1,10 +1,14 @@
-Ajout du fichier dependencies
+#XX Titre
 
-Le fichier dependencies.txt contiens tout les packages nécessaires au fonctionnement du code.
+Qui: Lucas (PirLucas)
 
-Pour l'utiliser:
-depuis le terminal dans le dossier  du projet-> pip install -r dependencies.txt
+Quoi: 
 
-Pour le mettre a jour:
-Si vous avez installé un nouveau package qui sera requis par la suite->pip freeze > dependencies.txt
-cela réecrira le fichier avec tout les packages, y compris le nouveau.
+Pourquoi: 
+
+
+Comment:
+
+notes:
+
+

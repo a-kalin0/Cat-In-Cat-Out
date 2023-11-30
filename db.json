@@ -1,20 +1,20 @@
 [
 {
     "model": "sessions.session",
-    "pk": "jzgr6l0f5bw5s1nqgid922rds0yaat26",
+    "pk": "h8lrzwhm45qtw8d89u8imh0we7vph4au",
     "fields": {
-        "session_data": ".eJxVjbsOgzAMRf_FM42cAHkwVl06VKrUD0BOCIUWgZSEqeq_N1QsyJ7uuT7-wPUODXChGObhUEBLaxraNfrQjl1m4phZcm8_b6B70fxcmFvmFEbLtgrbaWS3pfPTee8eBAPFIV9X3opScsO1rqW0RspKuxpr1xO3Shjlnaid11XHuS1z2KuKiBt0BrWjTbrpoBEFTGNMj0QhQYMF9OOUfLhQ8vkN4um_iPD9Acf5SOw:1r54UU:jBaYhRTKa_t9WBcF0QRiR5QgyoS8-z8_i-Efzlu_7vY",
-        "expire_date": "2023-12-04T13:39:06.270Z"
+        "session_data": ".eJxVj8tOxDAMRf_F606UR5ukXfJYsEBC8AGVE2emgdCiJAMLxL-TwmxG9urc6yP5Gx6eYAIhDeNtBHTwgaV8bZmeQwn1_h1jaoXGPzFFwhq39Xaj8M9mPNdlPpeQ50gNqWvm0L-FdQ_oFdfTxvy21hwd2yvskhb22Hzp5tK9EixYlnYtZRhl0Ei9CsbyURE6JwmNUaicElyQEdoOI5L3OFiprfCOjnLQuneDbdJdB5PqIMVSXyrmCtOh7-AYUw35Duv-EeeHv-Ucfn4BCDFYJg:1r8fId:GItX1wf7sjwweQAz-Grozxve5W6aAlcljjA12_nihho",
+        "expire_date": "2023-12-14T11:33:43.100Z"
     }
 },
 {
     "model": "CICO.usercico",
     "fields": {
         "password": "pbkdf2_sha256$600000$XYhutwtvdqDkeqD1G7msPY$b1B8GwxH5Hndtfx36F/8H6Bzeg1bKQUtBe7y17BjiCQ=",
-        "last_login": "2023-11-20T13:39:06.229Z",
+        "last_login": "2023-11-30T10:53:03.381Z",
         "is_superuser": false,
         "username": "test",
-        "first_name": "firstN",
+        "first_name": "firstName",
         "last_name": "lastN",
         "email": "test@test.be",
         "is_staff": false,
@@ -28,8 +28,8 @@
 {
     "model": "CICO.usercico",
     "fields": {
-        "password": "pbkdf2_sha256$600000$1uypFXQ0zY20tIBfDPIfSG$dbqN5MUn9u0pRJqOHdTbtglX1Bxve/iR8C1raI7BNdw=",
-        "last_login": "2023-11-16T15:02:40.963Z",
+        "password": "pbkdf2_sha256$600000$BhXFVfQarhPTrzPRXV3iwT$1t6yQXWBTC7dPLqkUkAO8v/NLveucHSc+pHP0QMvbHg=",
+        "last_login": "2023-11-30T11:24:37.956Z",
         "is_superuser": false,
         "username": "teste",
         "first_name": "",
@@ -38,7 +38,7 @@
         "is_staff": false,
         "is_active": true,
         "date_joined": "2023-10-23T13:10:35.435Z",
-        "ownedDevice": null,
+        "ownedDevice": "6",
         "groups": [],
         "user_permissions": []
     }
@@ -155,6 +155,185 @@
         "time": "2023-11-19T13:24:17.861Z",
         "event": "IN",
         "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 13,
+    "fields": {
+        "deviceId": [
+            "test"
+        ],
+        "time": "2023-11-30T09:18:03.396Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 14,
+    "fields": {
+        "deviceId": [
+            "teste"
+        ],
+        "time": "2023-11-30T11:26:35.873Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 15,
+    "fields": {
+        "deviceId": [
+            "teste"
+        ],
+        "time": "2023-11-30T11:31:37.170Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 16,
+    "fields": {
+        "deviceId": [
+            "teste"
+        ],
+        "time": "2023-11-30T11:33:06.404Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 17,
+    "fields": {
+        "deviceId": [
+            "teste"
+        ],
+        "time": "2023-11-30T11:35:01.317Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 18,
+    "fields": {
+        "deviceId": [
+            "test"
+        ],
+        "time": "2023-11-30T11:39:33.473Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 19,
+    "fields": {
+        "deviceId": [
+            "test"
+        ],
+        "time": "2023-11-30T11:40:00.396Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 20,
+    "fields": {
+        "deviceId": [
+            "test"
+        ],
+        "time": "2023-11-30T11:40:24.438Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 21,
+    "fields": {
+        "deviceId": [
+            "test"
+        ],
+        "time": "2023-11-30T11:42:27.787Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 22,
+    "fields": {
+        "deviceId": [
+            "test"
+        ],
+        "time": "2023-11-30T11:45:27.027Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 23,
+    "fields": {
+        "deviceId": [
+            "test"
+        ],
+        "time": "2023-11-30T11:48:00.074Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 24,
+    "fields": {
+        "deviceId": [
+            "test"
+        ],
+        "time": "2023-11-30T11:48:19.736Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 25,
+    "fields": {
+        "deviceId": [
+            "test"
+        ],
+        "time": "2023-11-30T11:48:28.183Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.devicerecords",
+    "pk": 26,
+    "fields": {
+        "deviceId": [
+            "test"
+        ],
+        "time": "2023-11-30T11:52:07.816Z",
+        "event": "IN",
+        "isCat": true
+    }
+},
+{
+    "model": "CICO.cats",
+    "pk": "0a4d3471-3154-4530-b3d4-92bfe974b602",
+    "fields": {
+        "ownerId": [
+            "teste"
+        ],
+        "name": "gifcat",
+        "image": "media/user_3/cat_0a4d3471-3154-4530-b3d4-92bfe974b602/EXCheekRub.gif"
     }
 },
 {

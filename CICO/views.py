@@ -4,7 +4,8 @@ from django.views.generic import ListView
 from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword, ContactUsForm, CatSubmitForm, CodeForm
 from django.contrib.auth import authenticate, login, get_user_model, logout
 
-from .models import Statuses, UserCICO, Cats, DeviceRecords, Trigger
+from .models import Statuses, UserCICO, Cats, DeviceRecords #, Trigger
+
 
 from django.shortcuts import redirect
 from CICO.forms import ContactUsForm

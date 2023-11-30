@@ -82,7 +82,17 @@ def mail_sent(request):
         if form.is_valid():
             if form.cleaned_data["code"] == request.session["validationCode"]:
                 request.session["validationCode"] = ""
-                return redirect(newpassword)
+
+                if request.session["validating"] == "newAccount":
+                    user = UserCICO.objects.get(email=request.session["passwordResetEmail"])
+                    user.is_active = True
+                    user.save()
+                    login(request, user)
+                    request.session['IP'] = request.META.get("REMOTE_ADDR")
+                    request.session['user'] = user.id
+                    return redirect('profileIndex')
+                elif request.session["validating"] == "newPassword":
+                    return redirect(newpassword)
             else:
                 print("wrong code")
         else:
@@ -133,19 +143,36 @@ def connection(request, formType):
                     newUser.is_active = False
                     newUser.save()
     
-                    current_site = get_current_site(request)
-                    mail_subject = "Confirmation d'inscription"
-                    message = render_to_string('CICO/acc_activate_email.html', {
-                                'user': newUser,
-                                'domain': current_site.domain,
-                                'uid':urlsafe_base64_encode(force_bytes(newUser.pk)),
-                                'token':account_activation_token.make_token(newUser),
-                            })
-                    to_email = form.cleaned_data.get('email')
-                    email = EmailMessage(
-                                mail_subject, message, to=[to_email]
-                    )
-                    email.send()
+                    current_site = get_current_site(request) #osef?
+
+                    request.session["validating"] = "newAccount"
+                    request.session["passwordResetEmail"] = newUser.email
+                    request.session["validationCode"] = generateCode()
+
+                    subject = "Confirmation d'inscription"
+                    email_template_name = "CICO/acc_activate_email.html"
+                    c = {
+                        "email": newUser.email,
+                        'site_name': 'YourWebsite',
+                        "user": newUser,
+                        "code": request.session["validationCode"],
+                        'protocol': 'http',
+                    }
+                    email = render_to_string(email_template_name, c)
+                    try:
+                        send_mail(subject, email, 'server@example.com', [newUser.email], fail_silently=False)
+                    except Exception as e:
+                        return HttpResponse('Invalid header found.')
+
+
+
+
+
+
+
+
+
+
                     return redirect('../mail_sent')
 
                     #request.session['user'] = newUser.id  # A backend authenticated the credentials
@@ -218,7 +245,7 @@ def profileNoDevice(request):
             user = UserCICO.objects.get(username=request.user)
             user.ownedDevice = number
             user.save()
-            return redirect('profileIndex', listButton="None")
+            return redirect('profileIndex')
     else:
         form = AddDeviceNumber()
         return render(request, 'CICO/profileNoDevice.html', {"form":form})
@@ -262,6 +289,7 @@ def forgotpassword(request):
         password_reset_form = ForgottenPassword(request.POST)
         if password_reset_form.is_valid():
             data = password_reset_form.cleaned_data['email']
+            request.session["validating"] = "newPassword"
             request.session["passwordResetEmail"] = data
             request.session["validationCode"] = generateCode()
             associated_users = UserCICO.objects.filter(email=data)

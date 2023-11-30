@@ -293,3 +293,21 @@ def delete_cat(request, catId):
             os.remove(cat.image.path)
     cat.delete()
     return JsonResponse({'message': 'Cat deleted successfully'})
+
+@login_required
+def modify_cat(request, catId):
+    cat = get_object_or_404(Cats, catId=catId, ownerId_id=request.user)
+    if request.method == 'POST':
+        form = CatSubmitForm(request.POST, request.FILES, instance=cat)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({
+                'success': True, 
+                'message': 'Cat modified successfully',
+                'catId': str(cat.catId),  # Assuming catId is a UUID
+                'newName': cat.name
+            })
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})

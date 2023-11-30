@@ -140,12 +140,41 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-light border rounded-pill" type="button" data-bs-dismiss="modal">Annuler</button>
+                <button id="modifyCatBtn" class="btn btn-primary rounded-pill">Modifier</button>
                 <button class="btn btn-danger border rounded-pill deleteCatBtn" type="submit">Supprimer
                     chat</button>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modify Cat Modal -->
+<div class="modal fade" id="modifyCatModal" tabindex="-1" role="dialog" aria-labelledby="modifyCatModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modifyCatModalLabel">Modifier les informations du chat</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="modifyCatForm" enctype="multipart/form-data" method="PUT">
+                    {% csrf_token %}
+                    <input type="text" id="editCatName" name="name" class="form-control" placeholder="New Cat Name">
+                    <input type="file" id="editCatImage" style="margin-top: 15px;width: 100%;" required=""
+                        accept="image/*" class="form-control mt-2">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-primary rounded-pill" id="submitModifyCat">Sauvegarder</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 <div id="toastContainer" class="toast-container position-fixed top-0 start-50 translate-middle-x p-3"
     style="z-index: 11;">
@@ -329,7 +358,9 @@
             type: 'DELETE',
             url: '/CICO/delete_cat/' + catId,
             headers: {
-                'X-CSRFToken': getCookie('csrftoken')  // Make sure to include CSRF token
+                'X-CSRFToken': getCookie('csrftoken'),  // Make sure to include CSRF token
+                'X-Requested-With': 'XMLHttpRequest'
+
             },
             success: function (response) {
                 // Handle success (e.g., close modal, remove cat from list, show message)
@@ -344,6 +375,74 @@
         });
     }
 </script>
+<script>
+    $(document).on('click', '#modifyCatBtn', function () {
+        var catId = $('#catDetailsModal').data('cat-id');
+        var catName = $(this).data('cat-name');
+        // Set the catId and current name in the modify modal
+        $('#modifyCatModal').find('#editCatName').val(catName);
+        $('#modifyCatModal').find('#submitModifyCat').data('cat-id', catId);
+        $('#catDetailsModal').modal('hide').click();
+
+        // Show the modify cat modal
+        $('#modifyCatModal').modal('show');
+
+    });
+
+    $(document).on('click', '#submitModifyCat', function () {
+        var catId = $(this).data('cat-id');
+        var newName = $('#editCatName').val();
+        var newImage = $('#editCatImage')[0].files[0];
+
+        var formData = new FormData();
+        formData.append('name', newName);
+        if (newImage) {
+            formData.append('image', newImage);
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/CICO/modify_cat/' + catId + '/',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+
+            },
+            success: function (response) {
+                if (response.success) {
+                    // Update UI accordingly
+                    var updatedCat = {
+                        catId: response.catId,
+                        name: response.newName
+                    };
+
+                    // Update the cat row
+                    updateCatRow(updatedCat);
+
+                    $('#modifyCatModal').modal('hide');
+                    alert('Cat modified successfully');
+                } else {
+                    alert('Error modifying cat: ' + JSON.stringify(response.errors));
+                }
+            },
+            error: function (error) {
+                console.log(error)
+                alert('Error modifying cat');
+            }
+        });
+    });
+
+    function updateCatRow(cat) {
+        var catButtonHtml = '<button class="btn d-flex my-auto justify-content-xl-start cat-btn" data-cat-id="' + cat.catId.replace(/-/g, '') + '" type="button" style="width: 100%;">' + cat.name + '<i class="fas fa-cat fs-4" style="margin-left: 10px;"></i></button>';
+        // Find the existing cat row and update its contents
+        $(".cat-btn[data-cat-id='" + cat.catId.replace(/-/g, '') + "']").closest('td').html(catButtonHtml);
+    }
+</script>
+
 
 
 {% endblock %}

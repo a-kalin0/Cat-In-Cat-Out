@@ -18,6 +18,7 @@ urlpatterns = [
     path('get_cats/', views.get_cats, name='get_cats'),
     path('get_cat_details/<str:catId>/', views.get_cat_details, name='get_cat_details'),
     path('delete_cat/<str:catId>/', views.delete_cat, name='delete_cat'),
+    path('modify_cat/<str:catId>/', views.modify_cat, name='modify_cat'),
     path("forgotpassword", views.forgotpassword, name ="forgotpassword"),
     path("newpassword/<uidb64>/<token>/", views.newpassword, name="newpassword"),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),

@@ -60,8 +60,8 @@ class Cats(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
-    def getStatus(self):
-        return Cats.objects.filter(catId=self.catId).annotate(status=F("trigger__recordId_id__event")).values("status").last()
+    #def getStatus(self):
+    #    return Cats.objects.filter(catId=self.catId).annotate(status=F("trigger__recordId_id__event")).values("status").last()
 
 
 class Trigger(models.Model):

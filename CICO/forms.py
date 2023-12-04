@@ -32,3 +32,10 @@ class CatSubmitForm(forms.ModelForm):
    class Meta:
       model = Cats
       fields = ["name", "image"]
+
+class CodeForm(forms.Form):
+   code = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+
+class AddDeviceNumber(forms.Form):
+   deviceNumber = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+

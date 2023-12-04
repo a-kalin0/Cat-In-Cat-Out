@@ -33,6 +33,8 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CatSerializer
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
+import os
 from random import randint
 from datetime import datetime
 from django.urls import reverse
@@ -333,37 +335,6 @@ def newpassword(request):
     return render(request, "CICO/newpassword.html", context={"form": new_password_form})
 
 
-    """
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 0890a6e44288336efef074a694599d470227ea9c
-    assert uidb64 is not None and token is not None
-
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = UserCICO.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, UserCICO.DoesNotExist):
-        user = None
-
-    if user is not None and password_reset_token.check_token(user, token):
-        # Le jeton est valide, l'utilisateur peut réinitialiser son mot de passe
-        if request.method == 'POST':
-            new_password_form = NewPassword(request.POST)
-            if new_password_form.is_valid():
-                new_password = new_password_form.cleaned_data['newPassword']
-                user.set_password(new_password)
-                user.save()
-                logger.info(f"Password changed for user {user.username}")
-                return redirect('reset_done')  # Rediriger vers la page de réussite
-        else:
-            new_password_form = NewPassword()
-
-        return render(request, "CICO/newpassword.html", context={"form": new_password_form})
-    else:
-        return HttpResponse('The reset link is invalid, possibly because it has already been used. Please request a new password reset.')
-    """
 @login_required
 def add_cat(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -374,10 +345,10 @@ def add_cat(request):
                 cat.ownerId = request.user  # Set ownerId to the current user
                 cat.clean()  # Call full_clean to run all other validations including clean()
                 cat.save()
-                return JsonResponse({'success': True, 'catName' : cat.name}, status=201)  # Or any other success response
+                return JsonResponse({'success': True, 'catName' : cat.name, 'catId': cat.catId}, status=201)  # Or any other success response
             
             except ValidationError:
-                return JsonResponse({'success': False, 'errors': form.errors}, status=405)
+                return JsonResponse({'success': False, 'errors': form.errors}, status=400)
         else:
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     return JsonResponse({'success': False, 'errors': 'Invalid request'}, status=400)
@@ -389,13 +360,46 @@ def get_cats(request):
         catsAndStatus = []
         for i in range(len(user_cats)-1):
             catsAndStatus.append([user_cats[i], Cats.objects.filter(ownerId_id=request.user)[i].getStatus()["status"]])
-
-        print(catsAndStatus)
-        print(user_cats)
         return JsonResponse(catsAndStatus, safe=False)
     return JsonResponse({'error': 'User not authenticated'}, status=401)
 
+@login_required
+def get_cat_details(request, catId):
+    # Fetch the cat details
+    cat = Cats.objects.get(ownerId_id=request.user, catId=catId)
+    return JsonResponse({
+        'name': cat.name,
+        'image_url': cat.image.url if cat.image else ''
+    })
 
+
+@login_required
+def delete_cat(request, catId):
+    cat = get_object_or_404(Cats, catId=catId, ownerId_id=request.user)
+    if cat.image:
+        if os.path.isfile(cat.image.path):
+            os.remove(cat.image.path)
+    cat.delete()
+    return JsonResponse({'message': 'Cat deleted successfully'})
+
+@login_required
+def modify_cat(request, catId):
+    cat = get_object_or_404(Cats, catId=catId, ownerId_id=request.user)
+    if request.method == 'POST':
+        form = CatSubmitForm(request.POST, request.FILES, instance=cat)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({
+                'success': True, 
+                'message': 'Cat modified successfully',
+                'catId': str(cat.catId),  # Assuming catId is a UUID
+                'newName': cat.name
+            })
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+  
 def profile(request):
     if not checkIP(request) or not request.user.is_authenticated:
         return render(request, 'CICO/unauthorized.html', status=401)
@@ -411,3 +415,4 @@ def profile(request):
         return redirect("profile")
     else:
         return render(request, "CICO/profile.html", {"user":user})
+

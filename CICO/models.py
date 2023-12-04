@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.db.models import UniqueConstraint
 from django.core.exceptions import ValidationError
-import uuid
+import uuid6
 
 
 
@@ -47,7 +47,7 @@ def cat_directory_path(instance, filename):
 class Cats(models.Model):
     ...
     ownerId = models.ForeignKey(UserCICO, on_delete=models.CASCADE)
-    catId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    catId = models.UUIDField(primary_key=True, default=uuid6.uuid7, editable=False)
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to=cat_directory_path, null=True, blank=True)
     #add other details if needed

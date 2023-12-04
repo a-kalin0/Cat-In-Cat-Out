@@ -312,7 +312,7 @@
 
 
     function appendCatRow(cats) {
-        var catRow = '<tr><td><button class="btn d-flex my-auto justify-content-xl-start" type="button" style="width: 100%;">' + cats[0] + ', état: ' + cats[1] + '<i class="fas fa-cat fs-4" style="margin-left: 10px;"></i></button></td></tr>';
+        var catRow = '<tr><td><button class="btn d-flex my-auto justify-content-xl-start cat-btn" data-cat-id="' + cats[1].replace(/-/g, '') + '" type="button" style="width: 100%;">' + cats[0] + ', état: ' + cats[2] + '<i class="fas fa-cat fs-4" style="margin-left: 10px;"></i></button></td></tr>';
 
         $('#catList').append(catRow);
     }

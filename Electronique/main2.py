@@ -5,6 +5,7 @@ import cv2
 import os
 import send_data
 
+
 # Configuration de la caméra
 camera = Picamera2()
 

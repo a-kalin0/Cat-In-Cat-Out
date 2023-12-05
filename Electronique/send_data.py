@@ -1,20 +1,15 @@
 import requests
 import json
 
-url = "http://192.168.15.98:8000/CICO/endpoint"
 
-# Les données textuelles
-data = {
-    "champ1": "valeur1",
-    "champ2": "valeur2"
-}
+#url = "http://192.168.43.11:8000/CICO/postRaspberry"
+url = "http://172.20.10.6:8000/CICO/postRaspberry"
+def send_data(dictionnaire) :
 
-# La photo à envoyer
-#files = {
-#    'photo': open('/chemin/vers/la/photo.jpg', 'rb')
-}
-
-# Effectuer la requête POST
-#response = requests.post(url, data=data, files=files)
-response = requests.post(url, data=data)
-print(response.text)
+    #token et cookies
+    headers = {'X-CSRFToken': 'votre_token_csrf'}
+    cookies = {'csrftoken': 'votre_token_csrf'}
+    # Effectuer la requête POST
+    # response = requests.post(url, data=data, files=dictionnaire, headers=headers, cookies=cookies)
+    response = requests.post(url, files=dictionnaire, headers=headers, cookies=cookies)
+    print(response.text)

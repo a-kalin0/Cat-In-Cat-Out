@@ -9,7 +9,7 @@ import send_data
 camera = Picamera2()
 
 # Configuration du capteur de mouvement
-pir = MotionSensor(4)  
+pir = MotionSensor(4)
 
 try:
     print("Attente du mouvement. Appuyez sur Ctrl+C pour quitter.")
@@ -33,11 +33,11 @@ try:
             
             # Construit le dictionnaire pour les frames
             frames_dict = {}
-    
+            open_files = []  # Liste pour stocker les références aux fichiers ouverts
+
             # Enregistre les 4 premières frames
             for i in range(4):
                 ret, frame = cam.read()
-
                 if ret:
                     # Obtient le nom de la vidéo sans l'extension
                     video_name_without_extension = os.path.splitext(os.path.basename(video_path))[0]
@@ -48,15 +48,22 @@ try:
                     # Enregistre l'image
                     cv2.imwrite(image_path, frame)
                     print(f"Image {video_name_without_extension}_frame{i+1}.jpg créée avec succès pour la vidéo {filename}")
-                    
-                    # Ajoute le chemin de l'image au dictionnaire
-                    frames_dict[f"frame{i+1}"] = open(image_path, 'rb')
+
+                    # Ouvre le fichier image et l'ajoute au dictionnaire
+                    img_file = open(image_path, 'rb')
+                    frames_dict[f"frame{i+1}"] = (os.path.basename(image_path), img_file, 'image/jpeg')
+                    open_files.append(img_file)  # Ajoute le fichier ouvert à la liste
 
             # Ferme la vidéo
             cam.release()
-            # appel de la fonction tati
-            send_data(frames_dict)
-            print("données envoyée", frames_dict)
+
+            # Appel de la fonction send_data
+            send_data.send_data(frames_dict)
+            print("Données envoyées", frames_dict)
+
+            # Ferme tous les fichiers ouverts
+            for file in open_files:
+                file.close()
 
         else:
             print("Aucun mouvement détecté.")

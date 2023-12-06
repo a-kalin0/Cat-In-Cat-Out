@@ -345,7 +345,11 @@ def add_cat(request):
                 cat.ownerId = request.user  # Set ownerId to the current user
                 cat.clean()  # Call full_clean to run all other validations including clean()
                 cat.save()
-                return JsonResponse({'success': True, 'catName' : cat.name, 'catId': cat.catId}, status=201)  # Or any other success response
+                catsAndStatus = [cat.name, cat.catId,
+                                      cat.getStatus()["status"]]
+
+
+                return JsonResponse({'success': True, 'catsAndStatus': catsAndStatus}, status=201)  # Or any other success response
             
             except ValidationError:
                 return JsonResponse({'success': False, 'errors': form.errors}, status=400)
@@ -358,7 +362,6 @@ def get_cats(request):
     if request.user.is_authenticated:
         user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', 'catId')
         catsAndStatus = []
-        print(user_cats)
         for i in range(len(user_cats)-1):
             catsAndStatus.append([user_cats[i][0], user_cats[i][1], Cats.objects.filter(ownerId_id=request.user)[i].getStatus()["status"]])
         return JsonResponse(catsAndStatus, safe=False)

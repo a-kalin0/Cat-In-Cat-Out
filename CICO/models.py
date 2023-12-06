@@ -3,14 +3,7 @@ from django.db.models import F
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-
-import uuid
-from datetime import datetime, timedelta
-from random import randint
-import pytz
-
 import uuid6
-
 
 
 

@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
-from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword, ContactUsForm, CatSubmitForm
+
+from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword, ContactUsForm, CatSubmitForm, CodeForm, AddDeviceNumber
 from django.contrib.auth import authenticate, login, get_user_model, logout
 from .models import UserCICO, Cats, DeviceRecords, CatsAdventures
+from django.views.generic import ListView
 import logging
 logger = logging.getLogger('django')
 from django.http import HttpResponse
@@ -17,21 +19,31 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from datetime import timedelta
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
+import os
+from random import randint
+from datetime import datetime
+from django.urls import reverse
 
 LIST_SIZE = 2
 
-
-def UpdateList(request, deviceId):
-    recordList = GetRecords(deviceId)[::-1]
+def UpdateList(request, deviceId, date="00-00-000"):
+    recordList = GetRecords(deviceId, date)[::-1]
     newList = recordList[request.session['listStart']:request.session['listStart'] + LIST_SIZE]
     if len(newList) == 0:
         newList = recordList[request.session['listStart'] - LIST_SIZE:request.session['listStart']]
         request.session['listStart'] -= LIST_SIZE
+
     return newList
 
-
-def GetRecords(deviceId):
-    querySet = DeviceRecords.objects.filter(deviceId=deviceId).annotate(catName=F('trigger__catId__name'))
+def GetRecords(deviceId,date):
+    if date == "00-00-0000":
+        querySet = DeviceRecords.objects.filter(deviceId=deviceId).annotate(catName=F('trigger__catId__name'))
+    else:
+        dateObject = datetime.strptime(date, '%Y-%m-%d').date()
+        querySet = DeviceRecords.objects.filter(deviceId=deviceId,
+            time__year=dateObject.year, time__month=dateObject.month,
+                                            time__day=dateObject.day).annotate(catName=F('trigger__catId__name'))
     return querySet.values()
 
 
@@ -50,9 +62,32 @@ def checkIP(request):
 def vue(request):
     return render(request, 'CICO/index.html')
 
+def generateCode():
+    return str(randint(100000,999999)) #starts from 100000 to be sure that the number has at least 6 digits (and i'm too lazy to find a better way to do it)
 
 def mail_sent(request):
-    return render(request, 'CICO/mail_sent.html')   
+    if request.method == "POST":
+        form = CodeForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data["code"] == request.session["validationCode"]:
+                request.session["validationCode"] = ""
+
+                if request.session["validating"] == "newAccount":
+                    user = UserCICO.objects.get(email=request.session["passwordResetEmail"])
+                    user.is_active = True
+                    user.save()
+                    login(request, user)
+                    request.session['IP'] = request.META.get("REMOTE_ADDR")
+                    request.session['user'] = user.id
+                    return redirect('profileIndex')
+                elif request.session["validating"] == "newPassword":
+                    return redirect(newpassword)
+            else:
+                print("wrong code")
+        else:
+            print("form invalid")
+    form = CodeForm()
+    return render(request, 'CICO/mail_sent.html', {"form":form})
 
 
 def reset_done(request):
@@ -98,19 +133,27 @@ def connection(request, formType):
                     newUser.is_active = False
                     newUser.save()
     
-                    current_site = get_current_site(request)
-                    mail_subject = "Confirmation d'inscription"
-                    message = render_to_string('CICO/acc_activate_email.html', {
-                                'user': newUser,
-                                'domain': current_site.domain,
-                                'uid':urlsafe_base64_encode(force_bytes(newUser.pk)),
-                                'token':account_activation_token.make_token(newUser),
-                            })
-                    to_email = form.cleaned_data.get('email')
-                    email = EmailMessage(
-                                mail_subject, message, to=[to_email]
-                    )
-                    email.send()
+                    current_site = get_current_site(request) #osef?
+
+                    request.session["validating"] = "newAccount"
+                    request.session["passwordResetEmail"] = newUser.email
+                    request.session["validationCode"] = generateCode()
+
+                    subject = "Confirmation d'inscription"
+                    email_template_name = "CICO/acc_activate_email.html"
+                    c = {
+                        "email": newUser.email,
+                        'site_name': 'YourWebsite',
+                        "user": newUser,
+                        "code": request.session["validationCode"],
+                        'protocol': 'http',
+                    }
+                    email = render_to_string(email_template_name, c)
+                    try:
+                        send_mail(subject, email, 'server@example.com', [newUser.email], fail_silently=False)
+                    except Exception as e:
+                        return HttpResponse('Invalid header found.')
+
                     return redirect('../mail_sent')
 
                     #request.session['user'] = newUser.id  # A backend authenticated the credentials
@@ -124,14 +167,18 @@ def connection(request, formType):
 def profileIndex(request):
     if not checkIP(request) or not request.user.is_authenticated:
         return render(request, 'CICO/unauthorized.html', status=401)
-
+    if (UserCICO.objects.get(username=request.user).ownedDevice == None):
+        return redirect("profileNoDevice")
     try:
         request.session['listStart']
     except:
         request.session['listStart'] = 0
 
-    user = request.user
-    recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice)
+    try:
+        request.session["filterDate"]
+    except:
+        request.session["filterDate"] = "00-00-0000"
+
 
 
     if request.method == "GET":
@@ -156,28 +203,60 @@ def profileIndex(request):
                 cat_data[cat_name]['entrees'].append(adventure.entrees)
                 cat_data[cat_name]['sorties'].append(adventure.sorties)
                 print(cat_data[cat_name]['entrees'])
-
+        
+        recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice, request.session["filterDate"] )
         context = {
             "user": user.username,
             "recordList": recordList, 
             "xValues": xValues,
             "cat_data": cat_data,
             "barColors": barColors,
+            "date":request.session["filterDate"],
         }
 
         return render(request, 'CICO/profileIndex.html', context)
     
     elif request.method == "POST":
+        try:
+            datetime.strptime(request.POST["bouton"], '%Y-%m-%d').date()
+        except:
+            print("no date selected, using default value")
+        else:
+            request.session["filterDate"] = request.POST["bouton"]
+            request.session['listStart'] = 0
 
-        #check if bouton exists
-
-        if request.POST["bouton"] == "récent":
+        if request.POST["bouton"] == "Annuler":
+            request.session["filterDate"] = "00-00-0000"
+        elif request.POST["bouton"] == "récent":
             request.session['listStart'] = max(0, request.session[
             'listStart'] - LIST_SIZE)  # the max function is used to prevent the substraction from resulting in a negative
         elif request.POST["bouton"] == "ancien":
             request.session['listStart'] += LIST_SIZE
 
+    
     return redirect("profileIndex")
+
+
+
+def getProfileIndex(request, recordList):
+    return render(request, 'CICO/profileIndex.html')
+
+def profileNoDevice(request):
+    message = ""
+    if (request.method == "POST"):
+        form = AddDeviceNumber(request.POST)
+        if form.is_valid():
+            number = form.cleaned_data["deviceNumber"]
+            if number in UserCICO.objects.values_list("ownedDevice", flat=True):
+                message = "Wrong device number"
+                return render(request, 'CICO/profileNoDevice.html', {"form": form, "message": message})
+            user = UserCICO.objects.get(username=request.user)
+            user.ownedDevice = number
+            user.save()
+            return redirect('profileIndex')
+    else:
+        form = AddDeviceNumber()
+        return render(request, 'CICO/profileNoDevice.html', {"form":form})
 
 
 def faq(request):
@@ -196,6 +275,8 @@ def commande(request):
 def activate(request, uidb64, token):
     """Check the activation token sent via mail"""
     User = get_user_model()
+    print(request.POST["uidb64"])
+    print(request.POST["token"])
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -216,6 +297,9 @@ def forgotpassword(request):
         password_reset_form = ForgottenPassword(request.POST)
         if password_reset_form.is_valid():
             data = password_reset_form.cleaned_data['email']
+            request.session["validating"] = "newPassword"
+            request.session["passwordResetEmail"] = data
+            request.session["validationCode"] = generateCode()
             associated_users = UserCICO.objects.filter(email=data)
             if associated_users.exists():
                 for user in associated_users:
@@ -223,11 +307,9 @@ def forgotpassword(request):
                     email_template_name = "CICO/password_reset_email.html"
                     c = {
                         "email": user.email,
-                        'domain': get_current_site(request).domain,
                         'site_name': 'YourWebsite',
-                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                         "user": user,
-                        'token': password_reset_token.make_token(user),
+                        "code": request.session["validationCode"],
                         'protocol': 'http',
                     }
                     email = render_to_string(email_template_name, c)
@@ -240,31 +322,23 @@ def forgotpassword(request):
     return render(request, "CICO/resetpassword.html", context={"password_reset_form": password_reset_form})
 
 
-def newpassword(request, uidb64=None, token=None):
-    assert uidb64 is not None and token is not None
 
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = UserCICO.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, UserCICO.DoesNotExist):
-        user = None
-
-    if user is not None and password_reset_token.check_token(user, token):
-        # Le jeton est valide, l'utilisateur peut réinitialiser son mot de passe
-        if request.method == 'POST':
-            new_password_form = NewPassword(request.POST)
-            if new_password_form.is_valid():
-                new_password = new_password_form.cleaned_data['newPassword']
-                user.set_password(new_password)
-                user.save()
-                logger.info(f"Password changed for user {user.username}")
-                return redirect('reset_done')  # Rediriger vers la page de réussite
-        else:
-            new_password_form = NewPassword()
-
-        return render(request, "CICO/newpassword.html", context={"form": new_password_form})
+def newpassword(request):
+    if request.method == 'POST':
+        new_password_form = NewPassword(request.POST)
+        if new_password_form.is_valid():
+            new_password = new_password_form.cleaned_data['newPassword']
+            user = UserCICO.objects.get(email=request.session["passwordResetEmail"])
+            user.set_password(new_password)
+            user.save()
+            request.session["passwordResetEmail"] = ""
+            logger.info(f"Password changed for user {user.username}")
+            return redirect('reset_done')  # Rediriger vers la page de réussite
     else:
-        return HttpResponse('The reset link is invalid, possibly because it has already been used. Please request a new password reset.')
+        new_password_form = NewPassword()
+
+    return render(request, "CICO/newpassword.html", context={"form": new_password_form})
+
 
 @login_required
 def add_cat(request):
@@ -276,10 +350,14 @@ def add_cat(request):
                 cat.ownerId = request.user  # Set ownerId to the current user
                 cat.clean()  # Call full_clean to run all other validations including clean()
                 cat.save()
-                return JsonResponse({'success': True, 'catName' : cat.name}, status=201)  # Or any other success response
+                catsAndStatus = [cat.name, cat.catId,
+                                      cat.getStatus()["status"]]
+
+
+                return JsonResponse({'success': True, 'catsAndStatus': catsAndStatus}, status=201)  # Or any other success response
             
             except ValidationError:
-                return JsonResponse({'success': False, 'errors': form.errors}, status=405)
+                return JsonResponse({'success': False, 'errors': form.errors}, status=400)
         else:
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     return JsonResponse({'success': False, 'errors': 'Invalid request'}, status=400)
@@ -287,6 +365,63 @@ def add_cat(request):
 @login_required
 def get_cats(request):
     if request.user.is_authenticated:
-        user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', flat=True)
-        return JsonResponse(list(user_cats), safe=False)
+        user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', 'catId')
+        catsAndStatus = []
+        for i in range(len(user_cats)-1):
+            catsAndStatus.append([user_cats[i][0], user_cats[i][1], Cats.objects.filter(ownerId_id=request.user)[i].getStatus()["status"]])
+        return JsonResponse(catsAndStatus, safe=False)
     return JsonResponse({'error': 'User not authenticated'}, status=401)
+
+@login_required
+def get_cat_details(request, catId):
+    # Fetch the cat details
+    cat = Cats.objects.get(ownerId_id=request.user, catId=catId)
+    return JsonResponse({
+        'name': cat.name,
+        'image_url': cat.image.url if cat.image else ''
+    })
+
+
+@login_required
+def delete_cat(request, catId):
+    cat = get_object_or_404(Cats, catId=catId, ownerId_id=request.user)
+    if cat.image:
+        if os.path.isfile(cat.image.path):
+            os.remove(cat.image.path)
+    cat.delete()
+    return JsonResponse({'message': 'Cat deleted successfully'})
+
+@login_required
+def modify_cat(request, catId):
+    cat = get_object_or_404(Cats, catId=catId, ownerId_id=request.user)
+    if request.method == 'POST':
+        form = CatSubmitForm(request.POST, request.FILES, instance=cat)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({
+                'success': True, 
+                'message': 'Cat modified successfully',
+                'catId': str(cat.catId),  # Assuming catId is a UUID
+                'newName': cat.name
+            })
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+  
+def profile(request):
+    if not checkIP(request) or not request.user.is_authenticated:
+        return render(request, 'CICO/unauthorized.html', status=401)
+
+    user = UserCICO.objects.get(username=request.user)
+
+    if request.method == "POST":
+        if list(request.POST.keys())[1] == "deleteAccount":
+            user.delete()
+            return redirect("connexion", formType="connexion")
+        setattr(user,str(list(request.POST.keys())[1]), str(list(request.POST.values())[1]))
+        user.save()
+        return redirect("profile")
+    else:
+        return render(request, "CICO/profile.html", {"user":user})
+

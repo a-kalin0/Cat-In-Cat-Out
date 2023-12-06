@@ -1,26 +1,18 @@
-#XX Modification des paramètres de la page connexion et création de la page logout
 
-Qui: Lucas (PirLucas)
+#61 Modification du système de confirmation par mail pour le reset de mdp
 
-Quoi: 
+Qui: @PirLucas, basé sur le travail de @a-kalin0
 
-Modification des paramètres de la page connexion
-Ajout d'une page logout
-la déconnection passe par la page de logout
+Quoi: Jusqu'a maintenant, le mail de confirmation envoyé pour la réinitialisation de mot de passe fournissait un lien qui permettait d'authentifier l'utilisateur grace à un uuid et un token. 
 
-Pourquoi: 
+Ce système de confirmation à été remplacé par un code de confirmation à entrer dans un formulaire. Ce code est envoyé par mail et doit etre copié-collé par l'utilisateur. 
 
-Choisir entre le formulaire de connexion ou de création de compte via l'url n'est pas une faille de sécurité, donc on peut garder ça, mais il fallait rendre ça plus clair, avec des mot plutot que des id.
-C'est plus propre de créer une page de logout plutot que de faire le logout dans la page de connexion avec un certain paramètre.
+Pourquoi: La confirmation par token utilisait les paramètres dans l'url ce que la saite parole de mr Schalkwijk nous à informé que c'était une très mauvaise chose.
+La première altérnative (utiliser une requète POST) ne marche pas via un mail (ou alors c'est vraiment super dur)
+Après réflexion, il se trouve qu'un code de vérification est aussi une manière de confirmer son identité valable et est beaucoup plus simple à implémenter tout en évitant le passage de paramètres dans l'url.
 
 
-Comment:
-
-
-formId remplacé par formType
-les valeurs int remplacées par les noms des formulaires pour plus de clarté
-création d'une vue et d'une url de logout
+Comment: Le mail de vérification contient un code, la page qui confirme l'envoi du mail contiend un formulaire dans lequel on doit entrer le code. Si le code correspond à celui géneré par le serveur, l'utilisateur est redirigé vers la page de nouveau mot de passe.
 
 notes:
-
 

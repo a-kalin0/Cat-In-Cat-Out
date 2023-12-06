@@ -28,14 +28,27 @@ from .serializers import CatSerializer
 from django.core.exceptions import ValidationError
 from django.views.decorators.csrf import csrf_exempt
 
+#@csrf_exempt
+#def postRaspberry(request):
+#    owner =  UserCICO.objects.get(id=2)
+#   if request.method == 'POST':
+#      print(request.FILES)
+#        AddRecord(owner,"IN", True, request.FILES["dictionnaire"])
+#        return HttpResponse("test")
 @csrf_exempt
 def postRaspberry(request):
-    owner =  UserCICO.objects.get(id=2)
+    owner = UserCICO.objects.get(id=2)
     if request.method == 'POST':
         print(request.FILES)
-        AddRecord(owner,"IN", True, request.FILES["photo"])
-        return HttpResponse("test") 
-    
+
+        # Itérer sur tous les fichiers dans request.FILES
+        for key, uploaded_file in request.FILES.items():
+            # Traitez chaque fichier, par exemple, en l'enregistrant ou en effectuant d'autres opérations nécessaires
+            AddRecord(owner, "IN", True, uploaded_file)
+
+        return JsonResponse({"message": "Photos enregistrées avec succès"})
+    else:
+        return JsonResponse({"error": "Aucune photo reçue"}, status=400)
 LIST_SIZE = 2
 
 def UpdateList(request, deviceId):

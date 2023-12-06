@@ -1,5 +1,6 @@
 from gpiozero import MotionSensor
 from picamera2 import Picamera2
+import send_data
 import time
 import cv2
 import os
@@ -24,16 +25,19 @@ try:
 
             # Récupère la date et l'heure pour le nom de fichier
             timestamp = time.strftime("%d-%m-%y-%H-%M-%S", time.localtime())
-            filename = f"{sensor_trigger}-{timestamp}.mp4"
-            video_path = f"/home/cico/Videos/{filename}"
+            filename = f"/home/cico/Pictures/{sensor_trigger}-{timestamp}.mp4"
 
             # Enregistre la vidéo pendant 10 secondes
-            camera.start_and_record_video(video_path, duration=10)
-            print(f"Vidéo enregistrée : {filename}")
+            camera.start_and_record_video(filename, duration=10)
+            print(f"Vidéo enregistrée")
             
             # Ouvre la vidéo
             video_path = filename
             cam = cv2.VideoCapture(video_path, cv2.CAP_FFMPEG)
+            
+            # Construit le dictionnaire pour les frames
+            frames_dict = {}
+            open_files = []  # Liste pour stocker les références aux fichiers ouverts
 
             frame_count = int(cam.get(cv2.CAP_PROP_FRAME_COUNT))
             start_frame = frame_count - 4 if sensor_trigger == "in" else 0
@@ -48,8 +52,21 @@ try:
                     image_path = f"/home/cico/Pictures/{sensor_trigger}-{timestamp}_frame{i+1}.jpg"
                     cv2.imwrite(image_path, frame)
                     print(f"Image {sensor_trigger}-{timestamp}_frame{i+1}.jpg créée avec succès pour la vidéo {filename}")
+                    
+                    # Ouvre le fichier image et l'ajoute au dictionnaire
+                    img_file = open(image_path, 'rb')
+                    frames_dict[f"frame{i+1}"] = (os.path.basename(image_path), img_file, 'image/jpg')
+                    open_files.append(img_file)  # Ajoute le fichier ouvert à la liste
 
             cam.release()
+            
+            # Appel de la fonction send_data
+            send_data.send_data(frames_dict)
+            print("Données envoyées", frames_dict)
+
+            # Ferme tous les fichiers ouverts
+            for file in open_files:
+                file.close()
 
         else:
             print("Aucun mouvement détecté.")

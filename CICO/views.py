@@ -18,6 +18,8 @@ import logging
 
 logger = logging.getLogger('django')
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from django.core.mail import EmailMessage, send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
@@ -38,6 +40,29 @@ import os
 from random import randint
 from datetime import datetime
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+
+#@csrf_exempt
+#def postRaspberry(request):
+#    owner =  UserCICO.objects.get(id=2)
+#   if request.method == 'POST':
+#      print(request.FILES)
+#        AddRecord(owner,"IN", True, request.FILES["dictionnaire"])
+#        return HttpResponse("test")
+@csrf_exempt
+def postRaspberry(request):
+    owner = UserCICO.objects.get(id=2)
+    if request.method == 'POST':
+        print(request.FILES)
+
+        # Itérer sur tous les fichiers dans request.FILES
+        for key, uploaded_file in request.FILES.items():
+            # Traitez chaque fichier, par exemple, en l'enregistrant ou en effectuant d'autres opérations nécessaires
+            AddRecord(owner, "IN", True, uploaded_file)
+
+        return JsonResponse({"message": "Photos enregistrées avec succès"})
+    else:
+        return JsonResponse({"error": "Aucune photo reçue"}, status=400)
 
 LIST_SIZE = 2
 
@@ -59,6 +84,11 @@ def GetRecords(deviceId,date):
             time__year=dateObject.year, time__month=dateObject.month,
                                             time__day=dateObject.day).annotate(catName=F('trigger__catId__name'))
     return querySet.values()
+
+
+def AddRecord(deviceOwner,event,isCat, photo, cat = None):
+    newRecord = DeviceRecords.objects.create(deviceId=deviceOwner,event=event,isCat=isCat, image=photo)
+
 
 def Empty(request):
     return redirect("CICO/")
@@ -264,7 +294,7 @@ def contact(request):
 
 def commande(request):
     return render(request, 'CICO/commande.html')
-
+    
 
 
 def activate(request, uidb64, token):
@@ -317,7 +347,6 @@ def forgotpassword(request):
     return render(request, "CICO/resetpassword.html", context={"password_reset_form": password_reset_form})
 
 
-
 def newpassword(request):
     if request.method == 'POST':
         new_password_form = NewPassword(request.POST)
@@ -366,6 +395,7 @@ def get_cats(request):
             catsAndStatus.append([user_cats[i][0], user_cats[i][1], Cats.objects.filter(ownerId_id=request.user)[i].getStatus()["status"]])
         return JsonResponse(catsAndStatus, safe=False)
     return JsonResponse({'error': 'User not authenticated'}, status=401)
+
 
 @login_required
 def get_cat_details(request, catId):
@@ -419,4 +449,3 @@ def profile(request):
         return redirect("profile")
     else:
         return render(request, "CICO/profile.html", {"user":user})
-

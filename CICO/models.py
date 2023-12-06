@@ -1,10 +1,11 @@
 from django.db import models
+from django.db.models import F
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.db.models import UniqueConstraint
 from django.core.exceptions import ValidationError
-import uuid
+import uuid6
 
 
 
@@ -23,7 +24,7 @@ class Statuses(models.Model):
     
 
 class UserSettings(models.Model):
-    userId = models.OneToOneField(UserCICO, primary_key=True, on_delete=models.PROTECT)
+    userId = models.OneToOneField(UserCICO, primary_key=True, on_delete=models.CASCADE)
     setting1 = models.CharField(max_length=100)
     #add other settings as required
 
@@ -32,7 +33,7 @@ def record_directory_path(instance, filename):
     return 'media/device_{0}/record_{1}/{2}'.format(instance.deviceId_id, instance.recordId, filename)
 
 class DeviceRecords(models.Model):
-    deviceId = models.ForeignKey(UserCICO, to_field="ownedDevice", on_delete=models.PROTECT,name="deviceId")
+    deviceId = models.ForeignKey(UserCICO, to_field="ownedDevice", on_delete=models.CASCADE,name="deviceId")
     recordId = models.AutoField(primary_key=True)
     image = models.ImageField(upload_to=record_directory_path, null=True, blank=True)
     time = models.DateTimeField(auto_now_add=True)
@@ -51,7 +52,7 @@ def cat_directory_path(instance, filename):
 class Cats(models.Model):
     ...
     ownerId = models.ForeignKey(UserCICO, on_delete=models.CASCADE)
-    catId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    catId = models.UUIDField(primary_key=True, default=uuid6.uuid7, editable=False)
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to=cat_directory_path, null=True, blank=True)
     #add other details if needed
@@ -63,6 +64,9 @@ class Cats(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
+
+    def getStatus(self):
+        return Cats.objects.filter(catId=self.catId).annotate(status=F("trigger__recordId_id__event")).values("status").last()
 
 
 class Trigger(models.Model):

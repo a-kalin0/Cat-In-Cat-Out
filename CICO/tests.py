@@ -7,12 +7,12 @@ from .models import Trigger
 from django.template.loader import render_to_string
 from django.contrib.auth import login
 import math
+from .models import Cats, CatsAdventures
+from django.utils import timezone
 import uuid6
 import requests
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
-
-
 
 
 def createSession():
@@ -97,8 +97,7 @@ class CatDeletionTests(TestCase):
         self.user = UserCICO.objects.create_user(username='testuser', password='12345')
         self.client = Client()
         self.client.login(username='testuser', password='12345')
-
-        # Create a cat
+                # Create a cat
         self.cat = Cats.objects.create(
             ownerId=self.user,
             name="Test Cat",
@@ -129,7 +128,6 @@ class CatDeletionTests(TestCase):
         response = self.client.post(self.delete_url)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(Cats.objects.count(), 1)  # The cat should still exist
-
 
 class CatAdditionTests(TestCase):
     def setUp(self):
@@ -175,3 +173,56 @@ def get_image_from_url(url):
         return BytesIO(response.content), 'test_image.jpg'  # 'test_image.jpg' can be any filename with a valid extension
     else:
         raise Exception("Failed to download image")
+
+        
+class TestsGraphiquesDesChats(TestCase):
+
+    def setUp(self):
+        self.utilisateur = UserCICO.objects.create_user('utilisateur_test', password="testpwd")
+        self.url = reverse('profileIndex')
+
+    def testDisplaysOnProfileIndex(self):
+        """
+        Tests that the graphics for cat entries and exits appear on the profile page.
+        """
+        self.client.force_login(self.utilisateur)
+        session = self.client.session
+        session['IP'] = '127.0.0.1'
+        session.save()
+        response = self.client.get(self.url)
+        self.assertContains(response, '<canvas id="EntreesCat"')
+        self.assertContains(response, '<canvas id="SortiesCat"')
+
+    def testCorrectGraphicData(self):
+        """
+        Tests that the correct data for cat graphs are included in the HTML.
+        """
+        self.client.force_login(self.utilisateur)
+        session = self.client.session
+        session['IP'] = '127.0.0.1'
+        session.save()
+        response = self.client.get(self.url)
+
+        # Récupérez les données attendues
+        expected_data = CatsAdventures.objects.filter(
+            cat__ownerId=self.utilisateur
+        ).values('timestamp', 'entrees', 'sorties')
+
+        # Testez si les scripts nécessaires sont présents
+        self.assertContains(response, 'var xValues = ')
+        self.assertContains(response, 'var barColors = ')
+        self.assertContains(response, 'var catData = ')
+
+        # Vérifiez si les données attendues sont présentes dans la réponse
+        for data in expected_data:
+            # Formattez la date et les valeurs comme elles apparaîtraient dans le HTML
+            formatted_date = data['timestamp'].strftime("%Y-%m-%d")
+            formatted_entrees = str(data['entrees'])
+            formatted_sorties = str(data['sorties'])
+
+            # Vérifiez si ces valeurs sont présentes dans la réponse
+            self.assertContains(response, formatted_date)
+            self.assertContains(response, formatted_entrees)
+            self.assertContains(response, formatted_sorties)
+
+ 

@@ -33,6 +33,10 @@ class CatSubmitForm(forms.ModelForm):
       model = Cats
       fields = ["name", "image"]
 
+class CatAdventuresDateForm(forms.Form):
+    start = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    end = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+
 class CodeForm(forms.Form):
    code = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
 

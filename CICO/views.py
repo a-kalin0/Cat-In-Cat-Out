@@ -1,25 +1,13 @@
 from django.shortcuts import render, redirect
-from django.views.generic import ListView
 
-from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword, ContactUsForm, CatSubmitForm, CodeForm
+from CICO.forms import ConnectionForm, NewAccountForm, ForgottenPassword, NewPassword, ContactUsForm, CatSubmitForm, CodeForm, AddDeviceNumber
 from django.contrib.auth import authenticate, login, get_user_model, logout
-
-from .models import Statuses, UserCICO, Cats, DeviceRecords #, Trigger
-
-
-from django.shortcuts import redirect
-from CICO.forms import ContactUsForm
-from CICO.forms import ConnectionForm
-from CICO.forms import NewAccountForm
-
-from CICO.forms import AddDeviceNumber
-
+from .models import UserCICO, Cats, DeviceRecords, CatsAdventures, Trigger
+from django.views.generic import ListView
 import logging
-
 logger = logging.getLogger('django')
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-
 from django.core.mail import EmailMessage, send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
@@ -29,18 +17,20 @@ from .tokens import account_activation_token, password_reset_token
 from django.db.models import F
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.forms.models import model_to_dict
-from django.core.files.storage import default_storage
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
-from .serializers import CatSerializer
 from django.core.exceptions import ValidationError
+from datetime import timedelta
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 import os
 from random import randint
 from datetime import datetime
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.forms.models import model_to_dict
+from django.core.files.storage import default_storage
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .serializers import CatSerializer
 
 #@csrf_exempt
 #def postRaspberry(request):
@@ -86,6 +76,7 @@ def GetRecords(deviceId,date):
     return querySet.values()
 
 
+
 def AddRecord(deviceOwner,event,isCat, photo, cat = None):
     newRecord = DeviceRecords.objects.create(deviceId=deviceOwner,event=event,isCat=isCat, image=photo)
 
@@ -93,7 +84,6 @@ def AddRecord(deviceOwner,event,isCat, photo, cat = None):
 def Empty(request):
     return redirect("CICO/")
 
-# Create your views here.
 
 def checkIP(request):
     print(request.session['IP'], request.META.get("REMOTE_ADDR"))
@@ -136,6 +126,7 @@ def mail_sent(request):
 
 def reset_done(request):
      return render(request, "CICO/password_reset_complete.html")
+
 
 def logoutPage(request):
     logout(request)
@@ -197,15 +188,6 @@ def connection(request, formType):
                     except Exception as e:
                         return HttpResponse('Invalid header found.')
 
-
-
-
-
-
-
-
-
-
                     return redirect('../mail_sent')
 
                     #request.session['user'] = newUser.id  # A backend authenticated the credentials
@@ -215,9 +197,6 @@ def connection(request, formType):
             form = NewAccountForm()
 
     return render(request, 'CICO/connexion.html', {"form": form})
-
-
-
 
 def profileIndex(request):
     if not checkIP(request) or not request.user.is_authenticated:
@@ -237,10 +216,40 @@ def profileIndex(request):
 
 
     if request.method == "GET":
-        recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice, request.session["filterDate"] )
-        return render(request, 'CICO/profileIndex.html',
-                      {"user": request.user.username, "recordList": recordList, "date":request.session["filterDate"]})
+        user_cats = Cats.objects.filter(ownerId=request.user)
 
+        end_date = timezone.now()
+
+        start_date = end_date - timedelta(days=6)
+
+        cat_adventures = CatsAdventures.objects.filter()
+
+        xValues = [day.strftime("%A") for day in (start_date + timedelta(n) for n in range(7))]
+
+        barColors = ["red", "green", "blue", "orange", "brown"]
+
+        cat_data = {cat.name: {'entrees': [], 'sorties': []} for cat in user_cats}
+
+        for adventure in cat_adventures:
+            day_of_week = adventure.timestamp.strftime("%A")
+            cat_name = adventure.cat.name
+            if day_of_week in xValues:
+                cat_data[cat_name]['entrees'].append(adventure.entrees)
+                cat_data[cat_name]['sorties'].append(adventure.sorties)
+                print(cat_data[cat_name]['entrees'])
+        
+        recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice, request.session["filterDate"] )
+        context = {
+            "user": user.username,
+            "recordList": recordList, 
+            "xValues": xValues,
+            "cat_data": cat_data,
+            "barColors": barColors,
+            "date":request.session["filterDate"],
+        }
+
+        return render(request, 'CICO/profileIndex.html', context)
+    
     elif request.method == "POST":
         try:
             datetime.strptime(request.POST["bouton"], '%Y-%m-%d').date()

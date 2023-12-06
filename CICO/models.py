@@ -33,9 +33,14 @@ class UserSettings(models.Model):
     setting1 = models.CharField(max_length=100)
     #add other settings as required
 
+def record_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'media/device_{0}/record_{1}/{2}'.format(instance.deviceId_id, instance.recordId, filename)
+
 class DeviceRecords(models.Model):
     deviceId = models.ForeignKey(UserCICO, to_field="ownedDevice", on_delete=models.CASCADE,name="deviceId")
     recordId = models.AutoField(primary_key=True)
+    image = models.ImageField(upload_to=record_directory_path, null=True, blank=True)
     time = models.DateTimeField(auto_now_add=True)
 
     EVENTS_CHOICES = [

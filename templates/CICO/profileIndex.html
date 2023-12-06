@@ -207,11 +207,12 @@
                 <button type="button" class="btn btn-primary rounded-pill" id="submitModifyCat">Sauvegarder</button>
             </div>
             </form>
+
             </div>
     </div>
 </div>
 
-=======
+
 <div class="modal fade" role="dialog" tabindex="-1" id="modal-record">
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -229,7 +230,7 @@
                         </div>
                     </div>
                 </div>
->>>>>>> b1fd017 (préparation affichage photo du record)
+
         </div>
     </div>
 </div>
@@ -311,13 +312,10 @@
     }
 
     function handleAddCatSuccess(response) {
+        console.log(response.catsAndStatus)
         if (response.success) {
-            let newCat = {
-                name: response.catName,
-                catId: response.catId,
-                // add other properties here if needed
-            };
-            appendCatRow(newCat);
+
+            appendCatRow(response.catsAndStatus);
             showToast('successToast');
             closeModal('modal-1');
         } else {

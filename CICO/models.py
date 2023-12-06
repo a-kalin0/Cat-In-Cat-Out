@@ -45,12 +45,10 @@ def cat_directory_path(instance, filename):
     return 'media/user_{0}/cat_{1}/{2}'.format(instance.ownerId_id, instance.catId, filename)
 
 class Cats(models.Model):
-    ...
     ownerId = models.ForeignKey(UserCICO, on_delete=models.CASCADE)
     catId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to=cat_directory_path, null=True, blank=True)
-    #add other details if needed
 
     def clean(self):
         if Cats.objects.filter(name=self.name).exists():
@@ -59,24 +57,6 @@ class Cats(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
-
-    def create_static_data(self):
-        start_date = timezone.now() - timedelta(days=datetime.now().weekday())
-        end_date = start_date + timedelta(days=7)
-
-        data = []
-
-        current_date = start_date
-        while current_date < end_date:
-            CatsAdventures.objects.create(
-                cat=self,
-                timestamp=current_date,
-                entrees=randint(1, 10),
-                sorties=randint(1, 10),
-            )
-            current_date += timedelta(days=1)
-        
-        return data
         
 
 class Trigger(models.Model):

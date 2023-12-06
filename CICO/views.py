@@ -138,27 +138,24 @@ def profileIndex(request):
         user_cats = Cats.objects.filter(ownerId=request.user)
 
         end_date = timezone.now()
-        start_date = end_date - timedelta(days=end_date.weekday())
 
-        for cat in user_cats:
-            # Assurez-vous qu'il n'y a pas déjà des données pour cette semaine
-            if not CatsAdventures.objects.filter(cat=cat, timestamp__gte=start_date, timestamp__lt=start_date + timedelta(days=7)).exists():
-                cat.create_static_data()
+        start_date = end_date - timedelta(days=6)
 
-        cat_adventures = CatsAdventures.objects.filter(
-            cat__in=user_cats,
-            timestamp__gte=start_date,
-            timestamp__lt=start_date + timedelta(days=8)
-        )
+        cat_adventures = CatsAdventures.objects.filter()
 
         xValues = [day.strftime("%A") for day in (start_date + timedelta(n) for n in range(7))]
+
         barColors = ["red", "green", "blue", "orange", "brown"]
 
         cat_data = {cat.name: {'entrees': [], 'sorties': []} for cat in user_cats}
 
         for adventure in cat_adventures:
-            cat_data[adventure.cat.name]['entrees'].append(adventure.entrees)
-            cat_data[adventure.cat.name]['sorties'].append(adventure.sorties)
+            day_of_week = adventure.timestamp.strftime("%A")
+            cat_name = adventure.cat.name
+            if day_of_week in xValues:
+                cat_data[cat_name]['entrees'].append(adventure.entrees)
+                cat_data[cat_name]['sorties'].append(adventure.sorties)
+                print(cat_data[cat_name]['entrees'])
 
         context = {
             "user": user.username,

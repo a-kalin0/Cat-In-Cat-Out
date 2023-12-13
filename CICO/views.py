@@ -222,25 +222,31 @@ def profileIndex(request):
 
         start_date = end_date - timedelta(days=6)
 
-        cat_adventures = CatsAdventures.objects.filter()
+        triggers = Trigger.objects.filter(
+            catId__in=user_cats,
+            recordId__time__range=[start_date, end_date]
+        )
 
         xValues = [day.strftime("%A") for day in (start_date + timedelta(n) for n in range(7))]
 
         barColors = ["red", "green", "blue", "orange", "brown"]
 
-        cat_data = {cat.name: {'entrees': [], 'sorties': []} for cat in user_cats}
+        cat_data = {cat.name: {'entrees': [0]*7, 'sorties': [0]*7} for cat in user_cats}
 
-        for adventure in cat_adventures:
-            day_of_week = adventure.timestamp.strftime("%A")
-            cat_name = adventure.cat.name
-            if day_of_week in xValues:
-                cat_data[cat_name]['entrees'].append(adventure.entrees)
-                cat_data[cat_name]['sorties'].append(adventure.sorties)
-                print(cat_data[cat_name]['entrees'])
+        for trigger in triggers:
+            record = trigger.recordId
+            day_of_week = record.time.strftime("%A")
+            cat_name = trigger.catId.name
+            index_day = xValues.index(day_of_week)
+
+            if record.event == "IN":
+                cat_data[cat_name]['entrees'][index_day] += 1
+            elif record.event == "OUT":
+                cat_data[cat_name]['sorties'][index_day] += 1
         
         recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice, request.session["filterDate"] )
         context = {
-            "user": user.username,
+            "user": request.user.username,
             "recordList": recordList, 
             "xValues": xValues,
             "cat_data": cat_data,

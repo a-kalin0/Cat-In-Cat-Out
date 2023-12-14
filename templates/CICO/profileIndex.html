@@ -78,7 +78,7 @@
 
         <tr id=row_{{forloop.counter}}>
           <td>
-              <button class="btn d-flex my-auto justify-content-xl-start" type="button" data-bs-target="#modal-record" data-bs-toggle="modal" style="width: 100%" onclick="selectedCat= '{{  record.catName }}'; showSelectedCat() ">
+              <button class="btn d-flex my-auto justify-content-xl-start" type="button" data-bs-target="#modal-record" data-bs-toggle="modal" style="width: 100%" onclick="selectedCat= '{{  record.image }}'; showSelectedCat() ">
                   {{record.catName}}
               </button>
           </td>
@@ -335,9 +335,8 @@
                             <div class="row row-cols-3">
                                 <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto align-self-center m-auto"
                                     style="margin: 15px;">
-                                    <img id="imgFrontPreview" class="border rounded d-flex m-auto" width="100%"
+                                    <img id="selectedCatDisplay" class="border rounded d-flex m-auto" width="100%"
                                         height="200" src="{% static 'CICO/img/silhouette%20face.jpg' %}">
-                                    <p id="selectedCatDisplay"></p>
                                 </div>
 
                             </div>
@@ -475,7 +474,9 @@
 
     let selectedCat = ""
     function showSelectedCat(){
-        document.getElementById("selectedCatDisplay").innerHTML = selectedCat
+        console.log(selectedCat)
+        $('#selectedCatDisplay').attr('src', './media/' + selectedCat);
+        //document.getElementById("selectedCatDisplay").innerHTML = selectedCat
     }
 
 </script>

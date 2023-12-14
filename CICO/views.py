@@ -41,13 +41,18 @@ from .serializers import CatSerializer
 #        return HttpResponse("test")
 @csrf_exempt
 def postRaspberry(request):
-    owner = UserCICO.objects.get(id=2)
+
     if request.method == 'POST':
         print(request.FILES)
 
         # Itérer sur tous les fichiers dans request.FILES
         for key, uploaded_file in request.FILES.items():
+            owner = UserCICO.objects.get(id=2)
+            fileName = str(uploaded_file)
+            print(fileName[0:2].upper())
             # Traitez chaque fichier, par exemple, en l'enregistrant ou en effectuant d'autres opérations nécessaires
+            #La reconnaissance de Chat devrait se faire ici
+
             AddRecord(owner, "IN", True, uploaded_file)
 
         return JsonResponse({"message": "Photos enregistrées avec succès"})
@@ -240,7 +245,7 @@ def profileIndex(request):
         
         recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice, request.session["filterDate"] )
         context = {
-            "user": user.username,
+            "user": request.user.username,
             "recordList": recordList, 
             "xValues": xValues,
             "cat_data": cat_data,

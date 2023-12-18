@@ -44,16 +44,16 @@ def postRaspberry(request):
 
     if request.method == 'POST':
         print(request.FILES)
-
+        print(request.POST)
         # Itérer sur tous les fichiers dans request.FILES
         for key, uploaded_file in request.FILES.items():
-            owner = UserCICO.objects.get(id=2)
+            owner = UserCICO.objects.get(id=1) #Should be specific to the device
             fileName = str(uploaded_file)
-            print(fileName[0:2].upper())
+            print(request.POST)
             # Traitez chaque fichier, par exemple, en l'enregistrant ou en effectuant d'autres opérations nécessaires
             #La reconnaissance de Chat devrait se faire ici
 
-            AddRecord(owner, "IN", True, uploaded_file)
+            AddRecord(owner, fileName[0:2].upper(), True, uploaded_file)
 
         return JsonResponse({"message": "Photos enregistrées avec succès"})
     else:

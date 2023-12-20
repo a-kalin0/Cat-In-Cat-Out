@@ -39,14 +39,14 @@ from django.views.decorators.csrf import csrf_exempt
 def postRaspberry(request):
     owner = UserCICO.objects.get(id=2)
     if request.method == 'POST':
-        print(request.FILES)
-
+        if len(request.FILES.keys()) == 0:
+            return JsonResponse({"error": "Aucune photo reçue"}, status=400)
         # Itérer sur tous les fichiers dans request.FILES
         for key, uploaded_file in request.FILES.items():
-            # Traitez chaque fichier, par exemple, en l'enregistrant ou en effectuant d'autres opérations nécessaires
+            print(request.FILES)
+            # Traitez chaque fichier
             AddRecord(owner, "IN", True, uploaded_file)
-
-        return JsonResponse({"message": "Photos enregistrées avec succès"})
+        return JsonResponse({"message": "photos enregistrée avec succès"})
     else:
         return JsonResponse({"error": "Aucune photo reçue"}, status=400)
 LIST_SIZE = 2

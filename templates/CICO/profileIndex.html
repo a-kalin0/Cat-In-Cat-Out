@@ -30,68 +30,65 @@
 </div>
 <div>
 
-  <div class="table-responsive">
-    <table class="table table-striped table-hover table-bordered">
-      <thead>
-        <tr>
-          <th>
-            <button
-              class="btn d-flex my-auto justify-content-xl-start"
-              type="button"
-              data-bs-target="#modal-1"
-              data-bs-toggle="modal"
-              style="width: 100%"
-            >
-              <i class="fas fa-plus fs-4" style="margin-right: 10px"></i>Ajouter
-              un nouveau chat
-            </button>
-          </th>
-        </tr>
-      </thead>
-      <tbody id="catList">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        <button class="btn d-flex my-auto justify-content-xl-start" type="button"
+                            data-bs-target="#modal-1" data-bs-toggle="modal" style="width: 100%">
+                            <i class="fas fa-plus fs-4" style="margin-right: 10px"></i>Ajouter
+                            un nouveau chat
+                        </button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="catList">
 
-        <!-- Cats will be added here by the legend -->
+                <!-- Cats will be added here by the legend -->
 
 
 
-      </tbody>
-    </table>
+            </tbody>
+        </table>
 
 
-    <div>
-        <form  action="" method="post" style="float:left">
-            {% csrf_token %}
-            <input type="date" name="bouton" value="{{ date }}" onchange="this.parentNode.submit();">
-            <input type="submit" name="bouton" value="Annuler">
-        </form>
-    </div>
-    <table class="table table-striped table-hover table-bordered" id="tableRecords">
-      <thead>
-        <tr>
-            <th>Historique</th>
-        </tr>
-      </thead>
-      <tbody>
+        <div>
+            <form action="" method="post" style="float:left">
+                {% csrf_token %}
+                <input type="date" name="bouton" value="{{ date }}" onchange="this.parentNode.submit();">
+                <input type="submit" name="bouton" value="Annuler">
+            </form>
+        </div>
+        <table class="table table-striped table-hover table-bordered" id="tableRecords">
+            <thead>
+                <tr>
+                    <th>Historique</th>
+                </tr>
+            </thead>
+            <tbody>
 
 
-      {% for record in recordList  %}
+                {% for record in recordList %}
 
-        <tr id=row_{{forloop.counter}}>
-          <td>
-              <button class="btn d-flex my-auto justify-content-xl-start" type="button" data-bs-target="#modal-record" data-bs-toggle="modal" style="width: 100%" onclick="selectedCat= '{{  record.image }}'; showSelectedCat() ">
-                  {{record.catName}}
-              </button>
-          </td>
-          <td>{{record.event}}</td>
-          <td>{{record.time}}</td>
-        </tr>
+                <tr id=row_{{forloop.counter}}>
+                    <td>
+                        <button class="btn d-flex my-auto justify-content-xl-start" type="button"
+                            data-bs-target="#modal-record" data-bs-toggle="modal" style="width: 100%"
+                            onclick="selectedCat= '{{  record.image }}'; showSelectedCat() ">
+                            {{record.catName}}
+                        </button>
+                    </td>
+                    <td>{{record.event}}</td>
+                    <td>{{record.time}}</td>
+                </tr>
 
 
 
-      {% endfor %}
+                {% endfor %}
 
-      </tbody>
-    </table>
+            </tbody>
+        </table>
 
         <div>
             <form action="" method="post" style="float:left">
@@ -114,19 +111,19 @@
     </div>
 </div>
 
-<div style =  'display : flex;'>
-    <div style = 'width: 50%; padding: 20px;'>
+<div style='display : flex;'>
+    <div style='width: 50%; padding: 20px;'>
         <canvas id="EntreesCat" style="width:100%;max-width:700px"></canvas>
     </div>
-    <div style = 'width: 50%; padding: 20px;'>
+    <div style='width: 50%; padding: 20px;'>
         <canvas id="SortiesCat" style="width:100%;max-width:700px"></canvas>
     </div>
-</div>    
+</div>
 
 <script>
-    var xValues = {{ xValues|safe }};
-    var barColors = {{ barColors|safe }};
-    var catData = {{ cat_data|safe }};
+    var xValues = {{ xValues| safe }};
+    var barColors = {{ barColors| safe }};
+    var catData = {{ cat_data| safe }};
 
     var entrees = Object.keys(catData).map(function (key, index) {
         return {
@@ -154,7 +151,7 @@
             scales: {
                 xAxes: [{
                     stacked: false,
-                    barPercentage: 0.8,  
+                    barPercentage: 0.8,
                 }],
                 yAxes: [{
                     stacked: false,
@@ -192,10 +189,10 @@
             scales: {
                 xAxes: [{
                     stacked: false,
-                    barPercentage: 0.8,  
+                    barPercentage: 0.8,
                 }],
                 yAxes: [{
-                    stacked: false,  
+                    stacked: false,
                     ticks: {
                         beginAtZero: true,
                     },
@@ -227,9 +224,10 @@
 <div class="modal fade" role="dialog" tabindex="-1" id="modal-1">
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header"><i class="fas fa-cat fs-1" style="margin-right: 10px;"></i>
-                <h4 class="modal-title">Ajouter un nouveau chat</h4><button class="btn-close" type="button"
-                    aria-label="Close" data-bs-dismiss="modal"></button>
+            <div class="modal-header">
+                <i class="fas fa-cat fs-1" style="margin-right: 10px;"></i>
+                <h4 class="modal-title">Ajouter un nouveau chat</h4>
+                <button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form id="addCatForm" enctype="multipart/form-data" method="post" action="{% url 'add_cat' %}">
@@ -237,33 +235,45 @@
                     <div class="container">
                         <div class="row flex-md-column flex-lg-column flex-xl-row">
                             <div class="col">
+                                <!-- Image upload section -->
                                 <div class="row row-cols-3">
-                                    <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto align-self-center m-auto"
-                                        style="margin: 15px;">
-                                        <p class="text-center bg-body-secondary border rounded">Choisir une photo de
-                                            face
-                                        </p><img id="imgFrontPreview" class="border rounded d-flex m-auto" width="100%"
-                                            height="200" src="{% static 'CICO/img/silhouette%20face.jpg' %}"><input
-                                            id="imgFrontInput" name="image" type="file"
-                                            style="margin-top: 15px;width: 100%;" required="" accept="image/*"
-                                            onchange="updateImagePreview(this, 'imgFrontPreview')">
+                                    <!-- Image 1 -->
+                                    <div class="col-12 col-md-6 col-lg-4 col-xl-4 mb-3">
+                                        <p class="text-center bg-body-secondary border rounded">Photo principale</p>
+                                        <img id="img1Preview" class="border rounded d-flex m-auto" width="100%"
+                                            height="200" src="{% static 'CICO/img/silhouette-face.jpg' %}">
+                                        <input id="img1Input" name="image" type="file"
+                                            style="margin-top: 15px;width: 100%;" required
+                                            accept="image/svg+xml, image/png, image/jpeg, image/jpg"
+                                            onchange="updateImagePreview(this, 'img1Preview')">
                                     </div>
+                                    <!-- Additional images -->
+                                    {% for i in "23456" %}
+                                    <div class="col-12 col-md-6 col-lg-4 col-xl-4 mb-3">
+                                        <p class="text-center bg-body-secondary border rounded">Image {{ i }}</p>
+                                        <img id="img{{ i }}Preview" class="border rounded d-flex m-auto" width="100%"
+                                            height="200" src="{% static 'CICO/img/silhouette-face.jpg' %}">
+                                        <input id="img{{ i }}Input" name="image{{ i }}" type="file"
+                                            style="margin-top: 15px;width: 100%;"
+                                            accept="image/svg+xml, image/png, image/jpeg, image/jpg"
+                                            onchange="updateImagePreview(this, 'img{{ i }}Preview')">
+                                    </div>
+                                    {% endfor %}
                                 </div>
                             </div>
-                            <div class="col-md-auto col-auto align-self-xl-center align-self-xxl-center"><input
-                                    id="catName" class="border rounded-pill form-control-lg d-flex" type="text"
+                            <div class="col-md-auto col-auto align-self-xl-center align-self-xxl-center">
+                                <input id="catName" class="border rounded-pill form-control-lg d-flex" type="text"
                                     name="name" placeholder="Nom"
                                     style="width: 100%;margin-top: 15px;margin-bottom: 15px;" required="">
                             </div>
                         </div>
                     </div>
             </div>
-            <div class="modal-footer"><button class="btn btn-light border rounded-pill" type="button"
-                    data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary border rounded-pill"
-                    type="submit">Ajouter</button>
+            <div class="modal-footer">
+                <button class="btn btn-light border rounded-pill" type="button" data-bs-dismiss="modal">Annuler</button>
+                <button class="btn btn-primary border rounded-pill" type="submit">Ajouter</button>
             </div>
             </form>
-
         </div>
     </div>
 </div>
@@ -312,8 +322,10 @@
                         accept="image/*" class="form-control mt-2">
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Fermer</button>
-                        <button type="button" class="btn btn-primary rounded-pill" id="submitModifyCat">Sauvegarder</button>
+                        <button type="button" class="btn btn-secondary rounded-pill"
+                            data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-primary rounded-pill"
+                            id="submitModifyCat">Sauvegarder</button>
                     </div>
                 </form>
 
@@ -329,19 +341,19 @@
         <div class="modal-content">
             <div class="container">
 
-                    <div class="row flex-md-column flex-lg-column flex-xl-row">
-                        <div class="col">
-                            <div class="row row-cols-3">
-                                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto align-self-center m-auto"
-                                    style="margin: 15px;">
-                                    <img id="selectedCatDisplay" class="border rounded d-flex m-auto" width="100%"
-                                        height="200" src="{% static 'CICO/img/silhouette%20face.jpg' %}">
-                                </div>
-
+                <div class="row flex-md-column flex-lg-column flex-xl-row">
+                    <div class="col">
+                        <div class="row row-cols-3">
+                            <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto col-xxl-auto align-self-center m-auto"
+                                style="margin: 15px;">
+                                <img id="selectedCatDisplay" class="border rounded d-flex m-auto" width="100%"
+                                    height="200" src="{% static 'CICO/img/silhouette%20face.jpg' %}">
                             </div>
+
                         </div>
                     </div>
                 </div>
+            </div>
 
         </div>
     </div>
@@ -472,7 +484,7 @@
 <script>
 
     let selectedCat = ""
-    function showSelectedCat(){
+    function showSelectedCat() {
         console.log(selectedCat)
         $('#selectedCatDisplay').attr('src', './media/' + selectedCat);
         //document.getElementById("selectedCatDisplay").innerHTML = selectedCat

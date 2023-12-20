@@ -64,8 +64,6 @@ class Cats(models.Model):
     def getStatus(self):
 
         status = Cats.objects.filter(catId=self.catId).annotate(status=F("trigger__recordId_id__event")).values("status")[::-1][0]
-
-        print(Cats.objects.filter(catId=self.catId).annotate(status=F("trigger__recordId_id__event")).values("status")[::-1][0])
         if status["status"] is None:
             return {"status" : "Jamais détecté"}
         return status

@@ -81,8 +81,8 @@ class AllTest(TestCase):
         Trigger.objects.create(catId=testCat, recordId=testRecord3)
         response = testClient.get(reverse('profileIndex'))
         testList = []
-        for i in range(math.ceil(len(DeviceRecords.objects.all())/2)):
-            testSession['listStart'] = i * 2
+        for i in range(math.ceil(len(DeviceRecords.objects.all())/5)):
+            testSession['listStart'] = i * 5
             for j in range(len(response.context["recordList"])):
                 testList.append(response.context["recordList"][j]["recordId"])
             testClient.post(reverse("profileIndex"),{"bouton":"ancien"})

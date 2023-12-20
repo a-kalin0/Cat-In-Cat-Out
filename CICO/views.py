@@ -32,14 +32,9 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CatSerializer
 
-#@csrf_exempt
-#def postRaspberry(request):
-#    owner =  UserCICO.objects.get(id=2)
-#   if request.method == 'POST':
-#      print(request.FILES)
-#        AddRecord(owner,"IN", True, request.FILES["dictionnaire"])
-#        return HttpResponse("test")
-@csrf_exempt
+LIST_SIZE = 5
+
+
 def postRaspberry(request):
     if request.method == 'POST':
         print(request.FILES)
@@ -60,7 +55,7 @@ def postRaspberry(request):
     else:
         return JsonResponse({"error": "Aucune photo reçue"}, status=400)
 
-LIST_SIZE = 2
+
 
 def UpdateList(request, deviceId, date="00-00-000"):
     recordList = GetRecords(deviceId, date)[::-1]
@@ -142,7 +137,7 @@ def logoutPage(request):
 
 
 def connection(request, formType):
-
+    message = ""
 
     if (formType == "connexion"):
         if (request.method == "POST"):
@@ -163,10 +158,15 @@ def connection(request, formType):
         if (request.method == "POST"):
             form = NewAccountForm(request.POST)
             if form.is_valid():
-                if form.cleaned_data["email"] in UserCICO.objects.values_list("email", flat=True):
+                if form.data["newAccount-identification"] in UserCICO.objects.values_list("username", flat=True):
+                    logger.info("This username is already used")
+                    message = "This username is already used"
+                elif form.data["newAccount-email"] in UserCICO.objects.values_list("email", flat=True):
                     logger.info("This email is already used")  # these texts will need to be displayed on the page
-                elif form.cleaned_data["password"] != form.cleaned_data["confirmPassword"]:
+                    message = "This email is already used"
+                elif form.data["newAccount-password"] != form.data["newAccount-confirmPassword"]:
                     logger.info("Passwords not identical")
+                    message = "Passwords not identical"
                 else:
                     newUser = UserCICO.objects.create(email=form.cleaned_data["email"],
                                                       username=form.cleaned_data["identification"])
@@ -200,10 +200,11 @@ def connection(request, formType):
                     #request.session['user'] = newUser.id  # A backend authenticated the credentials
                     #return redirect('profileIndex')
 
+
         else:
             form = NewAccountForm()
 
-    return render(request, 'CICO/connexion.html', {"form": form})
+    return render(request, 'CICO/connexion.html', {"form": form, "message": message})
 
 def profileIndex(request):
     if not checkIP(request) or not request.user.is_authenticated:

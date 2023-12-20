@@ -53,6 +53,19 @@ class Cats(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to=cat_directory_path, null=True, blank=True)
 
+    image2 = models.ImageField(upload_to=cat_directory_path, null=True, blank=True)
+    image3 = models.ImageField(upload_to=cat_directory_path, null=True, blank=True)
+    image4 = models.ImageField(upload_to=cat_directory_path, null=True, blank=True)
+    image5 = models.ImageField(upload_to=cat_directory_path, null=True, blank=True)
+    image6 = models.ImageField(upload_to=cat_directory_path, null=True, blank=True)
+
+    # String value fields
+    string_value1 = models.CharField(max_length=200, blank=True)
+    string_value2 = models.CharField(max_length=200, blank=True)
+    string_value3 = models.CharField(max_length=200, blank=True)
+    string_value4 = models.CharField(max_length=200, blank=True)
+    string_value5 = models.CharField(max_length=200, blank=True)
+
     def clean(self):
         if Cats.objects.filter(name=self.name).exists():
             raise ValidationError("A cat with this name already exists for this user.")

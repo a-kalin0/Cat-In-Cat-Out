@@ -407,7 +407,7 @@ def get_cats(request):
     if request.user.is_authenticated:
         user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', 'catId')
         catsAndStatus = []
-        for i in range(len(user_cats)-1):
+        for i in range(len(user_cats)):
             catsAndStatus.append([user_cats[i][0], user_cats[i][1], Cats.objects.filter(ownerId_id=request.user)[i].getStatus()["status"]])
         return JsonResponse(catsAndStatus, safe=False)
     return JsonResponse({'error': 'User not authenticated'}, status=401)

@@ -50,7 +50,7 @@ def postRaspberry(request):
             cat = None
             isCat = True
             if isCat:
-                cat = Cats.objects.filter(ownerId=owner)[0] #La reconnaissance de Chat devrait se faire ici
+                cat = Cats.objects.filter(ownerId=owner)[1] #La reconnaissance de Chat devrait se faire ici
             print(cat)
             fileName = str(uploaded_file)
             # Traitez chaque fichier, par exemple, en l'enregistrant ou en effectuant d'autres opérations nécessaires

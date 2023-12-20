@@ -7,10 +7,11 @@ import os
 
 # Configuration de la caméra
 camera = Picamera2()
+camera.start()
 
 # Configuration des capteurs de mouvement
-pir_out = MotionSensor(4)  # Capteur OUT
-pir_in = MotionSensor(27)  # Capteur IN
+pir_out = MotionSensor(27)  # Capteur OUT
+pir_in = MotionSensor(4)  # Capteur IN
 
 try:
     print("Attente du mouvement. Appuyez sur Ctrl+C pour quitter.")
@@ -28,8 +29,8 @@ try:
             filename = f"/home/cico/Pictures/{sensor_trigger}-{timestamp}.mp4"
 
             # Enregistre la vidéo pendant 10 secondes
-            camera.start_and_record_video(filename, duration=10)
-            print(f"Vidéo enregistrée")
+            camera.start_and_record_video(filename, duration=20)
+            print(f"Vidéo enregistrée") 
             
             # Ouvre la vidéo
             video_path = filename

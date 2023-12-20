@@ -62,7 +62,11 @@ class Cats(models.Model):
         super().save(*args, **kwargs)
 
     def getStatus(self):
-        return Cats.objects.filter(catId=self.catId).annotate(status=F("trigger__recordId_id__event")).values("status").last()
+
+        status = Cats.objects.filter(catId=self.catId).annotate(status=F("trigger__recordId_id__event")).values("status")[::-1][0]
+        if status["status"] is None:
+            return {"status" : "Jamais détecté"}
+        return status
 
 
 

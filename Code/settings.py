@@ -33,7 +33,7 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
-ALLOWED_HOSTS = ["192.168.78.89", "0.0.0.0","192.168.43.11", "172.20.10.6", "127.0.0.1"]
+ALLOWED_HOSTS = ["192.168.78.89", "0.0.0.0","192.168.43.11", "172.20.10.6", "localhost", "127.0.0.1"]
  
 
 # Application definition

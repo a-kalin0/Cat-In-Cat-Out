@@ -32,29 +32,30 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CatSerializer
 
-#@csrf_exempt
-#def postRaspberry(request):
-#    owner =  UserCICO.objects.get(id=2)
-#   if request.method == 'POST':
-#      print(request.FILES)
-#        AddRecord(owner,"IN", True, request.FILES["dictionnaire"])
-#        return HttpResponse("test")
+LIST_SIZE = 5
+
 @csrf_exempt
 def postRaspberry(request):
-    owner = UserCICO.objects.get(id=2)
     if request.method == 'POST':
         print(request.FILES)
-
+        print(request.POST)
         # Itérer sur tous les fichiers dans request.FILES
         for key, uploaded_file in request.FILES.items():
+            owner = UserCICO.objects.get(ownedDevice=request.POST["deviceId"]) #Should be specific to the device
+            cat = None
+            isCat = True
+            if isCat:
+                cat = Cats.objects.filter(ownerId=owner)[2] #La reconnaissance de Chat devrait se faire ici
+            print(cat)
+            fileName = str(uploaded_file)
             # Traitez chaque fichier, par exemple, en l'enregistrant ou en effectuant d'autres opérations nécessaires
-            AddRecord(owner, "IN", True, uploaded_file)
+            AddRecord(owner, fileName.split("-")[0].upper(), isCat, uploaded_file, cat)
 
         return JsonResponse({"message": "Photos enregistrées avec succès"})
     else:
         return JsonResponse({"error": "Aucune photo reçue"}, status=400)
 
-LIST_SIZE = 2
+
 
 def UpdateList(request, deviceId, date="00-00-000"):
     recordList = GetRecords(deviceId, date)[::-1]
@@ -79,7 +80,8 @@ def GetRecords(deviceId,date):
 
 def AddRecord(deviceOwner,event,isCat, photo, cat = None):
     newRecord = DeviceRecords.objects.create(deviceId=deviceOwner,event=event,isCat=isCat, image=photo)
-
+    if isCat:
+        newTrigger = Trigger.objects.create(catId=cat, recordId=newRecord)
 
 def Empty(request):
     return redirect("CICO/")
@@ -135,7 +137,7 @@ def logoutPage(request):
 
 
 def connection(request, formType):
-
+    message = ""
 
     if (formType == "connexion"):
         if (request.method == "POST"):
@@ -149,6 +151,7 @@ def connection(request, formType):
                     request.session['user'] = user.id
                     return redirect('profileIndex')
                 else:
+                    message = "Mauvais mot de passe ou identifiant"
                     logger.info("login failed")
         else:
             form = ConnectionForm()
@@ -156,10 +159,15 @@ def connection(request, formType):
         if (request.method == "POST"):
             form = NewAccountForm(request.POST)
             if form.is_valid():
-                if form.cleaned_data["email"] in UserCICO.objects.values_list("email", flat=True):
+                if form.data["newAccount-identification"] in UserCICO.objects.values_list("username", flat=True):
+                    logger.info("This username is already used")
+                    message = "This username is already used"
+                elif form.data["newAccount-email"] in UserCICO.objects.values_list("email", flat=True):
                     logger.info("This email is already used")  # these texts will need to be displayed on the page
-                elif form.cleaned_data["password"] != form.cleaned_data["confirmPassword"]:
+                    message = "This email is already used"
+                elif form.data["newAccount-password"] != form.data["newAccount-confirmPassword"]:
                     logger.info("Passwords not identical")
+                    message = "Passwords not identical"
                 else:
                     newUser = UserCICO.objects.create(email=form.cleaned_data["email"],
                                                       username=form.cleaned_data["identification"])
@@ -193,10 +201,11 @@ def connection(request, formType):
                     #request.session['user'] = newUser.id  # A backend authenticated the credentials
                     #return redirect('profileIndex')
 
+
         else:
             form = NewAccountForm()
 
-    return render(request, 'CICO/connexion.html', {"form": form})
+    return render(request, 'CICO/connexion.html', {"form": form, "message": message})
 
 def profileIndex(request):
     if not checkIP(request) or not request.user.is_authenticated:
@@ -406,7 +415,7 @@ def get_cats(request):
     if request.user.is_authenticated:
         user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', 'catId')
         catsAndStatus = []
-        for i in range(len(user_cats)-1):
+        for i in range(len(user_cats)):
             catsAndStatus.append([user_cats[i][0], user_cats[i][1], Cats.objects.filter(ownerId_id=request.user)[i].getStatus()["status"]])
         return JsonResponse(catsAndStatus, safe=False)
     return JsonResponse({'error': 'User not authenticated'}, status=401)

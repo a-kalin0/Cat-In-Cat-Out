@@ -37,18 +37,16 @@ LIST_SIZE = 5
 @csrf_exempt
 def postRaspberry(request):
     if request.method == 'POST':
-        print(request.FILES)
-        print(request.POST)
-        # Itérer sur tous les fichiers dans request.FILES
+        # print(request.FILES)
+        # print(request.POST)
         for key, uploaded_file in request.FILES.items():
-            owner = UserCICO.objects.get(ownedDevice=request.POST["deviceId"]) #Should be specific to the device
+            owner = UserCICO.objects.get(ownedDevice=request.POST["deviceId"])
             cat = None
             isCat = True
             if isCat:
-                cat = Cats.objects.filter(ownerId=owner)[2] #La reconnaissance de Chat devrait se faire ici
-            print(cat)
+                cat = Cats.objects.filter(ownerId=owner)[2]
+            # print(cat)
             fileName = str(uploaded_file)
-            # Traitez chaque fichier, par exemple, en l'enregistrant ou en effectuant d'autres opérations nécessaires
             AddRecord(owner, fileName.split("-")[0].upper(), isCat, uploaded_file, cat)
 
         return JsonResponse({"message": "Photos enregistrées avec succès"})

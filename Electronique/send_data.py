@@ -10,7 +10,6 @@ def send_data(dictionnaire) :
     #token et cookies
     headers = {'X-CSRFToken': 'votre_token_csrf'}
     cookies = {'csrftoken': 'votre_token_csrf'}
-    # Effectuer la requête POST
     # response = requests.post(url, data=data, files=dictionnaire, headers=headers, cookies=cookies)
     response = requests.post(url, data={"deviceId": deviceId}, files=dictionnaire, headers=headers, cookies=cookies, verify=False)
     print(response.text)

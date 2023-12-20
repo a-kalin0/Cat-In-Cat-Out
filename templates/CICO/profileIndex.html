@@ -238,10 +238,10 @@
                                 <!-- Image upload section -->
                                 <div class="row row-cols-3">
                                     <!-- Image 1 -->
-                                    <div class="col">
+                                    <div class="col-12 col-md-6 col-lg-4 col-xl-4 mb-3">
                                         <p class="text-center bg-body-secondary border rounded">Photo principale</p>
                                         <img id="img1Preview" class="border rounded d-flex m-auto" width="100%"
-                                            height="200" src="{% static 'CICO/img/sihouette-face.jpg' %}">
+                                            height="200" src="{% static 'CICO/img/silhouette-face.jpg' %}">
                                         <input id="img1Input" name="image" type="file"
                                             style="margin-top: 15px;width: 100%;" required
                                             accept="image/svg+xml, image/png, image/jpeg, image/jpg"
@@ -249,7 +249,7 @@
                                     </div>
                                     <!-- Additional images -->
                                     {% for i in "23456" %}
-                                    <div class="col">
+                                    <div class="col-12 col-md-6 col-lg-4 col-xl-4 mb-3">
                                         <p class="text-center bg-body-secondary border rounded">Image {{ i }}</p>
                                         <img id="img{{ i }}Preview" class="border rounded d-flex m-auto" width="100%"
                                             height="200" src="{% static 'CICO/img/silhouette-face.jpg' %}">

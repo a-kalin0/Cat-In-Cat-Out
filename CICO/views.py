@@ -41,7 +41,6 @@ from .serializers import CatSerializer
 #        return HttpResponse("test")
 @csrf_exempt
 def postRaspberry(request):
-
     if request.method == 'POST':
         print(request.FILES)
         print(request.POST)

@@ -34,22 +34,22 @@
 
 
 <div id="username">
-    {{ user.username }}
+    Nom du compte: {{ user.username }}
     <button onclick="edit(this.parentNode.id,'{{ user.username }}')">edit</button>
 </div>
 
 <div id="first_name">
-    {{ user.first_name }}
+    Votre prénom: {{ user.first_name }}
     <button onclick="edit(this.parentNode.id,'{{ user.first_name }}')">edit</button>
 </div>
 
 <div id="last_name">
-    {{ user.last_name }}
+    Votre nom: {{ user.last_name }}
     <button onclick="edit(this.parentNode.id,'{{ user.last_name }}')">edit</button>
 </div>
 
 <div id="email">
-    {{ user.email }}
+    Email: {{ user.email }}
     <button onclick="edit(this.parentNode.id,'{{ user.email }}')">edit</button>
 </div>
 

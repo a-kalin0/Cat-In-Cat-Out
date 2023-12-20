@@ -79,7 +79,8 @@ def GetRecords(deviceId,date):
 
 def AddRecord(deviceOwner,event,isCat, photo, cat = None):
     newRecord = DeviceRecords.objects.create(deviceId=deviceOwner,event=event,isCat=isCat, image=photo)
-
+    if isCat:
+        newTrigger = Trigger.objects.create(catId=cat, recordId=newRecord)
 
 def Empty(request):
     return redirect("CICO/")
@@ -201,36 +202,26 @@ def connection(request, formType):
 def profileIndex(request):
     if not checkIP(request) or not request.user.is_authenticated:
         return render(request, 'CICO/unauthorized.html', status=401)
-    if (UserCICO.objects.get(username=request.user).ownedDevice == None):
+
+    user_cico = UserCICO.objects.filter(username=request.user).first()
+    if user_cico is None or user_cico.ownedDevice is None:
         return redirect("profileNoDevice")
-    try:
-        request.session['listStart']
-    except:
-        request.session['listStart'] = 0
 
-    try:
-        request.session["filterDate"]
-    except:
-        request.session["filterDate"] = "00-00-0000"
-
-
+    request.session.setdefault('listStart', 0)
+    request.session.setdefault("filterDate", "00-00-0000")
 
     if request.method == "GET":
         user_cats = Cats.objects.filter(ownerId=request.user)
-
         end_date = timezone.now()
-
         start_date = end_date - timedelta(days=6)
 
         triggers = Trigger.objects.filter(
             catId__in=user_cats,
             recordId__time__range=[start_date, end_date]
-        )
+        ).select_related('recordId', 'catId')  # Optimisation de la requête
 
         xValues = [day.strftime("%A") for day in (start_date + timedelta(n) for n in range(7))]
-
         barColors = ["red", "green", "blue", "orange", "brown"]
-
         cat_data = {cat.name: {'entrees': [0]*7, 'sorties': [0]*7} for cat in user_cats}
 
         for trigger in triggers:
@@ -243,15 +234,17 @@ def profileIndex(request):
                 cat_data[cat_name]['entrees'][index_day] += 1
             elif record.event == "OUT":
                 cat_data[cat_name]['sorties'][index_day] += 1
-        
-        recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice, request.session["filterDate"] )
+
+        # J'ai supposé que UpdateList est une fonction que vous avez définie ailleurs
+        recordList = UpdateList(request, user_cico.ownedDevice, request.session["filterDate"])
+
         context = {
             "user": request.user.username,
-            "recordList": recordList, 
+            "recordList": recordList,
             "xValues": xValues,
             "cat_data": cat_data,
             "barColors": barColors,
-            "date":request.session["filterDate"],
+            "date": request.session["filterDate"],
         }
 
         return render(request, 'CICO/profileIndex.html', context)
@@ -406,7 +399,7 @@ def get_cats(request):
     if request.user.is_authenticated:
         user_cats = Cats.objects.filter(ownerId_id=request.user).values_list('name', 'catId')
         catsAndStatus = []
-        for i in range(len(user_cats)-1):
+        for i in range(len(user_cats)):
             catsAndStatus.append([user_cats[i][0], user_cats[i][1], Cats.objects.filter(ownerId_id=request.user)[i].getStatus()["status"]])
         return JsonResponse(catsAndStatus, safe=False)
     return JsonResponse({'error': 'User not authenticated'}, status=401)

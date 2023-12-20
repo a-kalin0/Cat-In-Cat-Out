@@ -151,6 +151,7 @@ def connection(request, formType):
                     request.session['user'] = user.id
                     return redirect('profileIndex')
                 else:
+                    message = "Mauvais mot de passe ou identifiant"
                     logger.info("login failed")
         else:
             form = ConnectionForm()

@@ -1,6 +1,16 @@
 {% extends "base.html" %}
+{% block title %}Mail envoyé{% endblock title %}
 {% block content %}
-   <div>
+<div>
    Mail envoyé !
-   </div>
+
+</div>
+    <form action="" method="post" style="padding-left: 45px; padding-right: 45px; margin-top: 10px">
+    {% csrf_token %}
+    <label>Entrez le code envoyé par mail</label>
+    {{form.code}}
+    <input class="btn border rounded btn-primary d-block mx-auto" type="submit"
+              style="margin-top: 10px; text-align: center; margin-bottom: 10px" data-bs-theme="light" />
+    </form>
+
 {% endblock %}

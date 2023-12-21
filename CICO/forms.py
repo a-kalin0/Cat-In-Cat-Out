@@ -31,4 +31,15 @@ class NewPassword(forms.Form):
 class CatSubmitForm(forms.ModelForm):
    class Meta:
       model = Cats
-      fields = ["name", "image"]
+      fields = ["name", "image", "image2", "image3", "image4", "image5", "image6"]
+
+class CatAdventuresDateForm(forms.Form):
+    start = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    end = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+
+class CodeForm(forms.Form):
+   code = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+
+class AddDeviceNumber(forms.Form):
+   deviceNumber = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=100)
+

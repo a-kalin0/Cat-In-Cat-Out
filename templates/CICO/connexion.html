@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block content %} {% load static %}
+{% extends "base.html" %}{% block title %}Connexion{% endblock title %} {% block content %} {% load static %}
 
 <div class="container-fluid d-inline">
   <div class="row g-0 d-inline d-md-inline d-lg-flex d-xl-flex d-xxl-flex">
@@ -103,7 +103,7 @@
 
 
           </form>
-
+            <div>{{ message }}</div>
           <a href='{% url "forgotpassword" %}'>Mot de passe oublié ?</a>
           <a href='{% url "connexion" formType="nouveauCompte"%}'>Vous n'êtes pas encore inscrit ? Inscrivez vous !</a>
 

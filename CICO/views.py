@@ -46,18 +46,16 @@ def deleting_model(sender, instance, **kwargs):
 @csrf_exempt
 def postRaspberry(request):
     if request.method == 'POST':
-        print(request.FILES)
-        print(request.POST)
-        # Itérer sur tous les fichiers dans request.FILES
+        # print(request.FILES)
+        # print(request.POST)
         for key, uploaded_file in request.FILES.items():
-            owner = UserCICO.objects.get(ownedDevice=request.POST["deviceId"]) #Should be specific to the device
+            owner = UserCICO.objects.get(ownedDevice=request.POST["deviceId"])
             cat = None
             isCat = True
             if isCat:
-                cat = Cats.objects.filter(ownerId=owner)[2] #La reconnaissance de Chat devrait se faire ici
-            print(cat)
+                cat = Cats.objects.filter(ownerId=owner)[2]
+            # print(cat)
             fileName = str(uploaded_file)
-            # Traitez chaque fichier, par exemple, en l'enregistrant ou en effectuant d'autres opérations nécessaires
             AddRecord(owner, fileName.split("-")[0].upper(), isCat, uploaded_file, cat)
 
         return JsonResponse({"message": "Photos enregistrées avec succès"})
@@ -240,21 +238,27 @@ def profileIndex(request):
 
         start_date = end_date - timedelta(days=6)
 
-        cat_adventures = CatsAdventures.objects.filter()
+        triggers = Trigger.objects.filter(
+            catId__in=user_cats,
+            recordId__time__range=[start_date, end_date]
+        )
 
         xValues = [day.strftime("%A") for day in (start_date + timedelta(n) for n in range(7))]
 
         barColors = ["red", "green", "blue", "orange", "brown"]
 
-        cat_data = {cat.name: {'entrees': [], 'sorties': []} for cat in user_cats}
+        cat_data = {cat.name: {'entrees': [0]*7, 'sorties': [0]*7} for cat in user_cats}
 
-        for adventure in cat_adventures:
-            day_of_week = adventure.timestamp.strftime("%A")
-            cat_name = adventure.cat.name
-            if day_of_week in xValues:
-                cat_data[cat_name]['entrees'].append(adventure.entrees)
-                cat_data[cat_name]['sorties'].append(adventure.sorties)
-                print(cat_data[cat_name]['entrees'])
+        for trigger in triggers:
+            record = trigger.recordId
+            day_of_week = record.time.strftime("%A")
+            cat_name = trigger.catId.name
+            index_day = xValues.index(day_of_week)
+
+            if record.event == "IN":
+                cat_data[cat_name]['entrees'][index_day] += 1
+            elif record.event == "OUT":
+                cat_data[cat_name]['sorties'][index_day] += 1
         
         recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice, request.session["filterDate"] )
         context = {

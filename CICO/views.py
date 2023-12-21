@@ -31,8 +31,17 @@ from django.core.files.storage import default_storage
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CatSerializer
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
 
 LIST_SIZE = 5
+
+@receiver(post_delete, sender=Trigger)
+def deleting_model(sender, instance, **kwargs):
+
+    DeviceRecords.objects.get(recordId=instance.recordId_id).delete()
+    print("a")
+    print(instance.recordId_id)
 
 @csrf_exempt
 def postRaspberry(request):

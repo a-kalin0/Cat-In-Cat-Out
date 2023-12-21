@@ -1,9 +1,11 @@
 from django.db import models
 from django.db.models import F
+
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 import uuid6
+
 
 
 
@@ -73,6 +75,8 @@ class Cats(models.Model):
 class Trigger(models.Model):
     catId = models.ForeignKey(Cats, on_delete=models.CASCADE, to_field="catId", name="catId")
     recordId = models.ForeignKey(DeviceRecords,primary_key=True,  to_field="recordId", on_delete=models.CASCADE, name = "recordId")
+
+
 
 
 class CatsAdventures(models.Model):

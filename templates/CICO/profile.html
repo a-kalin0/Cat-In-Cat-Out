@@ -3,9 +3,10 @@
 <script>
     function edit(id, value) {
         document.getElementById(id).innerHTML=`
-            <form action="" method="post" >
+            <form method="post" id="form${id}" class="paramForm">
             {% csrf_token %}
-                <input type="text" name=${ id } value="${ value }"/>
+                <input type="hidden" name="param" value="${id}"/>
+                <input type="text" name="value" value="${ value }"/>
                 <input type="submit" value="save"/>
             </form>
             `
@@ -30,6 +31,30 @@
 
 
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+    $(document).on('submit','.paramForm',function(e){
+        console.log("a")
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url:'{% url "profile" %}',
+            data:
+            {
+                param:$('input[name="param"]').val(),
+                value:$('input[name="value"]').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success:function(response){
+                  alert(response.message);
+                    },
+            error: function () {
+                alert("Déjà pris");
+            }
+            })
+        });
+    </script>
 
 
 

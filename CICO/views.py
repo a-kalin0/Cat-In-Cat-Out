@@ -409,14 +409,19 @@ def profile(request):
         return render(request, 'CICO/unauthorized.html', status=401)
 
     user = UserCICO.objects.get(username=request.user)
-
     if request.method == "POST":
-        if list(request.POST.keys())[1] == "deleteAccount":
+        if "deleteAccount" in list(request.POST.keys()):
             user.delete()
             return redirect("connexion", formType="connexion")
-        setattr(user,str(list(request.POST.keys())[1]), str(list(request.POST.values())[1]))
+        if (str(list(request.POST.values())[0]) == "username"):
+            if str(list(request.POST.values())[1]) in UserCICO.objects.values_list("username", flat=True):
+                return JsonResponse({'message': "already used"})
+
+
+
+        setattr(user,str(list(request.POST.values())[0]), str(list(request.POST.values())[1]))
         user.save()
-        return redirect("profile")
+        return JsonResponse({'message': "saved"})
     else:
         return render(request, "CICO/profile.html", {"user":user})
 

@@ -69,8 +69,9 @@ class Cats(models.Model):
     string_value5 = models.CharField(max_length=200, blank=True)
 
     def clean(self):
-        if Cats.objects.filter(name=self.name).exists():
+        if Cats.objects.filter(name=self.name, ownerId=self.ownerId_id).exclude(catId=self.catId).exists():
             raise ValidationError("A cat with this name already exists for this user.")
+
                                   
     def save(self, *args, **kwargs):
         self.clean()

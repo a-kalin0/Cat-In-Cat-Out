@@ -165,6 +165,41 @@ class CatAdditionTests(TestCase):
         self.assertNotEqual(response.status_code, 201)
         self.assertEqual(Cats.objects.count(), 0)
 
+    def test_add_duplicate_cat_name_different_users(self):
+        """ Test that different users can add cats with the same name """
+        # Add a cat for the first user
+        self.add_cat('Test Cat')
+
+        # Create a second user and login
+        user2 = UserCICO.objects.create_user(username='testuser2', password='testpassword2')
+        self.client.force_login(user2)
+
+        # Try to add a cat with the same name for the second user
+        response = self.add_cat('Test Cat')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Cats.objects.filter(name='Test Cat').count(), 2)
+
+    def test_add_duplicate_cat_name_same_user(self):
+        """ Test that the same user cannot add two cats with the same name """
+        # Add a cat for the first user
+        self.add_cat('Test Cat')
+
+        # Try to add another cat with the same name for the same user
+        response = self.add_cat('Test Cat')
+        self.assertNotEqual(response.status_code, 201)
+        self.assertEqual(Cats.objects.filter(name='Test Cat').count(), 1)
+
+    def add_cat(self, cat_name):
+        """ Helper method to add a cat with the given name """
+        img_url = 'https://images5.alphacoders.com/325/thumb-1920-325672.jpg'
+        image_content, image_name = get_image_from_url(img_url)
+        cat_data = {
+            'name': cat_name,
+            'image': SimpleUploadedFile(image_name, image_content.read(), content_type="image/jpeg"),
+        }
+        return self.client.post(self.add_cat_url, cat_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+
 
 def get_image_from_url(url):
     response = requests.get(url)

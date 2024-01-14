@@ -175,3 +175,40 @@ def get_image_from_url(url):
         return BytesIO(response.content), 'test_image.jpg'  # 'test_image.jpg' can be any filename with a valid extension
     else:
         raise Exception("Failed to download image")
+
+
+class EditProfileTests(TestCase):
+
+    def testSameNameError(self):
+        """
+        Tests that trying to change your name to an already existing name returns a json with "already used"
+        """
+        testClient, testSession = createSession()
+
+        alreadyExistingUser = UserCICO.objects.create_user('user', password="pwd", ownedDevice=11)
+
+        testUser = UserCICO.objects.create_user('my-user-name', password="testpwd", ownedDevice=12)
+        self.assertTrue(testClient.login(username='my-user-name', password="testpwd"))
+
+        response = testClient.post(reverse("profile"), {'param': 'username', 'value':'user'})
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            {'message': 'already used'}
+        )
+
+    def testSameNameSuccess(self):
+        """
+        Tests that trying to change your name to a name that doesnt already exists returns a json with "saved"
+        """
+        testClient, testSession = createSession()
+
+        alreadyExistingUser = UserCICO.objects.create_user('user', password="pwd", ownedDevice=11)
+
+        testUser = UserCICO.objects.create_user('my-user-name', password="testpwd", ownedDevice=12)
+        self.assertTrue(testClient.login(username='my-user-name', password="testpwd"))
+
+        response = testClient.post(reverse("profile"), {'param': 'username', 'value':'newuser'})
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            {'message': 'saved'}
+        )

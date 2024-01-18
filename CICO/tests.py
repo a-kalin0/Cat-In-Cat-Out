@@ -9,10 +9,13 @@ from django.contrib.auth import login
 import math
 from .models import Cats, CatsAdventures
 from django.utils import timezone
+import datetime
+from datetime import timedelta
 import uuid6
 import requests
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
+from unittest import mock
 
 
 def createSession():
@@ -209,12 +212,47 @@ def get_image_from_url(url):
     else:
         raise Exception("Failed to download image")
 
-        
+
 class TestsGraphiquesDesChats(TestCase):
 
     def setUp(self):
-        self.utilisateur = UserCICO.objects.create_user('utilisateur_test', password="testpwd")
+        # Créez un utilisateur de test
+        self.utilisateur = UserCICO.objects.create_user(username='utilisateur_test', password="testpwd", ownedDevice="device_string_example")
         self.url = reverse('profileIndex')
+
+        # Générer un UUID valide pour le champ catId
+        cat_uuid = uuid6.uuid7()
+
+        # Créez un chat de test avec un UUID valide
+        self.cat = Cats.objects.create(catId=cat_uuid, ownerId=self.utilisateur, name="Test Cat")
+
+        now = timezone.now()
+
+        # Créez des données de test pour les déclencheurs
+        for i in range(7):
+            date = (now- datetime.timedelta(days=i)).date()
+            time = (now - datetime.timedelta(minutes=5 * i)).time()  # Adjust the time for each day
+
+            date_time = timezone.make_aware(datetime.datetime.combine(date, time))
+
+            with mock.patch('django.utils.timezone.now', mock.Mock(return_value=date_time)):
+                device_record_in = DeviceRecords.objects.create(
+                    event="IN",
+                    isCat=True,
+                    deviceId_id=self.utilisateur.ownedDevice,
+
+                )
+                device_record_out = DeviceRecords.objects.create(
+                    event="OUT",
+                    isCat=False,
+                    deviceId_id=self.utilisateur.ownedDevice,
+
+                )
+            
+            # Create Trigger objects linked to the cat and the DeviceRecords
+            Trigger.objects.create(catId=self.cat, recordId=device_record_in)
+            Trigger.objects.create(catId=self.cat, recordId=device_record_out)
+
 
     def testDisplaysOnProfileIndex(self):
         """
@@ -238,26 +276,22 @@ class TestsGraphiquesDesChats(TestCase):
         session.save()
         response = self.client.get(self.url)
 
-        # Récupérez les données attendues
-        expected_data = CatsAdventures.objects.filter(
-            cat__ownerId=self.utilisateur
-        ).values('timestamp', 'entrees', 'sorties')
-
-        # Testez si les scripts nécessaires sont présents
+        # Vérifiez si les scripts nécessaires sont présents
         self.assertContains(response, 'var xValues = ')
         self.assertContains(response, 'var barColors = ')
         self.assertContains(response, 'var catData = ')
 
-        # Vérifiez si les données attendues sont présentes dans la réponse
-        for data in expected_data:
-            # Formattez la date et les valeurs comme elles apparaîtraient dans le HTML
-            formatted_date = data['timestamp'].strftime("%Y-%m-%d")
-            formatted_entrees = str(data['entrees'])
-            formatted_sorties = str(data['sorties'])
+        # Récupérez les données attendues directement depuis le contexte de la réponse
+        context_data = response.context['cat_data'][self.cat.name]
+        for day in range(7):
+            date = (timezone.localtime() - timezone.timedelta(days=day)).date()
+            day_of_week = date.strftime("%A")
 
-            # Vérifiez si ces valeurs sont présentes dans la réponse
-            self.assertContains(response, formatted_date)
-            self.assertContains(response, formatted_entrees)
-            self.assertContains(response, formatted_sorties)
+            # Trouver l'index du jour dans xValues
+            index_day = response.context['xValues'].index(day_of_week)
+
+
+            self.assertEqual(context_data['entrees'][index_day], 1, f"Échec pour {day_of_week}: {context_data['entrees']}")
+            self.assertEqual(context_data['sorties'][index_day], 1, f"Échec pour {day_of_week}: {context_data['sorties']}")
 
  

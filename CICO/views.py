@@ -236,7 +236,7 @@ def profileIndex(request):
 
         end_date = timezone.now()
 
-        start_date = end_date - timedelta(days=6)
+        start_date = end_date - timedelta(days=7)
 
         triggers = Trigger.objects.filter(
             catId__in=user_cats,

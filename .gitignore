@@ -3,7 +3,6 @@ __pycache__/*
 Code/__pycache__/*
 CICO/Migrations/__pycache__/*
 .idea/
-media/
 db.sqlite3
 CICO/memorial.py
 .env

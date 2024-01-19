@@ -13,6 +13,9 @@ import uuid6
 import requests
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
+from .views import averageBGRCatColor
+import cv2
+import numpy as np
 
 
 def createSession():
@@ -225,4 +228,30 @@ class TestsGraphiquesDesChats(TestCase):
             self.assertContains(response, formatted_entrees)
             self.assertContains(response, formatted_sorties)
 
- 
+
+class AverageColorTest(TestCase):
+    def testAverageColor(self):
+        """
+        Tests that the average color of an image is correctly calculated.
+        """
+        with self.assertRaises(RuntimeError):
+            averageBGRCatColor("Not an image")
+        cat_image = cv2.imread("media/Cat_November_2010-1a.jpg")
+        no_cat_image = cv2.imread("media/not_cat.png")
+        self.assertIsInstance(cat_image, np.ndarray)
+        self.assertIsInstance(no_cat_image, np.ndarray)
+
+        average_color_BGR = averageBGRCatColor(cat_image)
+        self.assertEqual(type(average_color_BGR), str)
+        self.assertIsNotNone(average_color_BGR)
+        self.assertEqual(average_color_BGR, "68,90,113")
+
+        average_color_BGR2 = averageBGRCatColor(no_cat_image)
+        self.assertIsNone(average_color_BGR2)
+
+
+
+
+
+
+

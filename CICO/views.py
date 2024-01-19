@@ -33,6 +33,10 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import CatSerializer
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
+from ultralytics import YOLO
+import cv2
+import numpy as np
+import os
 
 LIST_SIZE = 5
 
@@ -62,6 +66,32 @@ def postRaspberry(request):
     else:
         return JsonResponse({"error": "Aucune photo reçue"}, status=400)
 
+def averageBGRCatColor(catImage) :
+    model = YOLO('../media/yolov8s-seg.pt')
+
+    # 1. Detect objects
+    try:
+        results = model.predict(source=catImage, show=False, retina_masks=True, classes=[15], conf=0.3)
+    except Exception:
+        raise RuntimeError("Segmentation failed")
+
+    # 2. Create mask
+    cat = results[0]
+    if cat.masks is None:
+        return None
+    masks = cat.masks
+    mask1 = masks[0]
+    mask_final = mask1.data[0].numpy()
+
+    # 3. Get average color
+    average_color = cv2.mean(catImage, mask=mask_final.astype(np.uint8))[0:3]
+    rounded_average_color = []
+    for i in range(len(average_color)):
+        rounded_average_color.append(int(average_color[i]))
+    average_color_for_storage = (str(rounded_average_color).replace("[", "")
+                                 .replace("]", "")
+                                 .replace(" ", ""))
+    return average_color_for_storage
 
 
 def UpdateList(request, deviceId, date="00-00-000"):
@@ -181,7 +211,7 @@ def connection(request, formType):
                     newUser.set_password(form.cleaned_data["password"])
                     newUser.is_active = False
                     newUser.save()
-    
+
                     current_site = get_current_site(request) #osef?
 
                     request.session["validating"] = "newAccount"
@@ -259,11 +289,11 @@ def profileIndex(request):
                 cat_data[cat_name]['entrees'][index_day] += 1
             elif record.event == "OUT":
                 cat_data[cat_name]['sorties'][index_day] += 1
-        
+
         recordList = UpdateList(request, UserCICO.objects.get(username=request.user).ownedDevice, request.session["filterDate"] )
         context = {
             "user": request.user.username,
-            "recordList": recordList, 
+            "recordList": recordList,
             "xValues": xValues,
             "cat_data": cat_data,
             "barColors": barColors,
@@ -271,7 +301,7 @@ def profileIndex(request):
         }
 
         return render(request, 'CICO/profileIndex.html', context)
-    
+
     elif request.method == "POST":
         try:
             datetime.strptime(request.POST["bouton"], '%Y-%m-%d').date()
@@ -289,7 +319,7 @@ def profileIndex(request):
         elif request.POST["bouton"] == "ancien":
             request.session['listStart'] += LIST_SIZE
 
-    
+
     return redirect("profileIndex")
 
 
@@ -325,7 +355,7 @@ def contact(request):
 
 def commande(request):
     return render(request, 'CICO/commande.html')
-    
+
 
 
 def activate(request, uidb64, token):
@@ -346,7 +376,7 @@ def activate(request, uidb64, token):
         return redirect('/CICO')
     else:
         return HttpResponse('Activation link is invalid!')
-    
+
 
 def forgotpassword(request):
     if request.method == "POST":
@@ -410,13 +440,15 @@ def add_cat(request):
 
 
                 return JsonResponse({'success': True, 'catsAndStatus': catsAndStatus}, status=201)  # Or any other success response
-            
+
             except ValidationError:
                 return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
         else:
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     return JsonResponse({'success': False, 'errors': 'Invalid request'}, status=400)
-    
+
+
 @login_required
 def get_cats(request):
     if request.user.is_authenticated:
@@ -455,7 +487,7 @@ def modify_cat(request, catId):
         if form.is_valid():
             form.save()
             return JsonResponse({
-                'success': True, 
+                'success': True,
                 'message': 'Cat modified successfully',
                 'catId': str(cat.catId),  # Assuming catId is a UUID
                 'newName': cat.name
@@ -464,7 +496,7 @@ def modify_cat(request, catId):
             return JsonResponse({'success': False, 'errors': form.errors})
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request'})
-  
+
 def profile(request):
     if not checkIP(request) or not request.user.is_authenticated:
         return render(request, 'CICO/unauthorized.html', status=401)
